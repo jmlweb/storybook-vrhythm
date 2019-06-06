@@ -1,7 +1,7 @@
 {
   "name": "storybook-vrhythm",
   "version": "0.0.1",
-  "description": "",
+  "description": "Storybook Vertical Rhythm Decorator",
   "homepage": "https://github.com/jmlweb/storybook-vrhythm",
   "main": "dist/index.js",
   "umd:main": "dist/storybook-vrhythm.umd.production.js",

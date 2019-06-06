@@ -48,14 +48,26 @@ stories.addParameters({ vrhythm: { hide: true } });
 
 Any valid color for the lines (examples: #ff0000, rgba(0,0,0,0.3))
 
+default: `'rgb(204, 204, 204)'`
+
 ### lineHeight
 
 Any valid value for the lineHeight of your system (examples: 16px, 1rem...)
+
+default: `16px`
 
 ### offset
 
 The offset from the top, in case your component is wrapped or whatever.
 
+default: `0`
+
 ### hide
 
 Useful to hide the decorator in some stories
+
+default: `false`
+
+## Inspiration
+
+[Baseliner extension](https://jpedroribeiro.com/2015/08/baseliner-my-first-chrome-extension/)
