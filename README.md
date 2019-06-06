@@ -1,5 +1,13 @@
-[![npm version](https://badge.fury.io/js/storybook-vrhythm.svg)](https://badge.fury.io/js/storybook-vrhythm)
-[![build status](https://travis-ci.org/jmlweb/storybook-vrhythm.svg?branch=master)](https://travis-ci.org/jmlweb/storybook-vrhythm)
+[![Last Commit][last-commit-badge]][last-commit]
+[![Travis][build-badge]][build]
+[![npm package][npm-badge]][npm]
+
+[last-commit-badge]: https://img.shields.io/github/last-commit/jmlweb/storybook-vrhythm.svg
+[last-commit]: https://github.com/jmlweb/storybook-vrhythm
+[build-badge]: https://img.shields.io/travis/jmlweb/storybook-vrhythm/master.png?style=flat-square
+[build]: https://travis-ci.org/jmlweb/storybook-vrhythm
+[npm-badge]: https://img.shields.io/npm/v/storybook-vrhythm.png?style=flat-square
+[npm]: https://www.npmjs.org/package/storybook-vrhythm
 
 # Storybook Vertical Rhythm Decorator
 
