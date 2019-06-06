@@ -1,0 +1,42 @@
+{
+  "name": "storybook-vrhythm",
+  "version": "0.0.1",
+  "description": "",
+  "homepage": "https://github.com/jmlweb/storybook-vrhythm",
+  "main": "dist/index.js",
+  "umd:main": "dist/storybook-vrhythm.umd.production.js",
+  "module": "dist/storybook-vrhythm.es.production.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --env=jsdom"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "husky": "^2.3.0",
+    "prettier": "^1.17.1",
+    "pretty-quick": "^1.11.0",
+    "react": "^16.8.6",
+    "tsdx": "^0.6.1",
+    "tslib": "^1.9.3",
+    "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "@storybook/addons": "5.1.1"
+  }
+}
