@@ -31,7 +31,7 @@ or
 import { addDecorator, addParameters } from '@storybook/react'; // or Vue, Angular...
 import StorybookVRhythm from 'storybook-vrhythm';
 
-addDecorator(VRhythm);
+addDecorator(StorybookVRhythm);
 
 addParameters({
   vrhythm: {
