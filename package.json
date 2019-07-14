@@ -1,6 +1,6 @@
 {
   "name": "storybook-vrhythm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Storybook Vertical Rhythm Decorator",
   "homepage": "https://github.com/jmlweb/storybook-vrhythm",
   "main": "dist/index.js",
