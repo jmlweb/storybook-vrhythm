@@ -7,6 +7,9 @@
   "umd:main": "dist/storybook-vrhythm.umd.production.js",
   "module": "dist/storybook-vrhythm.es.production.js",
   "typings": "dist/index.d.ts",
+  "engines": {
+    "node": ">=10"
+  },
   "files": [
     "dist"
   ],
