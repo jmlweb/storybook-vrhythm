@@ -23,7 +23,7 @@ It should work with any framework/library, however it's only tested in a React e
 
 or
 
-`yarn add -D storybook-rhythm`
+`yarn add -D storybook-vrhythm`
 
 ## Using the decorator globally
 
