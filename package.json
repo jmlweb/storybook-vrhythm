@@ -42,7 +42,7 @@
     "preset.js"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "peerDependencies": {
     "storybook": "^8.0.0 || ^9.0.0 || ^10.0.0"
