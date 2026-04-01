@@ -41,6 +41,7 @@
     "dist",
     "preset.js"
   ],
+  "packageManager": "pnpm@10.26.2",
   "engines": {
     "node": ">=20"
   },
