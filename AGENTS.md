@@ -52,7 +52,7 @@ apps/
 # Root (runs across all packages via Turborepo)
 pnpm build            # Build all packages
 pnpm test             # Test all packages
-pnpm lint             # Lint all packages
+pnpm typecheck        # Type-check all packages
 pnpm dev              # Dev mode for all packages
 
 # Addon package only
@@ -60,7 +60,7 @@ pnpm -F storybook-vrhythm build
 pnpm -F storybook-vrhythm test
 pnpm -F storybook-vrhythm test:watch
 pnpm -F storybook-vrhythm test:coverage
-pnpm -F storybook-vrhythm lint
+pnpm -F storybook-vrhythm typecheck
 pnpm -F storybook-vrhythm format
 pnpm -F storybook-vrhythm format:check
 ```
@@ -99,7 +99,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 ### DOM Strategy
 
 - `getOrCreateElement()` reuses existing `#storybook-rhythm` div if present
-- `injectStyle()` only appends to parent when the element has no `parentNode`
+- `injectStyle()` appends to parent or moves element when container changes
 - `removeElement()` removes the div entirely (not just hides it)
 
 ### Module Boundaries

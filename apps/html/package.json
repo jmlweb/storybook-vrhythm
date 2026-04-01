@@ -3,11 +3,14 @@
   "private": true,
   "scripts": {
     "dev": "storybook dev -p 6008 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "storybook": "^10.0.0",
+    "@storybook/html": "^10.3.3",
     "@storybook/html-vite": "^10.0.0",
-    "storybook-vrhythm": "workspace:*"
+    "storybook": "^10.0.0",
+    "storybook-vrhythm": "workspace:*",
+    "typescript": "^5.9.3"
   }
 }
