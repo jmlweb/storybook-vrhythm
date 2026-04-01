@@ -45,14 +45,33 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
+        id: npm-publish
         if: steps.changesets.outputs.hasChangesets == 'false'
         working-directory: packages/storybook-vrhythm
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if npm view "storybook-vrhythm@${VERSION}" version 2>/dev/null; then
             echo "Version ${VERSION} already published, skipping"
+            echo "published=false" >> $GITHUB_OUTPUT
           else
             npm publish --provenance --access public
+            echo "published=true" >> $GITHUB_OUTPUT
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create git tag and GitHub Release
+        if: steps.npm-publish.outputs.published == 'true'
+        run: |
+          VERSION="${{ steps.npm-publish.outputs.version }}"
+          TAG="storybook-vrhythm@${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
