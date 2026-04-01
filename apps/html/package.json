@@ -1,0 +1,13 @@
+{
+  "name": "@apps/html",
+  "private": true,
+  "scripts": {
+    "dev": "storybook dev -p 6008 --no-open",
+    "build-storybook": "storybook build"
+  },
+  "devDependencies": {
+    "storybook": "^10.0.0",
+    "@storybook/html-vite": "^10.0.0",
+    "storybook-vrhythm": "workspace:*"
+  }
+}
