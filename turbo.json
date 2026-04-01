@@ -11,10 +11,10 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": ["^build"]
     },
     "lint": {
-      "dependsOn": ["build"]
+      "dependsOn": ["^build"]
     },
     "format:check": {},
     "build-storybook": {

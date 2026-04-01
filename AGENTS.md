@@ -36,7 +36,7 @@ apps/
 | Build           | tsup                        |
 | Test            | Vitest + jsdom              |
 | Package Manager | pnpm                        |
-| Storybook       | v8+ (peer dependency: 8–10) |
+| Storybook       | v10+ (peer dependency: 10+) |
 | CI              | GitHub Actions              |
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
@@ -55,7 +55,11 @@ pnpm dev              # Dev mode for all packages
 # Addon package only
 pnpm -F storybook-vrhythm build
 pnpm -F storybook-vrhythm test
+pnpm -F storybook-vrhythm test:watch
+pnpm -F storybook-vrhythm test:coverage
 pnpm -F storybook-vrhythm lint
+pnpm -F storybook-vrhythm format
+pnpm -F storybook-vrhythm format:check
 ```
 
 ## Code Conventions

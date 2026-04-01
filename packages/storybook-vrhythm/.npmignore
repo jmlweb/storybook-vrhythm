@@ -1,7 +1,5 @@
 src/
 test/
-.github/
-.claude/
 .cache
 coverage
 *.log
@@ -9,9 +7,3 @@ coverage
 tsconfig.json
 tsup.config.ts
 vitest.config.ts
-.gitignore
-CLAUDE.md
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
-storybook-vrhythm.jpg
-pnpm-lock.yaml
