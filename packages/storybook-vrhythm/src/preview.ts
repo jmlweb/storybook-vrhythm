@@ -11,11 +11,11 @@ export default definePreviewAddon<{
     vrhythm: {
       description: 'Toggle vertical rhythm grid overlay',
       toolbar: {
-        title: 'V-Rhythm',
+        title: 'Show vertical rhythm',
         icon: 'grid',
         items: [
-          { value: 'true', title: 'Show grid', icon: 'eye' },
-          { value: 'false', title: 'Hide grid', icon: 'eyeclose' },
+          { value: 'true', title: 'Show vertical rhythm', icon: 'eye' },
+          { value: 'false', title: 'Hide vertical rhythm', icon: 'eyeclose' },
         ],
         dynamicTitle: true,
       },
