@@ -169,4 +169,49 @@ describe('withVRhythm', () => {
       expect(mockInjectStyle).not.toHaveBeenCalled();
     });
   });
+
+  describe('toolbar global preset selection', () => {
+    it('applies global preset when globals.vrhythm is a valid preset name', () => {
+      const storyFn = vi.fn();
+      withVRhythm(storyFn, {
+        globals: { vrhythm: 'material' },
+      } as Context);
+
+      const style = mockInjectStyle.mock.calls[0][0];
+      expect(style.background).toContain('4px'); // material lineHeight
+    });
+
+    it('global preset overrides story parameters style', () => {
+      const storyFn = vi.fn();
+      withVRhythm(storyFn, {
+        parameters: { vrhythm: { lineHeight: '24px' } },
+        globals: { vrhythm: 'material' },
+      } as Context);
+
+      const style = mockInjectStyle.mock.calls[0][0];
+      expect(style.background).toContain('4px'); // material overrides 24px
+    });
+
+    it('does not apply global preset for unknown preset name', () => {
+      const storyFn = vi.fn();
+      withVRhythm(storyFn, {
+        globals: { vrhythm: 'nonexistent' },
+      } as Context);
+
+      expect(mockInjectStyle).toHaveBeenCalledTimes(1);
+      const style = mockInjectStyle.mock.calls[0][0];
+      expect(style.background).toContain(DEFAULT_LINE_HEIGHT);
+    });
+
+    it('global preset does not affect hide behavior from parameters', () => {
+      const storyFn = vi.fn();
+      withVRhythm(storyFn, {
+        parameters: { vrhythm: { hide: true } },
+        globals: { vrhythm: 'material' },
+      } as Context);
+
+      expect(mockRemoveElement).toHaveBeenCalledTimes(1);
+      expect(mockInjectStyle).not.toHaveBeenCalled();
+    });
+  });
 });

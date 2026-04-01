@@ -9,7 +9,8 @@ declare module 'storybook/internal/types' {
 
 declare module 'storybook/internal/csf' {
   interface Globals {
-    /** Toolbar toggle for the vertical rhythm overlay (`'true'` | `'false'` or boolean). */
+    /** Toolbar toggle/preset selector for the vertical rhythm overlay.
+     * Values: `'true'` (show with story params) | `'false'` (hide) | preset name (e.g. `'material'`, `'tailwind'`) | boolean. */
     vrhythm?: string | boolean;
   }
 }

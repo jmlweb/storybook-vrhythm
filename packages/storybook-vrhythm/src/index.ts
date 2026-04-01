@@ -43,13 +43,25 @@ export const withVRhythm: DecoratorFunction<Renderer> = (storyFn, context) => {
   const globalsVrhythm = (
     context.globals as { vrhythm?: string | boolean } | undefined
   )?.vrhythm;
+
+  const globalPresetName =
+    typeof globalsVrhythm === 'string' &&
+    globalsVrhythm !== 'true' &&
+    globalsVrhythm !== 'false' &&
+    globalsVrhythm in presets
+      ? (globalsVrhythm as PresetName)
+      : null;
+
+  const globalPresetStyles = globalPresetName ? presets[globalPresetName] : {};
+
   const isHidden =
     !!params.hide || globalsVrhythm === false || globalsVrhythm === 'false';
 
   if (isHidden) {
     removeElement();
   } else {
-    const style = getStyle(params);
+    const finalParams: VRhythmParams = { ...params, ...globalPresetStyles };
+    const style = getStyle(finalParams);
     injectStyle(style, params.container || undefined);
   }
 
