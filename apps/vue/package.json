@@ -1,0 +1,16 @@
+{
+  "name": "@apps/vue",
+  "private": true,
+  "scripts": {
+    "dev": "storybook dev -p 6007 --no-open",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "storybook": "^10.0.0",
+    "@storybook/vue3-vite": "^10.0.0",
+    "storybook-vrhythm": "workspace:*"
+  }
+}
