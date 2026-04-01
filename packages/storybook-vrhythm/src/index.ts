@@ -44,9 +44,7 @@ export const withVRhythm: DecoratorFunction<Renderer> = (storyFn, context) => {
     context.globals as { vrhythm?: string | boolean } | undefined
   )?.vrhythm;
   const isHidden =
-    globalsVrhythm !== undefined
-      ? globalsVrhythm === false || globalsVrhythm === 'false'
-      : !!params.hide;
+    !!params.hide || globalsVrhythm === false || globalsVrhythm === 'false';
 
   if (isHidden) {
     removeElement();

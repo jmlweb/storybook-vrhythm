@@ -147,15 +147,15 @@ describe('withVRhythm', () => {
       expect(mockRemoveElement).not.toHaveBeenCalled();
     });
 
-    it('globals.vrhythm overrides parameters.hide', () => {
+    it('parameters.hide takes precedence over globals.vrhythm', () => {
       const storyFn = vi.fn();
       withVRhythm(storyFn, {
         parameters: { vrhythm: { hide: true } },
         globals: { vrhythm: true },
       } as Context);
 
-      expect(mockInjectStyle).toHaveBeenCalledTimes(1);
-      expect(mockRemoveElement).not.toHaveBeenCalled();
+      expect(mockRemoveElement).toHaveBeenCalledTimes(1);
+      expect(mockInjectStyle).not.toHaveBeenCalled();
     });
 
     it('falls back to parameters.hide when globals.vrhythm is undefined', () => {

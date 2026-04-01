@@ -91,7 +91,7 @@ pnpm -F storybook-vrhythm format:check
 DEFAULT_PARAMS → preset styles → story-level parameters (raw)
 ```
 
-Later sources override earlier ones. The `globals.vrhythm` toolbar toggle takes precedence over `params.hide`.
+Later sources override earlier ones. The story-level `hide` param takes precedence over the `globals.vrhythm` toolbar toggle (author intent wins over interactive toggle).
 
 ### DOM Strategy
 

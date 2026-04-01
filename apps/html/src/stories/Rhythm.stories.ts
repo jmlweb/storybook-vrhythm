@@ -21,3 +21,44 @@ export const WithPreset: StoryObj = {
 export const Hidden: StoryObj = {
   parameters: { vrhythm: { hide: true } },
 };
+
+export const PresetMaterial: StoryObj = {
+  parameters: { vrhythm: { preset: "material" } },
+};
+
+export const PresetBootstrap: StoryObj = {
+  parameters: { vrhythm: { preset: "bootstrap" } },
+};
+
+export const CustomLineHeight: StoryObj = {
+  parameters: { vrhythm: { lineHeight: "12px" } },
+};
+
+export const CustomColor: StoryObj = {
+  parameters: { vrhythm: { color: "rgba(255, 0, 0, 0.3)" } },
+};
+
+export const CustomOffset: StoryObj = {
+  parameters: { vrhythm: { offset: "8px" } },
+};
+
+export const CustomOpacity: StoryObj = {
+  parameters: { vrhythm: { opacity: 0.8 } },
+};
+
+export const PresetWithOverrides: StoryObj = {
+  parameters: {
+    vrhythm: { preset: "material", lineHeight: "8px", opacity: 0.5 },
+  },
+};
+
+export const FullCustom: StoryObj = {
+  parameters: {
+    vrhythm: {
+      lineHeight: "20px",
+      color: "rgba(0, 200, 100, 0.25)",
+      offset: "4px",
+      opacity: 0.6,
+    },
+  },
+};
