@@ -39,6 +39,29 @@ describe('injectStyle', () => {
     container.remove();
   });
 
+  it('moves element to a new container when container changes', () => {
+    const containerA = document.createElement('div');
+    containerA.id = 'container-a';
+    const containerB = document.createElement('div');
+    containerB.id = 'container-b';
+    document.body.append(containerA, containerB);
+
+    injectStyle({ color: 'red' }, '#container-a');
+    expect(document.getElementById(DIV_ID)?.parentNode).toBe(containerA);
+
+    injectStyle({ color: 'blue' }, '#container-b');
+    expect(document.getElementById(DIV_ID)?.parentNode).toBe(containerB);
+    expect(containerA.querySelector(`#${DIV_ID}`)).toBeNull();
+
+    containerA.remove();
+    containerB.remove();
+  });
+
+  it('falls back to body when container selector is invalid', () => {
+    injectStyle({ color: 'red' }, '[unclosed');
+    expect(document.getElementById(DIV_ID)?.parentNode).toBe(document.body);
+  });
+
   it('does not re-append element if it already exists in the DOM', () => {
     injectStyle({ color: 'red' });
     injectStyle({ color: 'blue' });

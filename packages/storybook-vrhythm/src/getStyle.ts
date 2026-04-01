@@ -20,7 +20,7 @@ export const getStyle = ({
 
   const background =
     columnWidth != null
-      ? `${horizontal}, linear-gradient(90deg, ${columnColor ?? color} 1px, transparent 1px) left top / ${columnWidth} 1px`
+      ? `${horizontal}, linear-gradient(90deg, ${columnColor ?? color} 1px, transparent 1px) left top / ${columnWidth} 100%`
       : horizontal;
 
   return {

@@ -31,6 +31,7 @@ describe('getStyle', () => {
     const style = getStyle({ columnWidth: '80px' });
     expect(style.background).toContain('90deg');
     expect(style.background).toContain('80px');
+    expect(style.background).toContain('100%');
   });
 
   it('uses columnColor for columns when provided', () => {

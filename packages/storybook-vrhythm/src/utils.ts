@@ -26,10 +26,18 @@ export function injectStyle(style: StyleObj, container?: string): void {
   const element = getOrCreateElement();
   Object.assign(element.style, style);
 
-  if (!element.parentNode) {
-    const parent = document.querySelector(container ?? PARENT_SELECTOR);
-    if (parent) {
-      parent.append(element);
-    }
+  let parent: Element | null = null;
+  try {
+    parent = document.querySelector(container ?? PARENT_SELECTOR);
+  } catch {
+    // invalid selector string — fall through to body fallback
+  }
+
+  if (!parent) {
+    parent = document.querySelector(PARENT_SELECTOR);
+  }
+
+  if (parent && element.parentNode !== parent) {
+    parent.append(element);
   }
 }
