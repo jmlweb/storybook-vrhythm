@@ -24,7 +24,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
 
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-node${{ matrix.node-version }}-
+
       - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
+
+      - run: pnpm turbo run lint test build --cache-dir=.turbo
+
+      - run: pnpm turbo run build-storybook --cache-dir=.turbo
