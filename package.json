@@ -34,7 +34,10 @@
       "import": "./dist/preview.js",
       "default": "./dist/preview.js"
     },
-    "./preset": "./dist/preset.js",
+    "./preset": {
+      "import": "./dist/preset.js",
+      "default": "./dist/preset.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -46,7 +49,7 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "storybook": "^8.0.0 || ^9.0.0 || ^10.0.0"
+    "storybook": "^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0"
   },
   "storybook": {
     "displayName": "Vertical rhythm",
@@ -55,11 +58,8 @@
       "vue",
       "angular",
       "web-components",
-      "ember",
-      "html",
-      "svelte",
-      "preact",
-      "react-native"
+      "html-vite",
+      "svelte"
     ]
   },
   "scripts": {
@@ -79,12 +79,11 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
-    "@storybook/types": "^8.6.14",
     "@types/node": "^25.5.0",
     "@vitest/coverage-v8": "^4.1.2",
     "jsdom": "^29.0.1",
     "prettier": "^3.5.3",
-    "storybook": "^8.6.18",
+    "storybook": "^10.0.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.2"

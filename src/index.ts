@@ -1,4 +1,4 @@
-import type { DecoratorFunction } from '@storybook/types';
+import type { DecoratorFunction, Renderer } from 'storybook/internal/types';
 
 import { getStyle } from './getStyle';
 import { StyleProps, ConfigProps } from './types';
@@ -25,7 +25,7 @@ const DEFAULT_PARAMS: VRhythmParams = {
   zIndex: DEFAULT_Z_INDEX,
 };
 
-export const withVRhythm: DecoratorFunction = (storyFn, context) => {
+export const withVRhythm: DecoratorFunction<Renderer> = (storyFn, context) => {
   const raw = (context.parameters as { vrhythm?: VRhythmParams } | undefined)
     ?.vrhythm;
   const presetStyles =
@@ -38,10 +38,13 @@ export const withVRhythm: DecoratorFunction = (storyFn, context) => {
     ...raw,
   };
 
-  const globalsVrhythm = (context.globals as { vrhythm?: boolean } | undefined)
-    ?.vrhythm;
+  const globalsVrhythm = (
+    context.globals as { vrhythm?: string | boolean } | undefined
+  )?.vrhythm;
   const isHidden =
-    globalsVrhythm !== undefined ? globalsVrhythm === false : !!params.hide;
+    globalsVrhythm !== undefined
+      ? globalsVrhythm === false || globalsVrhythm === 'false'
+      : !!params.hide;
 
   if (isHidden) {
     removeElement();

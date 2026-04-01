@@ -1,4 +1,4 @@
-import type { ProjectAnnotations, Renderer } from '@storybook/types';
+import type { ProjectAnnotations, Renderer } from 'storybook/internal/types';
 
 import { withVRhythm } from './index';
 
@@ -11,15 +11,15 @@ const preview: ProjectAnnotations<Renderer> = {
         title: 'V-Rhythm',
         icon: 'grid',
         items: [
-          { value: true, title: 'Show grid', icon: 'eye' },
-          { value: false, title: 'Hide grid', icon: 'eyeclose' },
+          { value: 'true', title: 'Show grid', icon: 'eye' },
+          { value: 'false', title: 'Hide grid', icon: 'eyeclose' },
         ],
         dynamicTitle: true,
       },
     },
   },
   initialGlobals: {
-    vrhythm: true,
+    vrhythm: 'true',
   },
 };
 
