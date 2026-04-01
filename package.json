@@ -1,6 +1,6 @@
 {
   "name": "storybook-vrhythm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Storybook decorator and preset addon for vertical rhythm baseline guides",
   "license": "MIT",
   "author": "jmlweb",
