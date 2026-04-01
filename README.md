@@ -121,8 +121,8 @@ export const decorators = [withVRhythm];
 | `color`       | `string`           | `'rgb(204, 204, 204)'` | CSS color for horizontal guide lines         |
 | `lineHeight`  | `string \| number` | `'16px'`               | Baseline grid height (`16px`, `1rem`, etc.)  |
 | `offset`      | `string \| number` | `0`                    | Vertical offset from the top                 |
-| `opacity`     | `number`           | —                      | Overlay opacity (0–1)                        |
-| `zIndex`      | `number`           | —                      | Stack order of the overlay                   |
+| `opacity`     | `number`           | `1`                    | Overlay opacity (0–1)                        |
+| `zIndex`      | `number`           | `9999`                 | Stack order of the overlay                   |
 | `columnWidth` | `string \| number` | —                      | Vertical column width for column grids       |
 | `columnColor` | `string`           | —                      | CSS color for vertical column lines          |
 | `hide`        | `boolean`          | `false`                | Hide the overlay for specific stories        |

@@ -53,16 +53,17 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "storybook": "^10.0.0 || ^11.0.0"
+    "storybook": "^10.0.0"
   },
   "storybook": {
     "displayName": "Vertical Rhythm Grid",
+    "icon": "https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/master/packages/storybook-vrhythm/icon.png",
     "supportedFrameworks": [
       "react",
       "vue",
       "angular",
       "web-components",
-      "html-vite",
+      "html",
       "svelte"
     ]
   },

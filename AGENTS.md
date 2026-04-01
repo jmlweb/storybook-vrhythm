@@ -20,8 +20,11 @@ packages/
       presets.ts            # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
+      storybook-parameter-augmentation.ts  # Type augmentation for Storybook parameters/globals
     test/
       getStyle.test.ts      # Unit tests for getStyle
+      index.test.ts         # Unit tests for the decorator (withVRhythm)
+      utils.test.ts         # Unit tests for DOM manipulation utilities
 apps/
   react/                    # Storybook + React integration test app
   vue/                      # Storybook + Vue integration test app
@@ -36,7 +39,7 @@ apps/
 | Build           | tsup                        |
 | Test            | Vitest + jsdom              |
 | Package Manager | pnpm                        |
-| Storybook       | v10+ (peer dependency: 10+) |
+| Storybook       | v10 (peer dependency: ^10)  |
 | CI              | GitHub Actions              |
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
@@ -111,12 +114,13 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `index`     | Decorator wiring              | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
 | `preview`   | Storybook preview annotations | No (registers decorator) |
+| `storybook-parameter-augmentation` | Type augmentation for SB parameters/globals | N/A |
 
 ## Testing
 
 - Tests live in `test/` directory (not co-located)
 - Test file naming: `<module>.test.ts`
-- Focus on pure function testing (`getStyle`) and DOM manipulation (`utils`)
+- Focus on pure function testing (`getStyle`), decorator behavior (`index`), and DOM manipulation (`utils`)
 - Use `jsdom` environment for DOM tests
 
 ## Publishing
