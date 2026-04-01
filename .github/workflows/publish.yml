@@ -35,11 +35,20 @@ jobs:
         run: pnpm turbo run lint test build
 
       - name: Create release PR or publish
+        id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish
           title: "chore: version packages"
           commit: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
+
+      - name: Publish to npm
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        working-directory: packages/storybook-vrhythm
+        run: |
+          if npm view storybook-vrhythm@$(node -p "require('./package.json').version") version 2>/dev/null; then
+            echo "Version already published, skipping"
+          else
+            npm publish --provenance --access public
+          fi
