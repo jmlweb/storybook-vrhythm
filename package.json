@@ -10,9 +10,14 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format:check": "turbo run format:check",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "turbo": "^2.9.0"
   }
 }
