@@ -5,7 +5,7 @@ import {
   DEFAULT_OFFSET,
 } from './constants';
 
-const getStyle = ({
+export const getStyle = ({
   color = DEFAULT_COLOR,
   lineHeight = DEFAULT_LINE_HEIGHT,
   offset = DEFAULT_OFFSET,
@@ -18,5 +18,3 @@ const getStyle = ({
   background: `linear-gradient(${color} 1px, transparent 1px) left top / 1px ${lineHeight}`,
   pointerEvents: 'none',
 });
-
-export default getStyle;

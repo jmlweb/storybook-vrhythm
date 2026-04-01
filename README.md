@@ -1,81 +1,121 @@
-[![Last Commit][last-commit-badge]][last-commit]
-[![Travis][build-badge]][build]
+# 📐 storybook-vrhythm
+
 [![npm package][npm-badge]][npm]
+[![License: MIT][license-badge]][license]
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/storybook-vrhythm)](https://bundlephobia.com/package/storybook-vrhythm)
 
-[last-commit-badge]: https://img.shields.io/github/last-commit/jmlweb/storybook-vrhythm.svg
-[last-commit]: https://github.com/jmlweb/storybook-vrhythm
-[build-badge]: https://img.shields.io/travis/jmlweb/storybook-vrhythm/master.png?style=flat-square
-[build]: https://travis-ci.org/jmlweb/storybook-vrhythm
-[npm-badge]: https://img.shields.io/npm/v/storybook-vrhythm.png?style=flat-square
-[npm]: https://www.npmjs.org/package/storybook-vrhythm
+**A Storybook decorator that overlays vertical rhythm guide lines on your stories.**
+Verify that your components align to a baseline grid — with zero effort.
 
-# Storybook Vertical Rhythm Decorator
+![Vertical rhythm overlay example](storybook-vrhythm.jpg)
 
-Take an eye over the vertical rhythm of your stories with this decorator.
+## ✨ Features
 
-It should work with any framework/library, however it's only tested in a React environment for the moment.
+- 🎯 **Framework agnostic** — Works with React, Vue, Angular, Svelte, and any Storybook-supported framework
+- 🎨 **Fully customizable** — Color, line height, offset, and visibility per story
+- 🪶 **Lightweight** — Pure CSS overlay using `linear-gradient` (no images, no canvas)
+- 🖱️ **Non-intrusive** — Overlay doesn't interfere with pointer events
+- ⚡ **Zero config** — Works out of the box with sensible defaults
 
-![](storybook-vrhythm.jpg)
+## 📦 Installation
 
-## Installation
+<details open>
+<summary><strong>pnpm</strong></summary>
 
-`npm install storybook-vrhythm --development`
+```bash
+pnpm add -D storybook-vrhythm
+```
 
-or
+</details>
 
-`yarn add -D storybook-vrhythm`
+<details>
+<summary><strong>npm</strong></summary>
 
-## Using the decorator globally
+```bash
+npm install --save-dev storybook-vrhythm
+```
 
-```js
-import { addDecorator, addParameters } from '@storybook/react'; // or Vue, Angular...
-import StorybookVRhythm from 'storybook-vrhythm';
+</details>
 
-addDecorator(StorybookVRhythm);
+<details>
+<summary><strong>yarn</strong></summary>
 
-addParameters({
+```bash
+yarn add -D storybook-vrhythm
+```
+
+</details>
+
+## 🚀 Usage
+
+### Global decorator
+
+Add it to your `.storybook/preview.ts` to enable it across all stories:
+
+```typescript
+import { withVRhythm } from 'storybook-vrhythm';
+
+export const decorators = [withVRhythm];
+
+export const parameters = {
   vrhythm: {
-    color: 'rgba(178,86,18,0.5)',
+    color: 'rgba(178, 86, 18, 0.5)',
     lineHeight: '16px',
     offset: 0,
   },
-});
+};
 ```
 
-## Using the decorator in your stories
+### Per-story configuration
 
-```jsx
-const stories = storiesOf('components|MyComponent', module);
+Override or hide the overlay on individual stories:
 
-stories.addParameters({ vrhythm: { hide: true } });
+```typescript
+export const MyStory = {
+  parameters: {
+    vrhythm: {
+      hide: true,
+    },
+  },
+};
 ```
 
-## Available options
+## ⚙️ Options
 
-### color
+| Option       | Type               | Default                | Description                                |
+| ------------ | ------------------ | ---------------------- | ------------------------------------------ |
+| `color`      | `string`           | `'rgb(204, 204, 204)'` | Any valid CSS color for the guide lines    |
+| `lineHeight` | `string \| number` | `'16px'`               | Baseline grid height (e.g. `16px`, `1rem`) |
+| `offset`     | `string \| number` | `0`                    | Vertical offset from the top               |
+| `hide`       | `boolean`          | `false`                | Hide the overlay for specific stories      |
 
-Any valid color for the lines (examples: #ff0000, rgba(0,0,0,0.3))
+## 💡 Why vertical rhythm?
 
-default: `'rgb(204, 204, 204)'`
+Vertical rhythm is the practice of spacing elements on a page based on a consistent baseline grid. It improves readability and creates a sense of visual harmony. This decorator lets you **see** the grid while developing, so you can catch alignment issues before they reach production.
 
-### lineHeight
+## 🛠️ Development
 
-Any valid value for the lineHeight of your system (examples: 16px, 1rem...)
+```bash
+pnpm install    # Install dependencies
+pnpm build      # Build the package
+pnpm test       # Run tests
+pnpm lint       # Lint source code
+pnpm format     # Format with Prettier
+```
 
-default: `16px`
+## 🤝 Contributing
 
-### offset
+Contributions are welcome! Feel free to open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues) or submit a pull request.
 
-The offset from the top, in case your component is wrapped or whatever.
+## 🙏 Inspiration
 
-default: `0`
+[Baseliner](https://jpedroribeiro.com/2015/08/baseliner-my-first-chrome-extension/) — a Chrome extension by JP Ribeiro for overlaying baseline grids.
 
-### hide
+## 📄 License
 
-Useful to hide the decorator in some stories
+[MIT](LICENSE)
 
-default: `false`
-
-## Inspiration
-
-[Baseliner extension](https://jpedroribeiro.com/2015/08/baseliner-my-first-chrome-extension/)
+[npm-badge]: https://img.shields.io/npm/v/storybook-vrhythm.svg
+[npm]: https://www.npmjs.org/package/storybook-vrhythm
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[license]: https://github.com/jmlweb/storybook-vrhythm/blob/master/LICENSE

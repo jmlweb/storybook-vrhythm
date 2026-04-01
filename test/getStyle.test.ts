@@ -1,4 +1,4 @@
-import getStyle from '../src/getStyle';
+import { getStyle } from '../src/getStyle';
 
 describe('getStyle', () => {
   it('works with default values', () => {
