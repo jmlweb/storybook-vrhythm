@@ -27,6 +27,27 @@ const DEFAULT_PARAMS: VRhythmParams = {
   zIndex: DEFAULT_Z_INDEX,
 };
 
+/**
+ * Storybook decorator that injects a vertical rhythm baseline grid overlay into stories.
+ *
+ * Register globally via the addon preset in `.storybook/main.ts` (recommended):
+ * ```ts
+ * export default { addons: ['storybook-vrhythm'] };
+ * ```
+ *
+ * Or manually in `.storybook/preview.ts`:
+ * ```ts
+ * import { withVRhythm } from 'storybook-vrhythm';
+ * export const decorators = [withVRhythm];
+ * ```
+ *
+ * Control per story via `parameters.vrhythm`:
+ * ```ts
+ * export const MyStory = {
+ *   parameters: { vrhythm: { preset: 'material' } },
+ * };
+ * ```
+ */
 export const withVRhythm: DecoratorFunction<Renderer> = (storyFn, context) => {
   const raw = (context.parameters as { vrhythm?: VRhythmParams } | undefined)
     ?.vrhythm;
