@@ -6,18 +6,26 @@ An npm package that provides a Storybook decorator and preset addon for overlayi
 
 ## Project Structure
 
+Monorepo managed with pnpm workspaces and Turborepo.
+
 ```text
-src/
-  index.ts        # Decorator entry point (withVRhythm named export)
-  types.ts        # TypeScript interfaces (StyleProps, ConfigProps, StyleObj)
-  constants.ts    # Default values and DOM selectors
-  getStyle.ts     # Generates CSS style object for the rhythm overlay
-  utils.ts        # DOM manipulation (inject/remove overlay element)
-  presets.ts      # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
-  preset.ts       # Storybook preset entry (previewAnnotations)
-  preview.ts      # Storybook preview annotations (decorator + toolbar toggle)
-test/
-  getStyle.test.ts  # Unit tests for getStyle
+packages/
+  storybook-vrhythm/        # Addon package (published to npm)
+    src/
+      index.ts              # Decorator entry point (withVRhythm named export)
+      types.ts              # TypeScript interfaces (StyleProps, ConfigProps, StyleObj)
+      constants.ts          # Default values and DOM selectors
+      getStyle.ts           # Generates CSS style object for the rhythm overlay
+      utils.ts              # DOM manipulation (inject/remove overlay element)
+      presets.ts            # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
+      preset.ts             # Storybook preset entry (previewAnnotations)
+      preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
+    test/
+      getStyle.test.ts      # Unit tests for getStyle
+apps/
+  react/                    # Storybook + React integration test app
+  vue/                      # Storybook + Vue integration test app
+  html/                     # Storybook + HTML/Vite integration test app
 ```
 
 ## Tech Stack
@@ -32,19 +40,22 @@ test/
 | CI              | GitHub Actions              |
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
+| Orchestration   | Turborepo                   |
 | Node            | >= 20                       |
 
 ## Scripts
 
 ```bash
-pnpm build            # Build with tsup
-pnpm dev              # Build in watch mode
-pnpm test             # Run tests (vitest run)
-pnpm test:watch       # Run tests in watch mode
-pnpm test:coverage    # Run tests with coverage
-pnpm lint             # Type-check (tsc --noEmit)
-pnpm format           # Format with Prettier
-pnpm format:check     # Check formatting
+# Root (runs across all packages via Turborepo)
+pnpm build            # Build all packages
+pnpm test             # Test all packages
+pnpm lint             # Lint all packages
+pnpm dev              # Dev mode for all packages
+
+# Addon package only
+pnpm -F storybook-vrhythm build
+pnpm -F storybook-vrhythm test
+pnpm -F storybook-vrhythm lint
 ```
 
 ## Code Conventions

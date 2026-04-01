@@ -1,0 +1,91 @@
+{
+  "name": "storybook-vrhythm",
+  "version": "0.2.0",
+  "description": "Storybook decorator and preset addon for vertical rhythm baseline guides",
+  "license": "MIT",
+  "author": "jmlweb",
+  "homepage": "https://github.com/jmlweb/storybook-vrhythm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmlweb/storybook-vrhythm.git"
+  },
+  "keywords": [
+    "storybook-addon",
+    "style",
+    "debug",
+    "layout",
+    "baseline",
+    "vertical-rhythm",
+    "storybook",
+    "decorator"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./preview": {
+      "types": "./dist/preview.d.ts",
+      "import": "./dist/preview.js",
+      "default": "./dist/preview.js"
+    },
+    "./preset": {
+      "import": "./dist/preset.js",
+      "default": "./dist/preset.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "preset.js"
+  ],
+  "packageManager": "pnpm@10.26.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "storybook": "^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0"
+  },
+  "storybook": {
+    "displayName": "Vertical rhythm",
+    "supportedFrameworks": [
+      "react",
+      "vue",
+      "angular",
+      "web-components",
+      "html-vite",
+      "svelte"
+    ]
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "tsc --noEmit",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@vitest/coverage-v8": "^4.1.2",
+    "jsdom": "^29.0.1",
+    "prettier": "^3.5.3",
+    "storybook": "^10.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
+  }
+}
