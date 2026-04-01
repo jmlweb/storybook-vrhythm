@@ -1,0 +1,172 @@
+# storybook-vrhythm
+
+> Baseline grid overlay for Storybook 10. Draws a customizable vertical rhythm grid on stories to visually verify spacing and alignment during development. Zero runtime dependencies. Framework agnostic.
+
+## Overview
+
+`storybook-vrhythm` is a Storybook addon that injects a CSS `linear-gradient`-based overlay into stories. It helps developers verify that components align to a baseline grid without leaving Storybook. The overlay is non-interactive (`pointer-events: none`) and toggleable via the toolbar.
+
+Supported frameworks: React, Vue, Angular, Svelte, Web Components, HTML.
+
+## Installation
+
+```bash
+npm install --save-dev storybook-vrhythm
+# pnpm add -D storybook-vrhythm
+# yarn add -D storybook-vrhythm
+```
+
+Requirements: Node.js 20+, Storybook 10+.
+
+## Setup
+
+### Option A: Addon preset (recommended)
+
+Add to `.storybook/main.ts`:
+
+```typescript
+export default {
+  addons: ['storybook-vrhythm'],
+};
+```
+
+This automatically registers the decorator and toolbar toggle for all stories.
+
+### Option B: Manual decorator
+
+```typescript
+// .storybook/preview.ts
+import { withVRhythm } from 'storybook-vrhythm';
+
+export const decorators = [withVRhythm];
+```
+
+## Configuration
+
+Parameters are passed via `parameters.vrhythm` at the story or global level.
+
+### Global defaults (.storybook/preview.ts)
+
+```typescript
+export const parameters = {
+  vrhythm: {
+    lineHeight: '8px',
+    color: 'rgba(0, 150, 255, 0.2)',
+  },
+};
+```
+
+### Per-story
+
+```typescript
+export const MyStory = {
+  parameters: {
+    vrhythm: {
+      preset: 'material',
+    },
+  },
+};
+
+export const Hidden = {
+  parameters: {
+    vrhythm: { hide: true },
+  },
+};
+```
+
+## Style Parameters
+
+| Parameter     | Type               | Default                | Description                                        |
+| ------------- | ------------------ | ---------------------- | -------------------------------------------------- |
+| `color`       | `string`           | `'rgb(204, 204, 204)'` | CSS color for horizontal guide lines               |
+| `lineHeight`  | `string \| number` | `'16px'`               | Baseline grid height (e.g. `'8px'`, `'1rem'`)      |
+| `lineWidth`   | `string \| number` | `'1px'`                | Thickness of each horizontal guide line            |
+| `offset`      | `string \| number` | `0`                    | Vertical offset from the top of the container      |
+| `opacity`     | `number`           | `1`                    | Overlay opacity (0–1)                              |
+| `zIndex`      | `number`           | `9999`                 | Stack order of the overlay                         |
+| `maxWidth`    | `string \| number` | —                      | Centers the overlay horizontally at this max width |
+| `columnWidth` | `string \| number` | —                      | Repeating column width for vertical column grid    |
+| `columnColor` | `string`           | —                      | Color for column lines (falls back to `color`)     |
+| `gutterWidth` | `string \| number` | —                      | Gutter between columns (requires `columnWidth`)    |
+
+## Config Parameters
+
+| Parameter   | Type      | Default | Description                                                        |
+| ----------- | --------- | ------- | ------------------------------------------------------------------ |
+| `hide`      | `boolean` | `false` | Hide the overlay for this story (overrides toolbar toggle)         |
+| `preset`    | `string`  | —       | Built-in preset name                                               |
+| `container` | `string`  | —       | CSS selector for the overlay parent element (defaults to `body`)   |
+
+## Built-in Presets
+
+Pass `preset` in `parameters.vrhythm` to use a ready-made configuration.
+
+| Preset name | lineHeight | color                       | Use case                  |
+| ----------- | ---------- | --------------------------- | ------------------------- |
+| `4px`       | 4px        | `rgba(0, 150, 255, 0.15)`  | Dense UIs, compact grids  |
+| `8px`       | 8px        | `rgba(0, 150, 255, 0.2)`   | Standard 8pt grid         |
+| `16px`      | 16px       | `rgba(204, 204, 204, 0.5)` | Body text baseline        |
+| `24px`      | 24px       | `rgba(204, 204, 204, 0.5)` | Heading alignment         |
+| `material`  | 4px        | `rgba(244, 67, 54, 0.15)`  | Material Design           |
+| `tailwind`  | 4px        | `rgba(99, 102, 241, 0.15)` | Tailwind CSS              |
+| `bootstrap` | 8px        | `rgba(13, 110, 253, 0.2)`  | Bootstrap                 |
+
+## Exports
+
+```typescript
+import { withVRhythm, presets } from 'storybook-vrhythm';
+import type { VRhythmParams, StyleProps, ConfigProps, PresetName } from 'storybook-vrhythm';
+```
+
+- `withVRhythm` — Storybook `DecoratorFunction` that injects the overlay
+- `presets` — record of all built-in preset configurations
+- `VRhythmParams` — `StyleProps & ConfigProps` (all parameters combined)
+- `StyleProps` — visual style parameters
+- `ConfigProps` — behavior parameters (`hide`, `preset`, `container`)
+- `PresetName` — union type of valid preset names (`'4px' | '8px' | '16px' | '24px' | 'material' | 'tailwind' | 'bootstrap'`)
+
+## Toolbar Globals
+
+The addon registers a `vrhythm` global with these toolbar values:
+
+| Value        | Behavior                                      |
+| ------------ | --------------------------------------------- |
+| `'true'`     | Use story-level parameters (default)          |
+| `'false'`    | Hide the overlay                              |
+| `'4px'`      | Override with 4px preset                     |
+| `'8px'`      | Override with 8px preset                     |
+| `'16px'`     | Override with 16px preset                    |
+| `'24px'`     | Override with 24px preset                    |
+| `'material'` | Override with Material Design preset          |
+| `'tailwind'` | Override with Tailwind CSS preset             |
+| `'bootstrap'`| Override with Bootstrap preset                |
+
+Story-level `hide: true` always overrides the toolbar toggle.
+
+## How it works
+
+1. A `<div id="storybook-rhythm">` is injected into the DOM (or reused if already present)
+2. Its `background` is set to a `linear-gradient` that repeats at `lineHeight` intervals
+3. If `columnWidth` is set, a second `linear-gradient(90deg, ...)` layer creates vertical columns
+4. The div is positioned `absolute` with `pointer-events: none` so it never interferes with stories
+5. On hide, the div is removed from the DOM entirely
+
+## TypeScript
+
+The package ships a Storybook parameter augmentation that adds `vrchythm` to `Parameters` and `Globals` automatically when imported via the preset or `preview` entry point.
+
+```typescript
+// These types are inferred automatically — no manual augmentation needed
+export const MyStory: StoryObj = {
+  parameters: {
+    vrhythm: { preset: 'tailwind' }, // fully typed
+  },
+};
+```
+
+## Repository
+
+- GitHub: https://github.com/jmlweb/storybook-vrhythm
+- npm: https://www.npmjs.com/package/storybook-vrhythm
+- Issues: https://github.com/jmlweb/storybook-vrhythm/issues
+- License: MIT
