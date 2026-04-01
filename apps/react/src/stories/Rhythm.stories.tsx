@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import "storybook-vrhythm";
 
 const RhythmBox = () => (
   <div style={{ padding: 32, fontSize: 16, lineHeight: "24px" }}>

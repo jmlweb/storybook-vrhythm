@@ -1,8 +1,11 @@
-import type { ProjectAnnotations, Renderer } from 'storybook/internal/types';
+import { definePreviewAddon } from 'storybook/internal/csf';
 
-import { withVRhythm } from './index';
+import { withVRhythm, type VRhythmParams } from './index';
 
-const preview: ProjectAnnotations<Renderer> = {
+export default definePreviewAddon<{
+  parameters: { vrhythm?: VRhythmParams };
+  globals: { vrhythm?: string | boolean };
+}>({
   decorators: [withVRhythm],
   globalTypes: {
     vrhythm: {
@@ -21,6 +24,4 @@ const preview: ProjectAnnotations<Renderer> = {
   initialGlobals: {
     vrhythm: 'true',
   },
-};
-
-export default preview;
+});

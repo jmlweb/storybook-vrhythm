@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
-import { defineComponent } from 'vue';
+import type { Meta, StoryObj } from "@storybook/vue3";
+import "storybook-vrhythm";
+import { defineComponent } from "vue";
 
 const RhythmBox = defineComponent({
   template: `<div style="padding: 32px; font-size: 16px; line-height: 24px;">
@@ -8,7 +9,7 @@ const RhythmBox = defineComponent({
 });
 
 const meta: Meta<typeof RhythmBox> = {
-  title: 'VRhythm/Integration',
+  title: "VRhythm/Integration",
   component: RhythmBox,
 };
 export { meta as default };
@@ -16,7 +17,7 @@ export { meta as default };
 export const Default: StoryObj<typeof RhythmBox> = {};
 
 export const WithPreset: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { preset: 'tailwind' } },
+  parameters: { vrhythm: { preset: "tailwind" } },
 };
 
 export const Hidden: StoryObj<typeof RhythmBox> = {

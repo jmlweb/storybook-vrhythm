@@ -1,3 +1,5 @@
+import './storybook-parameter-augmentation';
+
 import type { DecoratorFunction, Renderer } from 'storybook/internal/types';
 
 import { getStyle } from './getStyle';
