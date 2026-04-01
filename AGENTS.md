@@ -18,7 +18,7 @@ packages/
       getStyle.ts           # Generates CSS style object for the rhythm overlay
       utils.ts              # DOM manipulation (inject/remove overlay element)
       presets.ts            # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
-      preset.ts             # Storybook preset entry (previewAnnotations)
+      preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
     test/
       getStyle.test.ts      # Unit tests for getStyle
@@ -109,7 +109,7 @@ Later sources override earlier ones. The `globals.vrhythm` toolbar toggle takes 
 | `getStyle`  | StyleProps -> CSS style obj   | Yes                      |
 | `utils`     | DOM inject/remove             | No (DOM side effects)    |
 | `index`     | Decorator wiring              | No (orchestrates)        |
-| `preset`    | Storybook preset entry        | Yes                      |
+| `preset`    | Empty (SB auto-discovers preview) | N/A                  |
 | `preview`   | Storybook preview annotations | No (registers decorator) |
 
 ## Testing
@@ -128,8 +128,9 @@ Later sources override earlier ones. The `globals.vrhythm` toolbar toggle takes 
 
 ## Common Pitfalls
 
-- **Don't add JSX** — no file uses JSX; the `.ts` extension is intentional
-- **Don't break the preset protocol** — `preview.ts` must use `export default` (Storybook requirement)
+- **Don't add JSX to the addon** — no addon source file uses JSX; the `.ts` extension is intentional. Apps may use `.tsx`
+- **Don't add `previewAnnotations` to `preset.ts`** — Storybook 10 auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
+- **Don't break the preview protocol** — `preview.ts` must use `export default` (Storybook requirement)
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
 - **Always run `pnpm test` after changing `src/`** — tests catch regressions in style generation and DOM handling
 - **Don't modify `DIV_ID` or `PARENT_SELECTOR`** — consumers may depend on `#storybook-rhythm` for custom styling
