@@ -48,9 +48,39 @@ yarn add -D storybook-vrhythm
 
 ## 🚀 Usage
 
-### Global decorator
+This package is a **Storybook preset addon**: you can register it in `main` (recommended) or add the decorator manually in `preview`.
 
-Add it to your `.storybook/preview.ts` to enable it across all stories:
+**Requirements:** Node.js 18+ and Storybook 8 or newer (see `peerDependencies` in `package.json`).
+
+### Register as an addon (recommended)
+
+Add the package to `addons` in `.storybook/main.ts` (or `main.js`). Storybook loads the preset and applies the vertical rhythm decorator in the preview iframe.
+
+```typescript
+import type { StorybookConfig } from '@storybook/react-vite'; // or your framework package
+
+const config = {
+  addons: ['storybook-vrhythm'],
+} satisfies StorybookConfig;
+
+export default config;
+```
+
+Optional defaults and overrides still use `parameters.vrhythm` in `.storybook/preview.ts`:
+
+```typescript
+export const parameters = {
+  vrhythm: {
+    color: 'rgba(178, 86, 18, 0.5)',
+    lineHeight: '16px',
+    offset: 0,
+  },
+};
+```
+
+### Manual decorator
+
+If you prefer not to use the preset, import the decorator in `.storybook/preview.ts`:
 
 ```typescript
 import { withVRhythm } from 'storybook-vrhythm';

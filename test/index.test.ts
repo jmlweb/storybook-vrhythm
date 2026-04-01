@@ -1,16 +1,15 @@
 import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT } from '../src/constants';
-
-jest.mock('../src/utils', () => ({
-  injectStyle: jest.fn(),
-  removeElement: jest.fn(),
-}));
-
-// Import after mock is set up
 import { withVRhythm } from '../src/index';
 import { injectStyle, removeElement } from '../src/utils';
+import { vi } from 'vitest';
 
-const mockInjectStyle = injectStyle as jest.Mock;
-const mockRemoveElement = removeElement as jest.Mock;
+vi.mock('../src/utils', () => ({
+  injectStyle: vi.fn(),
+  removeElement: vi.fn(),
+}));
+
+const mockInjectStyle = vi.mocked(injectStyle);
+const mockRemoveElement = vi.mocked(removeElement);
 
 beforeEach(() => {
   mockInjectStyle.mockClear();
@@ -19,8 +18,8 @@ beforeEach(() => {
 
 describe('withVRhythm', () => {
   it('calls storyFn and returns its result', () => {
-    const storyFn = jest.fn().mockReturnValue('story-result');
-    const context = {};
+    const storyFn = vi.fn().mockReturnValue('story-result');
+    const context = {} as Parameters<typeof withVRhythm>[1];
 
     const result = withVRhythm(storyFn, context);
 
@@ -29,16 +28,16 @@ describe('withVRhythm', () => {
   });
 
   it('calls injectStyle when not hidden', () => {
-    const storyFn = jest.fn();
-    withVRhythm(storyFn, {});
+    const storyFn = vi.fn();
+    withVRhythm(storyFn, {} as Parameters<typeof withVRhythm>[1]);
 
     expect(mockInjectStyle).toHaveBeenCalledTimes(1);
     expect(mockRemoveElement).not.toHaveBeenCalled();
   });
 
   it('uses default parameters when none are provided', () => {
-    const storyFn = jest.fn();
-    withVRhythm(storyFn, {});
+    const storyFn = vi.fn();
+    withVRhythm(storyFn, {} as Parameters<typeof withVRhythm>[1]);
 
     const style = mockInjectStyle.mock.calls[0][0];
     expect(style.background).toContain(DEFAULT_COLOR);
@@ -46,12 +45,12 @@ describe('withVRhythm', () => {
   });
 
   it('uses custom parameters when provided', () => {
-    const storyFn = jest.fn();
+    const storyFn = vi.fn();
     withVRhythm(storyFn, {
       parameters: {
         vrhythm: { color: '#ff0000', lineHeight: '24px' },
       },
-    });
+    } as Parameters<typeof withVRhythm>[1]);
 
     const style = mockInjectStyle.mock.calls[0][0];
     expect(style.background).toContain('#ff0000');
@@ -59,20 +58,22 @@ describe('withVRhythm', () => {
   });
 
   it('calls removeElement when hide is true', () => {
-    const storyFn = jest.fn();
-    withVRhythm(storyFn, { parameters: { vrhythm: { hide: true } } });
+    const storyFn = vi.fn();
+    withVRhythm(storyFn, {
+      parameters: { vrhythm: { hide: true } },
+    } as Parameters<typeof withVRhythm>[1]);
 
     expect(mockRemoveElement).toHaveBeenCalledTimes(1);
     expect(mockInjectStyle).not.toHaveBeenCalled();
   });
 
   it('merges partial parameters with defaults', () => {
-    const storyFn = jest.fn();
+    const storyFn = vi.fn();
     withVRhythm(storyFn, {
       parameters: {
         vrhythm: { color: '#abc123' },
       },
-    });
+    } as Parameters<typeof withVRhythm>[1]);
 
     const style = mockInjectStyle.mock.calls[0][0];
     expect(style.background).toContain('#abc123');
@@ -80,9 +81,11 @@ describe('withVRhythm', () => {
   });
 
   it('does not throw when hide is true and element is not in DOM', () => {
-    const storyFn = jest.fn();
+    const storyFn = vi.fn();
     expect(() =>
-      withVRhythm(storyFn, { parameters: { vrhythm: { hide: true } } })
+      withVRhythm(storyFn, {
+        parameters: { vrhythm: { hide: true } },
+      } as Parameters<typeof withVRhythm>[1])
     ).not.toThrow();
   });
 });

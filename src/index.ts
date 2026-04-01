@@ -1,9 +1,15 @@
+import type { DecoratorFunction } from '@storybook/types';
+
 import { getStyle } from './getStyle';
 import { StyleProps, ConfigProps } from './types';
 import { injectStyle, removeElement } from './utils';
-import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT, DEFAULT_OFFSET } from './constants';
+import {
+  DEFAULT_COLOR,
+  DEFAULT_LINE_HEIGHT,
+  DEFAULT_OFFSET,
+} from './constants';
 
-type VRhythmParams = StyleProps & ConfigProps;
+export type VRhythmParams = StyleProps & ConfigProps;
 
 const DEFAULT_PARAMS: Required<VRhythmParams> = {
   hide: false,
@@ -12,13 +18,10 @@ const DEFAULT_PARAMS: Required<VRhythmParams> = {
   offset: DEFAULT_OFFSET,
 };
 
-export const withVRhythm = (
-  storyFn: (context?: unknown) => unknown,
-  context: { parameters?: { vrhythm?: VRhythmParams } }
-): unknown => {
+export const withVRhythm: DecoratorFunction = (storyFn, context) => {
   const params: Required<VRhythmParams> = {
     ...DEFAULT_PARAMS,
-    ...context.parameters?.vrhythm,
+    ...(context.parameters as { vrhythm?: VRhythmParams } | undefined)?.vrhythm,
   };
 
   if (params.hide) {
@@ -30,3 +33,5 @@ export const withVRhythm = (
 
   return storyFn(context);
 };
+
+export type { StyleProps, ConfigProps } from './types';
