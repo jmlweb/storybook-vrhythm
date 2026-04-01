@@ -1,7 +1,7 @@
 {
   "name": "storybook-vrhythm",
   "version": "0.2.0",
-  "description": "Storybook decorator and preset addon for vertical rhythm baseline guides",
+  "description": "Baseline grid overlay for Storybook — see your vertical rhythm while you build",
   "license": "MIT",
   "author": "jmlweb",
   "homepage": "https://github.com/jmlweb/storybook-vrhythm",
@@ -11,13 +11,18 @@
   },
   "keywords": [
     "storybook-addon",
-    "style",
-    "debug",
-    "layout",
-    "baseline",
-    "vertical-rhythm",
     "storybook",
-    "decorator"
+    "vertical-rhythm",
+    "baseline-grid",
+    "typography",
+    "layout",
+    "design-system",
+    "css-grid",
+    "decorator",
+    "debug",
+    "spacing",
+    "material-design",
+    "tailwind"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -51,7 +56,7 @@
     "storybook": "^10.0.0 || ^11.0.0"
   },
   "storybook": {
-    "displayName": "Vertical rhythm",
+    "displayName": "Vertical Rhythm Grid",
     "supportedFrameworks": [
       "react",
       "vue",
