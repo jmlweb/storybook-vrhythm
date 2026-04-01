@@ -6,3 +6,4 @@ dist
 coverage
 .turbo
 storybook-static
+.claude/settings.local.json
