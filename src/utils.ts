@@ -22,12 +22,12 @@ export function removeElement(): void {
   }
 }
 
-export function injectStyle(style: StyleObj): void {
+export function injectStyle(style: StyleObj, container?: string): void {
   const element = getOrCreateElement();
   Object.assign(element.style, style);
 
   if (!element.parentNode) {
-    const parent = document.querySelector(PARENT_SELECTOR);
+    const parent = document.querySelector(container ?? PARENT_SELECTOR);
     if (parent) {
       parent.append(element);
     }

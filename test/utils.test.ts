@@ -27,6 +27,18 @@ describe('injectStyle', () => {
     expect(el?.parentNode).toBe(document.body);
   });
 
+  it('appends the element to a custom container when specified', () => {
+    const container = document.createElement('div');
+    container.id = 'custom-root';
+    document.body.appendChild(container);
+
+    injectStyle({ color: 'green' }, '#custom-root');
+    const el = document.getElementById(DIV_ID);
+    expect(el?.parentNode).toBe(container);
+
+    container.remove();
+  });
+
   it('does not re-append element if it already exists in the DOM', () => {
     injectStyle({ color: 'red' });
     injectStyle({ color: 'blue' });
