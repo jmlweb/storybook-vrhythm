@@ -5,17 +5,18 @@ on:
     branches:
       - master
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 permissions:
-  id-token: write
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment: npm
 
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +48,11 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         working-directory: packages/storybook-vrhythm
         run: |
-          if npm view storybook-vrhythm@$(node -p "require('./package.json').version") version 2>/dev/null; then
-            echo "Version already published, skipping"
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "storybook-vrhythm@${VERSION}" version 2>/dev/null; then
+            echo "Version ${VERSION} already published, skipping"
           else
             npm publish --provenance --access public
           fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
