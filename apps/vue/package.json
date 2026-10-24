@@ -12,7 +12,7 @@
   "devDependencies": {
     "@storybook/vue3": "^10.3.3",
     "@storybook/vue3-vite": "^10.0.0",
-    "storybook": "^10.0.0",
+    "storybook": "^10.6.2",
     "storybook-vrhythm": "workspace:*",
     "typescript": "^5.9.3"
   }
