@@ -14,6 +14,6 @@
     "@storybook/vue3-vite": ">=11.0.0-0 <12.0.0-0",
     "storybook": ">=11.0.0-0 <12.0.0-0",
     "storybook-vrhythm": "workspace:*",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   }
 }
