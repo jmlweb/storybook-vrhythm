@@ -1,7 +1,7 @@
+import { vi } from 'vitest';
 import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT, DIV_ID } from '../src/constants';
 import vrhythm, { withVRhythm } from '../src/index';
 import { injectStyle, removeElement } from '../src/utils';
-import { vi } from 'vitest';
 
 vi.mock('../src/utils', () => ({
   injectStyle: vi.fn(),

@@ -7,7 +7,7 @@
     "defaultBranch": "master"
   },
   "files": {
-    "includes": ["**", "!pnpm-lock.yaml"]
+    "includes": ["**", "!pnpm-lock.yaml", "!**/*.md"]
   },
   "formatter": {
     "indentStyle": "space",
