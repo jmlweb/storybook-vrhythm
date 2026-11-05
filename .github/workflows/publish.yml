@@ -56,7 +56,12 @@ jobs:
             echo "Version ${VERSION} already published, skipping"
             echo "published=false" >> $GITHUB_OUTPUT
           else
-            npm publish --access public
+            # npm refuses to publish a prerelease version without an explicit tag
+            case "$VERSION" in
+              *-*) DIST_TAG=next ;;
+              *) DIST_TAG=latest ;;
+            esac
+            npm publish --access public --tag "$DIST_TAG"
             echo "published=true" >> $GITHUB_OUTPUT
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
           fi
@@ -70,8 +75,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag "$TAG"
           git push origin "$TAG"
+          case "$VERSION" in
+            *-*) PRERELEASE_FLAG=--prerelease ;;
+            *) PRERELEASE_FLAG= ;;
+          esac
           gh release create "$TAG" \
             --title "$TAG" \
-            --generate-notes
+            --generate-notes \
+            $PRERELEASE_FLAG
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

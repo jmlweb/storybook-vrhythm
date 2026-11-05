@@ -15,7 +15,7 @@ pnpm add -D storybook-vrhythm
 # or: npm install --save-dev storybook-vrhythm
 ```
 
-Requirements: Node.js 22.12+, Storybook 10 or 11.
+Requirements: Node.js 22.12+, Storybook 10 or 11. While Storybook 11 is in prerelease, install the `next` tag to use it (`storybook-vrhythm@next`); the `latest` tag is 0.x, which supports Storybook 10 only.
 
 ## Setup
 

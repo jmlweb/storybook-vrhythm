@@ -29,6 +29,8 @@ Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customi
 
 Storybook 10 is supported but not continuously tested: CI runs against Storybook 11 only.
 
+While Storybook 11 is in prerelease, install the `next` tag to use it: `pnpm add -D storybook-vrhythm@next`. The `latest` tag is 0.x, which supports Storybook 10 only.
+
 ## Quick start
 
 ```bash

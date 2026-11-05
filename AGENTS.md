@@ -130,6 +130,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Published to npm as `storybook-vrhythm`
 - Only `dist/` is included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
 - Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing
+- The repo is in Changesets prerelease mode (`.changeset/pre.json`), so releases go to the `next` dist-tag. At Storybook 11 GA, run `pnpm changeset pre exit` to release `1.0.0` to `latest`
 - ESM-only (`"type": "module"`)
 
 ## Common Pitfalls
