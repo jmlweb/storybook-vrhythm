@@ -1,5 +1,11 @@
 # storybook-vrhythm
 
+## 0.5.0
+
+### Minor Changes
+
+- [#32](https://github.com/jmlweb/storybook-vrhythm/pull/32) [`4e92dd2`](https://github.com/jmlweb/storybook-vrhythm/commit/4e92dd2341e651b964cb54cfa15762c7a1be0678) Thanks [@jmlweb](https://github.com/jmlweb)! - **Breaking:** require Node 22 or later. `engines.node` is now `>=22`, because Node 20 reached end of life on 2026-04-30. Ships as a minor bump because the package is still 0.x. The addon's API and the `storybook` peer range are unchanged.
+
 ## 0.4.0
 
 ### Minor Changes
