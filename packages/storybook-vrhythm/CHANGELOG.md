@@ -1,5 +1,19 @@
 # storybook-vrhythm
 
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#37](https://github.com/jmlweb/storybook-vrhythm/pull/37) [`1cfc56e`](https://github.com/jmlweb/storybook-vrhythm/commit/1cfc56ec918f3a89a2c9d81ee0ce92b1fdb4d7b6) Thanks [@jmlweb](https://github.com/jmlweb)! - Add Storybook 11 support alongside Storybook 10. The `storybook` peer range is now `^10.0.0 || ^11.0.0-0`.
+  
+  The package now has a default export for CSF Next. Register it with `definePreview({ addons: [vrhythm()] })`. Registering the addon in `.storybook/main.ts` and using the named `withVRhythm` decorator both keep working.
+  
+  **Breaking:** require Node 22.12 or later, the minimum for Storybook 11.
+
+### Patch Changes
+
+- [#38](https://github.com/jmlweb/storybook-vrhythm/pull/38) [`e92de84`](https://github.com/jmlweb/storybook-vrhythm/commit/e92de84bebd0bf03664d148c00fca9d90b2b7ac2) Thanks [@jmlweb](https://github.com/jmlweb)! - Ship the `LICENSE` file and mark the package as `sideEffects: false`. `index` and `preview` now share one chunk, so the decorator is no longer bundled twice. Remove the root `preset.js`, which `exports` already made unreachable.
+
 ## 0.5.0
 
 ### Minor Changes
