@@ -73,21 +73,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
-    "format:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'"
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
     "@vitest/coverage-v8": "^5.1.0",
     "jsdom": "^30.1.3",
-    "prettier": "^3.9.10",
     "storybook": ">=11.0.0-0 <12.0.0-0",
     "tsdown": "^0.23.5",
     "typescript": "^6.0.3",

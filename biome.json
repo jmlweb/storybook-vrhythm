@@ -1,0 +1,51 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.5/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "master"
+  },
+  "files": {
+    "includes": ["**", "!pnpm-lock.yaml"]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "es5"
+    }
+  },
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "noDefaultExport": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "packages/storybook-vrhythm/src/index.ts",
+        "packages/storybook-vrhythm/src/preview.ts",
+        "**/tsdown.config.ts",
+        "**/vitest.config.ts",
+        "apps/*/.storybook/**",
+        "apps/*/src/stories/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
+}
