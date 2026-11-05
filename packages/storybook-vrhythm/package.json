@@ -7,8 +7,10 @@
   "homepage": "https://github.com/jmlweb/storybook-vrhythm",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmlweb/storybook-vrhythm.git"
+    "url": "git+https://github.com/jmlweb/storybook-vrhythm.git",
+    "directory": "packages/storybook-vrhythm"
   },
+  "bugs": "https://github.com/jmlweb/storybook-vrhythm/issues",
   "keywords": [
     "storybook-addon",
     "storybook",
@@ -26,28 +28,22 @@
   ],
   "type": "module",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./preview": {
       "types": "./dist/preview.d.ts",
-      "import": "./dist/preview.js",
       "default": "./dist/preview.js"
     },
-    "./preset": {
-      "import": "./dist/preset.js",
-      "default": "./dist/preset.js"
-    },
+    "./preset": "./dist/preset.js",
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
-    "dist",
-    "preset.js"
+    "dist"
   ],
   "engines": {
     "node": ">=22.12"
