@@ -138,7 +138,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - **Don't add `previewAnnotations` to `preset.ts`** — Storybook auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
 - **Don't break the preview protocol** — `preview.ts` must use `export default` (Storybook requirement)
 - **Don't import `index.ts` from `preview.ts`** — `index.ts` imports `preview.ts` for the CSF Next factory, so the shared decorator lives in `withVRhythm.ts` to avoid a cycle
-- **Keep both registration paths working** — `apps/react` uses CSF Next, while `apps/vue` and `apps/html` use classic `main.ts` registration
+- **Keep both registration paths working** — `apps/react` and `apps/vue` use CSF Next, while `apps/html` uses classic `main.ts` registration
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
 - **Always run `pnpm test` after changing `src/`** — tests catch regressions in style generation and DOM handling
 - **Don't modify `DIV_ID` or `PARENT_SELECTOR`** — consumers may depend on `#storybook-rhythm` for custom styling
