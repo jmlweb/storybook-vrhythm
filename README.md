@@ -65,6 +65,8 @@ export default definePreview({
 
 This gives `parameters.vrhythm` full type safety in your stories. It needs no entry in `.storybook/main.ts`, though keeping one is harmless: the decorator still runs once.
 
+`definePreview` must come from your framework package. `@storybook/html` and `@storybook/html-vite` 11.0.0-beta.0 don't export it, so HTML projects should register the addon in `.storybook/main.ts`.
+
 ## Configuration
 
 ### Global defaults
@@ -154,6 +156,8 @@ This addon makes the invisible grid visible during development, so spacing incon
 
 - Node.js 22.12+
 - Storybook 10 or 11
+
+Storybook 10 is supported but not continuously tested: CI runs against Storybook 11 only.
 
 ## Contributing
 

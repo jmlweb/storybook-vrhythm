@@ -46,6 +46,8 @@ export default definePreview({
 
 This registers the same decorator and toolbar toggle, with typed `parameters.vrhythm`. No `.storybook/main.ts` entry is needed.
 
+`definePreview` must come from your framework package. `@storybook/html` and `@storybook/html-vite` 11.0.0-beta.0 don't export it, so use Option A for HTML projects.
+
 ### Option C: Manual decorator
 
 ```typescript

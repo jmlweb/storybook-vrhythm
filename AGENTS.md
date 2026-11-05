@@ -40,12 +40,12 @@ apps/
 | Build           | tsup                        |
 | Test            | Vitest + jsdom              |
 | Package Manager | pnpm                        |
-| Storybook       | v11 beta in dev (peer: ^10 \|\| ^11) |
+| Storybook       | v11 beta in dev (peer: `^10.0.0 \|\| ^11.0.0-0`) |
 | CI              | GitHub Actions              |
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
 | Orchestration   | Turborepo                   |
-| Node            | >= 22.12                    |
+| Node            | Consumers: >= 22.12. Repo development and CI: `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0` (jsdom) |
 
 ## Scripts
 
@@ -112,7 +112,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `presets`   | Built-in rhythm configs       | Yes                      |
 | `getStyle`  | StyleProps -> CSS style obj   | Yes                      |
 | `utils`     | DOM inject/remove             | No (DOM side effects)    |
-| `index`     | Public API, CSF Next factory  | No (re-exports)          |
+| `index`     | Public API, CSF Next factory  | No (re-exports, default factory) |
 | `withVRhythm` | Decorator wiring            | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
 | `preview`   | Storybook preview annotations | No (registers decorator) |
