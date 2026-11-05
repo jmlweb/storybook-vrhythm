@@ -45,7 +45,7 @@ apps/
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
 | Orchestration   | Turborepo                   |
-| Node            | Consumers: >= 22.12. Repo development and CI: `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0` (jsdom) |
+| Node            | Consumers: >= 22.12. Repo development and CI: `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0` (jsdom), enforced by `engineStrict` |
 
 ## Scripts
 
