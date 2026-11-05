@@ -19,38 +19,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
+          node-version: 24.x
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint, test, and build
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck, test, and build
         run: pnpm turbo run typecheck test build
 
       - name: Create release PR or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          title: "chore: version packages"
-          commit: "chore: version packages"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install npm with OIDC support
-        if: steps.changesets.outputs.hasChangesets == 'false'
-        run: npm install -g npm@11
+          pr-title: "chore: version packages"
+          commit-message: "chore: version packages"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
         id: npm-publish
-        if: steps.changesets.outputs.hasChangesets == 'false'
+        if: steps.changesets.outputs.has-changesets == 'false'
         working-directory: packages/storybook-vrhythm
         run: |
           VERSION=$(node -p "require('./package.json').version")
@@ -58,7 +56,12 @@ jobs:
             echo "Version ${VERSION} already published, skipping"
             echo "published=false" >> $GITHUB_OUTPUT
           else
-            npm publish --access public
+            # npm refuses to publish a prerelease version without an explicit tag
+            case "$VERSION" in
+              *-*) DIST_TAG=next ;;
+              *) DIST_TAG=latest ;;
+            esac
+            npm publish --access public --tag "$DIST_TAG"
             echo "published=true" >> $GITHUB_OUTPUT
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
           fi
@@ -72,8 +75,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag "$TAG"
           git push origin "$TAG"
+          case "$VERSION" in
+            *-*) PRERELEASE_FLAG=--prerelease ;;
+            *) PRERELEASE_FLAG= ;;
+          esac
           gh release create "$TAG" \
             --title "$TAG" \
-            --generate-notes
+            --generate-notes \
+            $PRERELEASE_FLAG
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

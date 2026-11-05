@@ -7,6 +7,8 @@
 
 > Baseline grid overlay for Storybook. See your vertical rhythm while you build.
 
+![Vertical rhythm overlay example](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/master/storybook-vrhythm.jpg)
+
 Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customizable baseline grid on top of your stories so you can **see** alignment issues as you develop — not after you ship.
 
 ## Features
@@ -22,15 +24,18 @@ Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customi
 
 ## Requirements
 
-- Node.js 22+
-- Storybook 10+
+- Node.js 22.12+
+- Storybook 10 or 11
+
+Storybook 10 is supported but not continuously tested: CI runs against Storybook 11 only.
+
+While Storybook 11 is in prerelease, install the `next` tag to use it: `pnpm add -D storybook-vrhythm@next`. The `latest` tag is 0.x, which supports Storybook 10 only.
 
 ## Quick start
 
 ```bash
 pnpm add -D storybook-vrhythm
 # or: npm install --save-dev storybook-vrhythm
-# or: yarn add -D storybook-vrhythm
 ```
 
 Add to `.storybook/main.ts`:
@@ -44,6 +49,23 @@ export default config;
 ```
 
 Done. A baseline grid overlay is now visible on every story, toggleable from the toolbar.
+
+### CSF Next
+
+Using `definePreview`? Register the addon in `.storybook/preview.ts` instead:
+
+```typescript
+import { definePreview } from '@storybook/your-framework';
+import vrhythm from 'storybook-vrhythm';
+
+export default definePreview({
+  addons: [vrhythm()],
+});
+```
+
+This gives `parameters.vrhythm` full type safety in your stories. It needs no entry in `.storybook/main.ts`, though keeping one is harmless: the decorator still runs once.
+
+`definePreview` must come from your framework package. `@storybook/html` and `@storybook/html-vite` 11.0.0-beta.0 don't export it, so HTML projects should register the addon in `.storybook/main.ts`.
 
 ## Configuration
 
@@ -166,7 +188,11 @@ This addon makes the invisible grid visible during development, so spacing incon
 
 ## Contributing
 
-Contributions are welcome! Feel free to open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues) or submit a pull request.
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/jmlweb/storybook-vrhythm/blob/master/CONTRIBUTING.md) for the setup, or open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues).
+
+## Inspiration
+
+[Baseliner](https://jpedroribeiro.com/2015/08/baseliner-my-first-chrome-extension/) — a Chrome extension by JP Ribeiro for overlaying baseline grids.
 
 ## License
 

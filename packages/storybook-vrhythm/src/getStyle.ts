@@ -1,4 +1,3 @@
-import { StyleObj, StyleProps } from './types';
 import {
   DEFAULT_COLOR,
   DEFAULT_LINE_HEIGHT,
@@ -7,6 +6,7 @@ import {
   DEFAULT_OPACITY,
   DEFAULT_Z_INDEX,
 } from './constants';
+import type { StyleObj, StyleProps } from './types';
 
 export const getStyle = ({
   color = DEFAULT_COLOR,
