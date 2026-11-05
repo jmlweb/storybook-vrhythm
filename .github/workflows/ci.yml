@@ -29,6 +29,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm -F @apps/react exec playwright install --with-deps chromium
+
       - run: pnpm turbo run typecheck test build --cache-dir=.turbo
 
       - run: pnpm turbo run build-storybook --cache-dir=.turbo

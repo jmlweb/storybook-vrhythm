@@ -12,6 +12,7 @@ import {
   DEFAULT_OFFSET,
   DEFAULT_OPACITY,
   DEFAULT_Z_INDEX,
+  LINE_HEIGHT_DATA_KEY,
 } from './constants';
 
 export type VRhythmParams = StyleProps & ConfigProps;
@@ -83,7 +84,11 @@ export const withVRhythm: DecoratorFunction<Renderer> = (storyFn, context) => {
   } else {
     const finalParams: VRhythmParams = { ...params, ...globalPresetStyles };
     const style = getStyle(finalParams);
-    injectStyle(style, params.container || undefined);
+    injectStyle(style, params.container || undefined, {
+      [LINE_HEIGHT_DATA_KEY]: String(
+        finalParams.lineHeight ?? DEFAULT_LINE_HEIGHT
+      ),
+    });
   }
 
   return storyFn(context);

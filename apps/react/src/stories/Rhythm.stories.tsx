@@ -11,7 +11,7 @@ const meta: Meta<typeof RhythmBox> = {
   title: "VRhythm/Integration",
   component: RhythmBox,
 };
-export { meta as default };
+export default meta;
 
 export const Default: StoryObj<typeof RhythmBox> = {};
 

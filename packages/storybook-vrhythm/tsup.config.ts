@@ -5,6 +5,7 @@ export default defineConfig([
     entry: {
       index: 'src/index.ts',
       preview: 'src/preview.ts',
+      audit: 'src/audit.ts',
     },
     format: ['esm'],
     dts: true,

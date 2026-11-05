@@ -15,6 +15,12 @@ describe('injectStyle', () => {
     expect(el).not.toBeNull();
   });
 
+  it('writes the given dataset to the element', () => {
+    injectStyle({}, undefined, { vrhythmLineHeight: '8px' });
+    const el = document.getElementById(DIV_ID);
+    expect(el?.getAttribute('data-vrhythm-line-height')).toBe('8px');
+  });
+
   it('applies the given styles to the element', () => {
     injectStyle({ position: 'absolute', top: 0 });
     const el = document.getElementById(DIV_ID) as HTMLDivElement;

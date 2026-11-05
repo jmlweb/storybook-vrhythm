@@ -39,15 +39,22 @@
       "import": "./dist/preview.js",
       "default": "./dist/preview.js"
     },
+    "./audit": {
+      "types": "./dist/audit.d.ts",
+      "import": "./dist/audit.js",
+      "default": "./dist/audit.js"
+    },
     "./preset": {
       "import": "./dist/preset.js",
       "default": "./dist/preset.js"
     },
+    "./llms.txt": "./llms.txt",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "preset.js"
+    "preset.js",
+    "llms.txt"
   ],
   "engines": {
     "node": ">=22"

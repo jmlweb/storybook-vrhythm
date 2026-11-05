@@ -17,6 +17,8 @@ packages/
       constants.ts          # Default values and DOM selectors
       getStyle.ts           # Generates CSS style object for the rhythm overlay
       utils.ts              # DOM manipulation (inject/remove overlay element)
+      find-violations.ts    # Compares measurements to the grid
+      audit.ts              # auditRhythm and expectRhythm (storybook-vrhythm/audit export)
       presets.ts            # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
@@ -111,6 +113,8 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `presets`   | Built-in rhythm configs       | Yes                      |
 | `getStyle`  | StyleProps -> CSS style obj   | Yes                      |
 | `utils`     | DOM inject/remove             | No (DOM side effects)    |
+| `find-violations` | Measurements -> violations | Yes                     |
+| `audit`     | Measure DOM, assert rhythm    | No (reads layout)        |
 | `index`     | Decorator wiring              | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
 | `preview`   | Storybook preview annotations | No (registers decorator) |
@@ -122,11 +126,14 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Test file naming: `<module>.test.ts`
 - Focus on pure function testing (`getStyle`), decorator behavior (`index`), and DOM manipulation (`utils`)
 - Use `jsdom` environment for DOM tests
+- jsdom has no layout, so `audit` tests stub rects. `apps/react/src/stories/Audit.stories.tsx` checks real layout through `play` functions (`pnpm -F @apps/react test`, needs `playwright install chromium`)
+- Story files must use `export default meta`: the Storybook Vitest transform fails on `export { meta as default }`
 
 ## Publishing
 
 - Published to npm as `storybook-vrhythm`
-- Only `dist/` folder is included in the published package
+- The published package includes `dist/`, `preset.js` and `llms.txt`
+- `packages/storybook-vrhythm/llms.txt` is the source. The root `llms.txt` is a symlink to it
 - Bump version in `package.json` before publishing
 - ESM-only (`"type": "module"`)
 

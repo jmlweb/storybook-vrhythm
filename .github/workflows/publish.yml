@@ -32,6 +32,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - run: pnpm -F @apps/react exec playwright install --with-deps chromium
+
       - name: Lint, test, and build
         run: pnpm turbo run typecheck test build
 
