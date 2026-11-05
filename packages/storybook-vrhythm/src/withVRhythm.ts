@@ -1,11 +1,6 @@
 import './storybook-parameter-augmentation';
 
 import type { DecoratorFunction, Renderer } from 'storybook/internal/types';
-
-import { getStyle } from './getStyle';
-import { StyleProps, ConfigProps } from './types';
-import { presets, PresetName } from './presets';
-import { injectStyle, removeElement } from './utils';
 import {
   DEFAULT_COLOR,
   DEFAULT_LINE_HEIGHT,
@@ -13,6 +8,10 @@ import {
   DEFAULT_OPACITY,
   DEFAULT_Z_INDEX,
 } from './constants';
+import { getStyle } from './getStyle';
+import { type PresetName, presets } from './presets';
+import type { ConfigProps, StyleProps } from './types';
+import { injectStyle, removeElement } from './utils';
 
 export type VRhythmParams = StyleProps & ConfigProps;
 

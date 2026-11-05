@@ -1,10 +1,10 @@
 import previewAddon from './preview';
 
-export { withVRhythm } from './withVRhythm';
-export type { VRhythmParams } from './withVRhythm';
-export { presets } from './presets';
 export type { PresetName } from './presets';
-export type { StyleProps, ConfigProps } from './types';
+export { presets } from './presets';
+export type { ConfigProps, StyleProps } from './types';
+export type { VRhythmParams } from './withVRhythm';
+export { withVRhythm } from './withVRhythm';
 
 /**
  * CSF Next entry point. Register it in `.storybook/preview.ts`:

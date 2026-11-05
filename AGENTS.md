@@ -37,13 +37,13 @@ apps/
 | Area            | Tool                        |
 | --------------- | --------------------------- |
 | Language        | TypeScript (strict mode)    |
-| Build           | tsup                        |
+| Build           | tsdown                      |
 | Test            | Vitest + jsdom              |
 | Package Manager | pnpm                        |
 | Storybook       | v11 beta in dev (peer: `^10.0.0 \|\| ^11.0.0-0`) |
 | CI              | GitHub Actions              |
-| Formatting      | Prettier                    |
-| Linting         | `tsc --noEmit`              |
+| Formatting      | Biome                       |
+| Linting         | Biome, `tsc --noEmit`       |
 | Orchestration   | Turborepo                   |
 | Node            | Consumers: >= 22.12. Repo development and CI: `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0` (jsdom), enforced by `engineStrict` |
 
@@ -55,6 +55,8 @@ pnpm build            # Build all packages
 pnpm test             # Test all packages
 pnpm typecheck        # Type-check all packages
 pnpm dev              # Dev mode for all packages
+pnpm lint             # Lint and check formatting with Biome (whole repo)
+pnpm lint:fix         # Apply Biome fixes (whole repo)
 
 # Addon package only
 pnpm -F storybook-vrhythm build
@@ -62,8 +64,6 @@ pnpm -F storybook-vrhythm test
 pnpm -F storybook-vrhythm test:watch
 pnpm -F storybook-vrhythm test:coverage
 pnpm -F storybook-vrhythm typecheck
-pnpm -F storybook-vrhythm format
-pnpm -F storybook-vrhythm format:check
 ```
 
 ## Code Conventions
@@ -128,8 +128,8 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 ## Publishing
 
 - Published to npm as `storybook-vrhythm`
-- Only `dist/` folder is included in the published package
-- Bump version in `package.json` before publishing
+- Only `dist/` is included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
+- Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing
 - ESM-only (`"type": "module"`)
 
 ## Common Pitfalls

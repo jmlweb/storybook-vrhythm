@@ -1,5 +1,5 @@
-import preview from "../../.storybook/preview";
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue';
+import preview from '../../.storybook/preview';
 
 const RhythmBox = defineComponent({
   template: `<div style="padding: 32px; font-size: 16px; line-height: 24px;">
@@ -8,14 +8,14 @@ const RhythmBox = defineComponent({
 });
 
 const meta = preview.meta({
-  title: "VRhythm/Integration",
+  title: 'VRhythm/Integration',
   component: RhythmBox,
 });
 
 export const Default = meta.story();
 
 export const WithPreset = meta.story({
-  parameters: { vrhythm: { preset: "tailwind" } },
+  parameters: { vrhythm: { preset: 'tailwind' } },
 });
 
 export const Hidden = meta.story({
@@ -23,23 +23,23 @@ export const Hidden = meta.story({
 });
 
 export const PresetMaterial = meta.story({
-  parameters: { vrhythm: { preset: "material" } },
+  parameters: { vrhythm: { preset: 'material' } },
 });
 
 export const PresetBootstrap = meta.story({
-  parameters: { vrhythm: { preset: "bootstrap" } },
+  parameters: { vrhythm: { preset: 'bootstrap' } },
 });
 
 export const CustomLineHeight = meta.story({
-  parameters: { vrhythm: { lineHeight: "12px" } },
+  parameters: { vrhythm: { lineHeight: '12px' } },
 });
 
 export const CustomColor = meta.story({
-  parameters: { vrhythm: { color: "rgba(255, 0, 0, 0.3)" } },
+  parameters: { vrhythm: { color: 'rgba(255, 0, 0, 0.3)' } },
 });
 
 export const CustomOffset = meta.story({
-  parameters: { vrhythm: { offset: "8px" } },
+  parameters: { vrhythm: { offset: '8px' } },
 });
 
 export const CustomOpacity = meta.story({
@@ -48,16 +48,16 @@ export const CustomOpacity = meta.story({
 
 export const PresetWithOverrides = meta.story({
   parameters: {
-    vrhythm: { preset: "material", lineHeight: "8px", opacity: 0.5 },
+    vrhythm: { preset: 'material', lineHeight: '8px', opacity: 0.5 },
   },
 });
 
 export const FullCustom = meta.story({
   parameters: {
     vrhythm: {
-      lineHeight: "20px",
-      color: "rgba(0, 200, 100, 0.25)",
-      offset: "4px",
+      lineHeight: '20px',
+      color: 'rgba(0, 200, 100, 0.25)',
+      offset: '4px',
       opacity: 0.6,
     },
   },
