@@ -7,6 +7,8 @@
 
 > Baseline grid overlay for Storybook. See your vertical rhythm while you build.
 
+![Vertical rhythm overlay example](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/master/storybook-vrhythm.jpg)
+
 Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customizable baseline grid on top of your stories so you can **see** alignment issues as you develop — not after you ship.
 
 ## Features
@@ -32,7 +34,6 @@ Storybook 10 is supported but not continuously tested: CI runs against Storybook
 ```bash
 pnpm add -D storybook-vrhythm
 # or: npm install --save-dev storybook-vrhythm
-# or: yarn add -D storybook-vrhythm
 ```
 
 Add to `.storybook/main.ts`:
@@ -185,7 +186,11 @@ This addon makes the invisible grid visible during development, so spacing incon
 
 ## Contributing
 
-Contributions are welcome! Feel free to open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues) or submit a pull request.
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/jmlweb/storybook-vrhythm/blob/master/CONTRIBUTING.md) for the setup, or open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues).
+
+## Inspiration
+
+[Baseliner](https://jpedroribeiro.com/2015/08/baseliner-my-first-chrome-extension/) — a Chrome extension by JP Ribeiro for overlaying baseline grids.
 
 ## License
 
