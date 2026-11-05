@@ -22,8 +22,8 @@ Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customi
 
 ## Requirements
 
-- Node.js 22+
-- Storybook 10+
+- Node.js 22.12+
+- Storybook 10 or 11
 
 ## Quick start
 
@@ -44,6 +44,21 @@ export default config;
 ```
 
 Done. A baseline grid overlay is now visible on every story, toggleable from the toolbar.
+
+### CSF Next
+
+Using `definePreview`? Register the addon in `.storybook/preview.ts` instead:
+
+```typescript
+import { definePreview } from '@storybook/your-framework';
+import vrhythm from 'storybook-vrhythm';
+
+export default definePreview({
+  addons: [vrhythm()],
+});
+```
+
+This gives `parameters.vrhythm` full type safety in your stories. It needs no entry in `.storybook/main.ts`, though keeping one is harmless: the decorator still runs once.
 
 ## Configuration
 

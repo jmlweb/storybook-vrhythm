@@ -12,7 +12,8 @@ Monorepo managed with pnpm workspaces and Turborepo.
 packages/
   storybook-vrhythm/        # Addon package (published to npm)
     src/
-      index.ts              # Decorator entry point (withVRhythm named export)
+      index.ts              # Package entry point (CSF Next default export, withVRhythm and presets)
+      withVRhythm.ts        # The decorator
       types.ts              # TypeScript interfaces (StyleProps, ConfigProps, StyleObj)
       constants.ts          # Default values and DOM selectors
       getStyle.ts           # Generates CSS style object for the rhythm overlay
@@ -39,12 +40,12 @@ apps/
 | Build           | tsup                        |
 | Test            | Vitest + jsdom              |
 | Package Manager | pnpm                        |
-| Storybook       | v10 (peer dependency: ^10)  |
+| Storybook       | v11 beta in dev (peer: ^10 \|\| ^11) |
 | CI              | GitHub Actions              |
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
 | Orchestration   | Turborepo                   |
-| Node            | >= 22                       |
+| Node            | >= 22.12                    |
 
 ## Scripts
 
@@ -67,7 +68,7 @@ pnpm -F storybook-vrhythm format:check
 
 ## Code Conventions
 
-- **Named exports only** — no default exports (exception: `preview.ts` which must use default export for Storybook preset protocol)
+- **Named exports only** — no default exports (exceptions: `preview.ts` must use a default export for the Storybook preset protocol, and `index.ts` must default-export the CSF Next addon factory)
 - **Functional approach** — no classes
 - **File names**: `kebab-case`
 - **Variables/functions**: `camelCase`
@@ -84,7 +85,7 @@ pnpm -F storybook-vrhythm format:check
 - Parameters are passed via Storybook's story-level `parameters.vrhythm`
 - Visibility can be toggled via Storybook toolbar (globals) or per-story `hide` param
 - Presets provide ready-made configurations (e.g., `material`, `tailwind`, `bootstrap`)
-- The package supports both manual decorator usage and automatic preset registration
+- The package supports manual decorator usage, automatic preset registration and CSF Next (`definePreview({ addons: [vrhythm()] })`)
 
 ## Architecture Notes
 
@@ -111,7 +112,8 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `presets`   | Built-in rhythm configs       | Yes                      |
 | `getStyle`  | StyleProps -> CSS style obj   | Yes                      |
 | `utils`     | DOM inject/remove             | No (DOM side effects)    |
-| `index`     | Decorator wiring              | No (orchestrates)        |
+| `index`     | Public API, CSF Next factory  | No (re-exports)          |
+| `withVRhythm` | Decorator wiring            | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
 | `preview`   | Storybook preview annotations | No (registers decorator) |
 | `storybook-parameter-augmentation` | Type augmentation for SB parameters/globals | N/A |
@@ -133,8 +135,10 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 ## Common Pitfalls
 
 - **Don't add JSX to the addon** — no addon source file uses JSX; the `.ts` extension is intentional. Apps may use `.tsx`
-- **Don't add `previewAnnotations` to `preset.ts`** — Storybook 10 auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
+- **Don't add `previewAnnotations` to `preset.ts`** — Storybook auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
 - **Don't break the preview protocol** — `preview.ts` must use `export default` (Storybook requirement)
+- **Don't import `index.ts` from `preview.ts`** — `index.ts` imports `preview.ts` for the CSF Next factory, so the shared decorator lives in `withVRhythm.ts` to avoid a cycle
+- **Keep both registration paths working** — `apps/react` uses CSF Next, while `apps/vue` and `apps/html` use classic `main.ts` registration
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
 - **Always run `pnpm test` after changing `src/`** — tests catch regressions in style generation and DOM handling
 - **Don't modify `DIV_ID` or `PARENT_SELECTOR`** — consumers may depend on `#storybook-rhythm` for custom styling

@@ -1,6 +1,6 @@
 import { definePreviewAddon } from 'storybook/internal/csf';
 
-import { withVRhythm, type VRhythmParams } from './index';
+import { withVRhythm, type VRhythmParams } from './withVRhythm';
 
 export default definePreviewAddon<{
   parameters: { vrhythm?: VRhythmParams };

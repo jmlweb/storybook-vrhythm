@@ -1,5 +1,5 @@
 import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT } from '../src/constants';
-import { withVRhythm } from '../src/index';
+import vrhythm, { withVRhythm } from '../src/index';
 import { injectStyle, removeElement } from '../src/utils';
 import { vi } from 'vitest';
 
@@ -213,5 +213,15 @@ describe('withVRhythm', () => {
       expect(mockRemoveElement).toHaveBeenCalledTimes(1);
       expect(mockInjectStyle).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('default export', () => {
+  it('returns the preview annotations for CSF Next', () => {
+    const addon = vrhythm();
+
+    expect(addon.decorators).toEqual([withVRhythm]);
+    expect(addon.globalTypes).toHaveProperty('vrhythm');
+    expect(addon.initialGlobals).toEqual({ vrhythm: 'true' });
   });
 });
