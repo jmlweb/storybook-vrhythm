@@ -1,5 +1,5 @@
-import { PARENT_SELECTOR, DIV_ID } from './constants';
-import { StyleObj } from './types';
+import { DIV_ID, PARENT_SELECTOR } from './constants';
+import type { StyleObj } from './types';
 
 function createElement(): HTMLDivElement {
   const element = document.createElement('div');

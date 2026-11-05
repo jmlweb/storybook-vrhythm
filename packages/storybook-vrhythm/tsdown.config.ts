@@ -1,4 +1,6 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
+
+const outExtensions = () => ({ js: '.js', dts: '.d.ts' });
 
 export default defineConfig([
   {
@@ -9,13 +11,11 @@ export default defineConfig([
     },
     format: ['esm'],
     dts: true,
-    splitting: false,
     clean: true,
     sourcemap: true,
-    treeshake: true,
     platform: 'browser',
     target: 'es2020',
-    outExtension: () => ({ js: '.js' }),
+    outExtensions,
   },
   {
     entry: { preset: 'src/preset.ts' },
@@ -25,6 +25,6 @@ export default defineConfig([
     sourcemap: true,
     platform: 'node',
     target: 'node22',
-    outExtension: () => ({ js: '.js' }),
+    outExtensions,
   },
 ]);

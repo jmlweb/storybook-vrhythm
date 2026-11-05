@@ -1,5 +1,5 @@
-import { injectStyle, removeElement } from '../src/utils';
 import { DIV_ID } from '../src/constants';
+import { injectStyle, removeElement } from '../src/utils';
 
 beforeEach(() => {
   const existing = document.getElementById(DIV_ID);

@@ -1,6 +1,6 @@
 # storybook-vrhythm
 
-> Baseline grid overlay for Storybook 10. Draws a customizable vertical rhythm grid on stories to visually verify spacing and alignment during development. Zero runtime dependencies. Framework agnostic.
+> Baseline grid overlay for Storybook 10 and 11. Draws a customizable vertical rhythm grid on stories to visually verify spacing and alignment during development. Zero runtime dependencies. Framework agnostic.
 
 ## Overview
 
@@ -11,12 +11,11 @@ Supported frameworks: React, Vue, Angular, Svelte, Web Components, HTML.
 ## Installation
 
 ```bash
-npm install --save-dev storybook-vrhythm
-# pnpm add -D storybook-vrhythm
-# yarn add -D storybook-vrhythm
+pnpm add -D storybook-vrhythm
+# or: npm install --save-dev storybook-vrhythm
 ```
 
-Requirements: Node.js 20+, Storybook 10+.
+Requirements: Node.js 22.12+, Storybook 10 or 11. While Storybook 11 is in prerelease, install the `next` tag to use it (`storybook-vrhythm@next`); the `latest` tag is 0.x, which supports Storybook 10 only.
 
 ## Setup
 
@@ -32,7 +31,23 @@ export default {
 
 This automatically registers the decorator and toolbar toggle for all stories.
 
-### Option B: Manual decorator
+### Option B: CSF Next
+
+```typescript
+// .storybook/preview.ts
+import { definePreview } from '@storybook/your-framework';
+import vrhythm from 'storybook-vrhythm';
+
+export default definePreview({
+  addons: [vrhythm()],
+});
+```
+
+This registers the same decorator and toolbar toggle, with typed `parameters.vrhythm`. No `.storybook/main.ts` entry is needed.
+
+`definePreview` must come from your framework package. `@storybook/html` and `@storybook/html-vite` 11.0.0-beta.0 don't export it, so use Option A for HTML projects.
+
+### Option C: Manual decorator
 
 ```typescript
 // .storybook/preview.ts

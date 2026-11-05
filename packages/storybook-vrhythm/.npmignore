@@ -1,9 +1,0 @@
-src/
-test/
-.cache
-coverage
-*.log
-.DS_Store
-tsconfig.json
-tsup.config.ts
-vitest.config.ts

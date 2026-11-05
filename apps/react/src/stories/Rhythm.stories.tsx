@@ -1,65 +1,65 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import "storybook-vrhythm";
+import preview from '../../.storybook/preview';
 
 const RhythmBox = () => (
-  <div style={{ padding: 32, fontSize: 16, lineHeight: "24px" }}>
+  <div style={{ padding: 32, fontSize: 16, lineHeight: '24px' }}>
     Check the vertical rhythm overlay behind this box.
   </div>
 );
 
-const meta: Meta<typeof RhythmBox> = {
-  title: "VRhythm/Integration",
+const meta = preview.meta({
+  title: 'VRhythm/Integration',
   component: RhythmBox,
-};
-export default meta;
+});
 
-export const Default: StoryObj<typeof RhythmBox> = {};
+export { meta as default };
 
-export const WithPreset: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { preset: "tailwind" } },
-};
+export const Default = meta.story();
 
-export const Hidden: StoryObj<typeof RhythmBox> = {
+export const WithPreset = meta.story({
+  parameters: { vrhythm: { preset: 'tailwind' } },
+});
+
+export const Hidden = meta.story({
   parameters: { vrhythm: { hide: true } },
-};
+});
 
-export const PresetMaterial: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { preset: "material" } },
-};
+export const PresetMaterial = meta.story({
+  parameters: { vrhythm: { preset: 'material' } },
+});
 
-export const PresetBootstrap: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { preset: "bootstrap" } },
-};
+export const PresetBootstrap = meta.story({
+  parameters: { vrhythm: { preset: 'bootstrap' } },
+});
 
-export const CustomLineHeight: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { lineHeight: "12px" } },
-};
+export const CustomLineHeight = meta.story({
+  parameters: { vrhythm: { lineHeight: '12px' } },
+});
 
-export const CustomColor: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { color: "rgba(255, 0, 0, 0.3)" } },
-};
+export const CustomColor = meta.story({
+  parameters: { vrhythm: { color: 'rgba(255, 0, 0, 0.3)' } },
+});
 
-export const CustomOffset: StoryObj<typeof RhythmBox> = {
-  parameters: { vrhythm: { offset: "8px" } },
-};
+export const CustomOffset = meta.story({
+  parameters: { vrhythm: { offset: '8px' } },
+});
 
-export const CustomOpacity: StoryObj<typeof RhythmBox> = {
+export const CustomOpacity = meta.story({
   parameters: { vrhythm: { opacity: 0.8 } },
-};
+});
 
-export const PresetWithOverrides: StoryObj<typeof RhythmBox> = {
+export const PresetWithOverrides = meta.story({
   parameters: {
-    vrhythm: { preset: "material", lineHeight: "8px", opacity: 0.5 },
+    vrhythm: { preset: 'material', lineHeight: '8px', opacity: 0.5 },
   },
-};
+});
 
-export const FullCustom: StoryObj<typeof RhythmBox> = {
+export const FullCustom = meta.story({
   parameters: {
     vrhythm: {
-      lineHeight: "20px",
-      color: "rgba(0, 200, 100, 0.25)",
-      offset: "4px",
+      lineHeight: '20px',
+      color: 'rgba(0, 200, 100, 0.25)',
+      offset: '4px',
       opacity: 0.6,
     },
   },
-};
+});

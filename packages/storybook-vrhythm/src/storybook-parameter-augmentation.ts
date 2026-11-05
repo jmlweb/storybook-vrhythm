@@ -14,5 +14,3 @@ declare module 'storybook/internal/csf' {
     vrhythm?: string | boolean;
   }
 }
-
-export {};

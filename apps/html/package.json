@@ -7,10 +7,10 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@storybook/html": "^10.6.5",
-    "@storybook/html-vite": "^10.6.5",
-    "storybook": "^10.6.5",
+    "@storybook/html": ">=11.0.0-0 <12.0.0-0",
+    "@storybook/html-vite": ">=11.0.0-0 <12.0.0-0",
+    "storybook": ">=11.0.0-0 <12.0.0-0",
     "storybook-vrhythm": "workspace:*",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3"
   }
 }

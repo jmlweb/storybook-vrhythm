@@ -12,7 +12,8 @@ Monorepo managed with pnpm workspaces and Turborepo.
 packages/
   storybook-vrhythm/        # Addon package (published to npm)
     src/
-      index.ts              # Decorator entry point (withVRhythm named export)
+      index.ts              # Package entry point (CSF Next default export, withVRhythm and presets)
+      withVRhythm.ts        # The decorator
       types.ts              # TypeScript interfaces (StyleProps, ConfigProps, StyleObj)
       constants.ts          # Default values and DOM selectors
       getStyle.ts           # Generates CSS style object for the rhythm overlay
@@ -38,15 +39,15 @@ apps/
 | Area            | Tool                        |
 | --------------- | --------------------------- |
 | Language        | TypeScript (strict mode)    |
-| Build           | tsup                        |
+| Build           | tsdown                      |
 | Test            | Vitest + jsdom              |
 | Package Manager | pnpm                        |
-| Storybook       | v10 (peer dependency: ^10)  |
+| Storybook       | v11 beta in dev (peer: `^10.0.0 \|\| ^11.0.0-0`) |
 | CI              | GitHub Actions              |
-| Formatting      | Prettier                    |
-| Linting         | `tsc --noEmit`              |
+| Formatting      | Biome                       |
+| Linting         | Biome, `tsc --noEmit`       |
 | Orchestration   | Turborepo                   |
-| Node            | >= 22                       |
+| Node            | Consumers: >= 22.12. Repo development and CI: `^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0` (jsdom), enforced by `engineStrict` |
 
 ## Scripts
 
@@ -56,6 +57,8 @@ pnpm build            # Build all packages
 pnpm test             # Test all packages
 pnpm typecheck        # Type-check all packages
 pnpm dev              # Dev mode for all packages
+pnpm lint             # Lint and check formatting with Biome (whole repo)
+pnpm lint:fix         # Apply Biome fixes (whole repo)
 
 # Addon package only
 pnpm -F storybook-vrhythm build
@@ -63,13 +66,11 @@ pnpm -F storybook-vrhythm test
 pnpm -F storybook-vrhythm test:watch
 pnpm -F storybook-vrhythm test:coverage
 pnpm -F storybook-vrhythm typecheck
-pnpm -F storybook-vrhythm format
-pnpm -F storybook-vrhythm format:check
 ```
 
 ## Code Conventions
 
-- **Named exports only** — no default exports (exception: `preview.ts` which must use default export for Storybook preset protocol)
+- **Named exports only** — no default exports (exceptions: `preview.ts` must use a default export for the Storybook preset protocol, and `index.ts` must default-export the CSF Next addon factory)
 - **Functional approach** — no classes
 - **File names**: `kebab-case`
 - **Variables/functions**: `camelCase`
@@ -86,7 +87,7 @@ pnpm -F storybook-vrhythm format:check
 - Parameters are passed via Storybook's story-level `parameters.vrhythm`
 - Visibility can be toggled via Storybook toolbar (globals) or per-story `hide` param
 - Presets provide ready-made configurations (e.g., `material`, `tailwind`, `bootstrap`)
-- The package supports both manual decorator usage and automatic preset registration
+- The package supports manual decorator usage, automatic preset registration and CSF Next (`definePreview({ addons: [vrhythm()] })`)
 
 ## Architecture Notes
 
@@ -115,7 +116,8 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `utils`     | DOM inject/remove             | No (DOM side effects)    |
 | `find-violations` | Measurements -> violations | Yes                     |
 | `audit`     | Measure DOM, assert rhythm    | No (reads layout)        |
-| `index`     | Decorator wiring              | No (orchestrates)        |
+| `index`     | Public API, CSF Next factory  | No (re-exports, default factory) |
+| `withVRhythm` | Decorator wiring            | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
 | `preview`   | Storybook preview annotations | No (registers decorator) |
 | `storybook-parameter-augmentation` | Type augmentation for SB parameters/globals | N/A |
@@ -127,21 +129,23 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Focus on pure function testing (`getStyle`), decorator behavior (`index`), and DOM manipulation (`utils`)
 - Use `jsdom` environment for DOM tests
 - jsdom has no layout, so `audit` tests stub rects. `apps/react/src/stories/Audit.stories.tsx` checks real layout through `play` functions (`pnpm -F @apps/react test`, needs `playwright install chromium`)
-- Story files must use `export default meta`: the Storybook Vitest transform fails on `export { meta as default }`
 
 ## Publishing
 
 - Published to npm as `storybook-vrhythm`
-- The published package includes `dist/`, `preset.js` and `llms.txt`
+- Only `dist/` and `llms.txt` are included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
 - `packages/storybook-vrhythm/llms.txt` is the source. The root `llms.txt` is a symlink to it
-- Bump version in `package.json` before publishing
+- Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing
+- The repo is in Changesets prerelease mode (`.changeset/pre.json`), so releases go to the `next` dist-tag. At Storybook 11 GA, run `pnpm changeset pre exit` to release `1.0.0` to `latest`
 - ESM-only (`"type": "module"`)
 
 ## Common Pitfalls
 
 - **Don't add JSX to the addon** — no addon source file uses JSX; the `.ts` extension is intentional. Apps may use `.tsx`
-- **Don't add `previewAnnotations` to `preset.ts`** — Storybook 10 auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
+- **Don't add `previewAnnotations` to `preset.ts`** — Storybook auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
 - **Don't break the preview protocol** — `preview.ts` must use `export default` (Storybook requirement)
+- **Don't import `index.ts` from `preview.ts`** — `index.ts` imports `preview.ts` for the CSF Next factory, so the shared decorator lives in `withVRhythm.ts` to avoid a cycle
+- **Keep both registration paths working** — `apps/react` and `apps/vue` use CSF Next, while `apps/html` uses classic `main.ts` registration
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
 - **Always run `pnpm test` after changing `src/`** — tests catch regressions in style generation and DOM handling
 - **Don't modify `DIV_ID` or `PARENT_SELECTOR`** — consumers may depend on `#storybook-rhythm` for custom styling

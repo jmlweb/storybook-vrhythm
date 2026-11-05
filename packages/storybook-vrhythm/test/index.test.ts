@@ -1,7 +1,7 @@
-import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT } from '../src/constants';
-import { withVRhythm } from '../src/index';
-import { injectStyle, removeElement } from '../src/utils';
 import { vi } from 'vitest';
+import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT, DIV_ID } from '../src/constants';
+import vrhythm, { withVRhythm } from '../src/index';
+import { injectStyle, removeElement } from '../src/utils';
 
 vi.mock('../src/utils', () => ({
   injectStyle: vi.fn(),
@@ -232,5 +232,45 @@ describe('withVRhythm', () => {
       expect(mockRemoveElement).toHaveBeenCalledTimes(1);
       expect(mockInjectStyle).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('default export', () => {
+  it('returns the preview annotations for CSF Next', () => {
+    const addon = vrhythm();
+
+    expect(addon.decorators).toEqual([withVRhythm]);
+    expect(
+      addon.globalTypes?.vrhythm.toolbar.items.map(
+        (item: { value: string }) => item.value
+      )
+    ).toEqual([
+      'true',
+      'false',
+      '4px',
+      '8px',
+      '16px',
+      '24px',
+      'material',
+      'tailwind',
+      'bootstrap',
+    ]);
+    expect(addon.initialGlobals).toEqual({ vrhythm: 'true' });
+  });
+});
+
+describe('double application', () => {
+  it('leaves exactly one overlay element', async () => {
+    const { injectStyle: actualInjectStyle, removeElement: actualRemove } =
+      await vi.importActual<typeof import('../src/utils')>('../src/utils');
+    mockInjectStyle
+      .mockImplementationOnce(actualInjectStyle)
+      .mockImplementationOnce(actualInjectStyle);
+    const context = {} as Context;
+
+    withVRhythm(() => withVRhythm(vi.fn(), context), context);
+
+    expect(document.querySelectorAll(`#${DIV_ID}`)).toHaveLength(1);
+    actualRemove();
   });
 });

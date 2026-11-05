@@ -1,10 +1,10 @@
 import { DIV_ID, LINE_HEIGHT_DATA_KEY } from './constants';
-import { findViolations, roundPx } from './find-violations';
 import type {
   RhythmGrid,
   RhythmMeasurement,
   RhythmViolation,
 } from './find-violations';
+import { findViolations, roundPx } from './find-violations';
 
 export type {
   RhythmEdge,

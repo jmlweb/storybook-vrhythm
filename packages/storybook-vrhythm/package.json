@@ -7,8 +7,10 @@
   "homepage": "https://github.com/jmlweb/storybook-vrhythm",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmlweb/storybook-vrhythm.git"
+    "url": "git+https://github.com/jmlweb/storybook-vrhythm.git",
+    "directory": "packages/storybook-vrhythm"
   },
+  "bugs": "https://github.com/jmlweb/storybook-vrhythm/issues",
   "keywords": [
     "storybook-addon",
     "storybook",
@@ -26,41 +28,33 @@
   ],
   "type": "module",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./preview": {
       "types": "./dist/preview.d.ts",
-      "import": "./dist/preview.js",
       "default": "./dist/preview.js"
     },
     "./audit": {
       "types": "./dist/audit.d.ts",
-      "import": "./dist/audit.js",
       "default": "./dist/audit.js"
     },
-    "./preset": {
-      "import": "./dist/preset.js",
-      "default": "./dist/preset.js"
-    },
-    "./llms.txt": "./llms.txt",
+    "./preset": "./dist/preset.js",
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
     "dist",
-    "preset.js",
     "llms.txt"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12"
   },
   "peerDependencies": {
-    "storybook": "^10.0.0"
+    "storybook": "^10.0.0 || ^11.0.0-0"
   },
   "storybook": {
     "displayName": "Vertical Rhythm Grid",
@@ -75,28 +69,19 @@
     ]
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
-    "format:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'"
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
     "@vitest/coverage-v8": "^5.1.0",
     "jsdom": "^30.1.3",
-    "prettier": "^3.9.10",
-    "storybook": "^10.6.5",
-    "tsup": "^9.0.0",
+    "storybook": ">=11.0.0-0 <12.0.0-0",
+    "tsdown": "^0.23.5",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
   }
