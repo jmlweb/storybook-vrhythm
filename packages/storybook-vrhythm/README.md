@@ -22,7 +22,7 @@ Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customi
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 22+
 - Storybook 10+
 
 ## Quick start

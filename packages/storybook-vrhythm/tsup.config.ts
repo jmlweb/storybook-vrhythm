@@ -23,7 +23,7 @@ export default defineConfig([
     clean: false,
     sourcemap: true,
     platform: 'node',
-    target: 'node20',
+    target: 'node22',
     outExtension: () => ({ js: '.js' }),
   },
 ]);

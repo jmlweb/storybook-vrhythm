@@ -137,7 +137,7 @@ This addon makes the invisible grid visible during development, so spacing incon
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 22+
 - Storybook 10+
 
 ## Contributing
