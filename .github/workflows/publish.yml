@@ -44,6 +44,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install npm with OIDC support
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: npm install -g npm@11
+
       - name: Publish to npm
         id: npm-publish
         if: steps.changesets.outputs.hasChangesets == 'false'
@@ -54,12 +58,10 @@ jobs:
             echo "Version ${VERSION} already published, skipping"
             echo "published=false" >> $GITHUB_OUTPUT
           else
-            npm publish --provenance --access public
+            npm publish --access public
             echo "published=true" >> $GITHUB_OUTPUT
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tag and GitHub Release
         if: steps.npm-publish.outputs.published == 'true'
