@@ -44,7 +44,7 @@ apps/
 | Formatting      | Prettier                    |
 | Linting         | `tsc --noEmit`              |
 | Orchestration   | Turborepo                   |
-| Node            | >= 20                       |
+| Node            | >= 22                       |
 
 ## Scripts
 
