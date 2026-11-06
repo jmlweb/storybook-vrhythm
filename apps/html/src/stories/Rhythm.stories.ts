@@ -31,6 +31,18 @@ export const PresetBootstrap: StoryObj = {
   parameters: { vrhythm: { preset: 'bootstrap' } },
 };
 
+export const PresetCarbon: StoryObj = {
+  parameters: { vrhythm: { preset: 'carbon' } },
+};
+
+export const Preset12px: StoryObj = {
+  parameters: { vrhythm: { preset: '12px' } },
+};
+
+export const Preset32px: StoryObj = {
+  parameters: { vrhythm: { preset: '32px' } },
+};
+
 export const CustomLineHeight: StoryObj = {
   parameters: { vrhythm: { lineHeight: '12px' } },
 };

@@ -1,7 +1,7 @@
 import previewAddon from './preview';
 
-export type { PresetName } from './presets';
-export { presets } from './presets';
+export type { PresetAliasName, PresetName } from './presets';
+export { presetAliases, presets } from './presets';
 export type { ConfigProps, StyleProps } from './types';
 export type { VRhythmParams } from './withVRhythm';
 export { withVRhythm } from './withVRhythm';
