@@ -130,13 +130,19 @@ describe('syncOverlay', () => {
 
 describe('keepOverlayInSync', () => {
   const disconnect = vi.fn();
+  const observe = vi.fn();
+  const unobserve = vi.fn();
+  let notify: () => void;
 
   beforeEach(() => {
     disconnect.mockClear();
+    observe.mockClear();
+    unobserve.mockClear();
     vi.stubGlobal(
       'ResizeObserver',
-      vi.fn(function ResizeObserverStub() {
-        return { observe: vi.fn(), disconnect };
+      vi.fn(function ResizeObserverStub(callback: () => void) {
+        notify = callback;
+        return { observe, unobserve, disconnect };
       })
     );
   });
@@ -160,6 +166,42 @@ describe('keepOverlayInSync', () => {
 
     removeElement();
     expect(disconnect).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops observing an anchor it no longer follows', () => {
+    const addTarget = () => {
+      const target = document.body.appendChild(document.createElement('div'));
+      target.className = 'target';
+      return target;
+    };
+    const first = addTarget();
+    injectStyle({}, { vrhythmAnchor: '.target' });
+    keepOverlayInSync();
+
+    first.remove();
+    const second = addTarget();
+    notify();
+
+    expect(unobserve).toHaveBeenCalledWith(first);
+    expect(observe).toHaveBeenCalledWith(second);
+
+    second.remove();
+    removeElement();
+  });
+
+  it('keeps observing the story root after the anchor moves off it', () => {
+    const story = document.body.appendChild(document.createElement('div'));
+    injectStyle({}, { vrhythmAnchor: 'story' });
+    keepOverlayInSync(story);
+
+    (document.getElementById(DIV_ID) as HTMLElement).dataset.vrhythmAnchor =
+      'page';
+    notify();
+
+    expect(unobserve).not.toHaveBeenCalled();
+
+    story.remove();
+    removeElement();
   });
 
   it('works without ResizeObserver', () => {

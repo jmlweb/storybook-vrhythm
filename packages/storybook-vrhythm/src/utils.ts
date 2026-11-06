@@ -151,6 +151,12 @@ export function keepOverlayInSync(storyRoot?: Element): void {
     typeof ResizeObserver === 'undefined'
       ? null
       : new ResizeObserver(() => sync());
+  let followedAnchor: Element | null = null;
+
+  const isAlwaysObserved = (element: Element): boolean =>
+    element === storyRoot ||
+    element === document.body ||
+    element === document.documentElement;
 
   function sync(): void {
     const overlay = document.getElementById(DIV_ID);
@@ -160,10 +166,18 @@ export function keepOverlayInSync(storyRoot?: Element): void {
 
     const anchor = resolveAnchor(overlay, storyRoot);
     syncOverlay(overlay, anchor);
+    if (anchor === followedAnchor) {
+      return;
+    }
+
+    if (followedAnchor && !isAlwaysObserved(followedAnchor)) {
+      observer?.unobserve(followedAnchor);
+    }
     // A selector anchor may render late, and may resize without its parents.
     if (anchor) {
       observer?.observe(anchor);
     }
+    followedAnchor = anchor;
   }
 
   sync();
