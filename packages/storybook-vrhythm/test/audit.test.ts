@@ -597,7 +597,15 @@ describe('overlay checks', () => {
     overlayAt({ top: 0, height: 800 }, { vrhythmUnknownPreset: 'nope' });
 
     expect(await codeOf(auditRhythm(root))).toBe('UNKNOWN_PRESET');
-    await expect(auditRhythm(root, { lineHeight: 8 })).resolves.toBeDefined();
+  });
+
+  it('rejects an unknown preset even with an explicit lineHeight', async () => {
+    const root = createRoot();
+    overlayAt({ top: 0, height: 800 }, { vrhythmUnknownPreset: 'nope' });
+
+    expect(await codeOf(auditRhythm(root, { lineHeight: 8 }))).toBe(
+      'UNKNOWN_PRESET'
+    );
   });
 
   it('names an anchor that matches nothing', async () => {

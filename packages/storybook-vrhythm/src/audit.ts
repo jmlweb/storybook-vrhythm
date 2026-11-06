@@ -202,7 +202,7 @@ const resolveGrid = (root: Element, options: AuditOptions): RhythmGrid => {
   const hasExplicitOrigin =
     options.offset !== undefined || options.anchor !== undefined;
   const unknownPreset = overlay?.dataset[UNKNOWN_PRESET_DATA_KEY];
-  if (unknownPreset && options.lineHeight === undefined) {
+  if (unknownPreset) {
     throw createError(
       'RhythmConfigError',
       RhythmErrorCode.UNKNOWN_PRESET,
