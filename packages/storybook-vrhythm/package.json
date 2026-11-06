@@ -24,7 +24,9 @@
     "debug",
     "spacing",
     "material-design",
-    "tailwind"
+    "tailwind",
+    "bootstrap",
+    "carbon"
   ],
   "type": "module",
   "main": "./dist/index.js",

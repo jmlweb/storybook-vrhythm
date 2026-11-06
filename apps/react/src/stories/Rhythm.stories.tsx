@@ -31,6 +31,18 @@ export const PresetBootstrap = meta.story({
   parameters: { vrhythm: { preset: 'bootstrap' } },
 });
 
+export const PresetCarbon = meta.story({
+  parameters: { vrhythm: { preset: 'carbon' } },
+});
+
+export const Preset12px = meta.story({
+  parameters: { vrhythm: { preset: '12px' } },
+});
+
+export const Preset32px = meta.story({
+  parameters: { vrhythm: { preset: '32px' } },
+});
+
 export const CustomLineHeight = meta.story({
   parameters: { vrhythm: { lineHeight: '12px' } },
 });
