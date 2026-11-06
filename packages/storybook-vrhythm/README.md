@@ -104,7 +104,7 @@ Set `audit` per component to move one at a time.
 - Node.js 22.12+
 - Storybook 10 or 11
 
-Storybook 10 is supported but not continuously tested: CI runs against Storybook 11 only.
+CI runs the unit and browser tests against both.
 
 **Install the `next` tag**, on Storybook 10 or 11: `pnpm add -D storybook-vrhythm@next`. The `latest` tag is 0.x. It supports Storybook 10 only and has no audit, so `storybook-vrhythm/audit` will not resolve. `next` moves to `latest` as `1.0.0` when Storybook 11 is released.
 
