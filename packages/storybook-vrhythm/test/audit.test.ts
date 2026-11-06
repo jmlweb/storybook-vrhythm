@@ -659,6 +659,15 @@ describe('edges', () => {
     expect(report).toMatchObject({ ok: true, checked: 1 });
   });
 
+  it('rejects a malformed ignore selector with a code', async () => {
+    await expect(
+      auditRhythm(createRoot(), { lineHeight: 8, ignore: '!!' })
+    ).rejects.toMatchObject({
+      name: 'RhythmConfigError',
+      code: 'INVALID_SELECTOR',
+    });
+  });
+
   it('rejects an empty list', async () => {
     await expect(
       auditRhythm(createRoot(), { lineHeight: 8, edges: [] })

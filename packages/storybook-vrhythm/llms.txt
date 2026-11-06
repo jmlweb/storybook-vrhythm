@@ -255,6 +255,7 @@ Error codes (`error.code`):
 | `INVALID_LENGTH` | `lineHeight` or `offset` is not a finite `px` or `rem` length, or `lineHeight` is 0 or less |
 | `INVALID_TOLERANCE` | `tolerance` is negative, not finite, or half of `lineHeight` or more |
 | `INVALID_EDGES` | `edges` is empty |
+| `INVALID_SELECTOR` | `ignore` is not a valid selector |
 | `UNMEASURABLE` | The environment cannot measure an edge or baseline: run in a real browser |
 
 ## Toolbar Globals

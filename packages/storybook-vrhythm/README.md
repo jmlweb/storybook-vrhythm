@@ -394,6 +394,7 @@ Audit errors have a stable `code`, also exported as `RhythmErrorCode`. Branch on
 | `INVALID_LENGTH`    | `RhythmConfigError`    | `lineHeight` or `offset` is not a finite `px` or `rem` length, or `lineHeight` is 0 or less |
 | `INVALID_TOLERANCE` | `RhythmConfigError`    | `tolerance` is negative, not finite, or half of `lineHeight` or more                        |
 | `INVALID_EDGES`     | `RhythmConfigError`    | `edges` is empty                                                                            |
+| `INVALID_SELECTOR`  | `RhythmConfigError`    | `ignore` is not a valid selector                                                            |
 | `UNMEASURABLE`      | `RhythmConfigError`    | The environment cannot measure an edge or a baseline                                        |
 
 ## Why vertical rhythm?

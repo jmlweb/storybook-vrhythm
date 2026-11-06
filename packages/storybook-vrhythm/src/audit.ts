@@ -421,6 +421,22 @@ const collectMeasurements = (
   ];
 };
 
+const assertValidIgnore = (root: Element, ignore?: string): void => {
+  if (!ignore) {
+    return;
+  }
+
+  try {
+    root.matches(ignore);
+  } catch {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.INVALID_SELECTOR,
+      `ignore is not a valid selector: "${ignore}".`
+    );
+  }
+};
+
 const waitForFonts = async (): Promise<void> => {
   // Layout shifts when web fonts swap in, and jsdom has no FontFaceSet.
   if ('fonts' in document) {
@@ -461,6 +477,8 @@ export const auditRhythm = async (
       `tolerance must be a finite number of pixels, 0 or more, got "${tolerance}".`
     );
   }
+
+  assertValidIgnore(root, ignore);
 
   const grid = resolveGrid(root, options);
   // Nothing can sit further than half a line from the nearest grid line.
