@@ -211,15 +211,24 @@ const expectOverlayOn = async (canvasElement: HTMLElement, offset = 0) => {
 // Stands in for layouts that place the root anywhere, including half pixels.
 const SHIFTED_ROOT_TOPS = [0, 16, 326, 326.5, 327];
 
+const withRootAt = async (top: number, check: () => Promise<void>) => {
+  document.body.style.paddingTop = `${top}px`;
+  try {
+    await check();
+  } finally {
+    document.body.style.paddingTop = '';
+  }
+};
+
 export const OriginFollowsTheStoryRoot = meta.story({
   args: { top: 16, height: 24 },
   play: async ({ canvasElement }) => {
     for (const top of SHIFTED_ROOT_TOPS) {
-      document.body.style.paddingTop = `${top}px`;
-      await expectRhythm(canvasElement);
-      await expectOverlayOn(canvasElement);
+      await withRootAt(top, async () => {
+        await expectRhythm(canvasElement);
+        await expectOverlayOn(canvasElement);
+      });
     }
-    document.body.style.paddingTop = '';
   },
 });
 
@@ -227,10 +236,10 @@ export const OffsetFollowsTheStoryRoot = meta.story({
   args: { top: 12, height: 8 },
   parameters: { vrhythm: { lineHeight: '8px', offset: '4px' } },
   play: async ({ canvasElement }) => {
-    document.body.style.paddingTop = '33px';
-    await expectRhythm(canvasElement);
-    await expectOverlayOn(canvasElement, 4);
-    document.body.style.paddingTop = '';
+    await withRootAt(33, async () => {
+      await expectRhythm(canvasElement);
+      await expectOverlayOn(canvasElement, 4);
+    });
   },
 });
 
@@ -238,12 +247,12 @@ export const PageAnchor = meta.story({
   args: { top: 16, height: 24 },
   parameters: { vrhythm: { preset: '8px', anchor: 'page' } },
   play: async ({ canvasElement }) => {
-    document.body.style.paddingTop = '3px';
-    const { grid, ok } = await auditRhythm(canvasElement);
-    document.body.style.paddingTop = '';
+    await withRootAt(3, async () => {
+      const { grid, ok } = await auditRhythm(canvasElement);
 
-    await expect(grid.origin).toBe(0);
-    await expect(ok).toBe(false);
+      await expect(grid.origin).toBe(0);
+      await expect(ok).toBe(false);
+    });
   },
 });
 

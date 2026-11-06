@@ -120,6 +120,30 @@ describe('runAutoAudit', () => {
     await expect(runAutoAudit(context)).rejects.toThrow('8px grid');
   });
 
+  it('does not fail in todo mode when reporting fails', async () => {
+    showOverlay();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const context = contextFor(createStory(3), { audit: 'todo' });
+    context.reporting.addReport.mockRejectedValue(new Error('broken'));
+
+    await expect(runAutoAudit(context)).resolves.toBeUndefined();
+
+    warn.mockRestore();
+  });
+
+  it('keeps the audit error when reporting fails', async () => {
+    showOverlay();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const context = contextFor(createStory(3), { audit: 'error' });
+    context.reporting.addReport.mockRejectedValue(new Error('broken'));
+
+    await expect(runAutoAudit(context)).rejects.toMatchObject({
+      code: 'OFF_GRID',
+    });
+
+    warn.mockRestore();
+  });
+
   it('audits a hidden overlay on the grid a visible one would use', async () => {
     const root = createStory(12);
 

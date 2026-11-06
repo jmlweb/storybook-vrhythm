@@ -53,19 +53,37 @@ const toAuditOptions = ({
   };
 };
 
-const addReport = (
+// Reporting is a side channel: a broken reporter must not decide a story's result.
+const addReport = async (
   { reporting }: AfterEachContext,
   status: Report['status'],
   result: RhythmReport | string
-) => reporting.addReport({ type: REPORT_TYPE, version: 1, result, status });
+): Promise<void> => {
+  try {
+    await reporting.addReport({
+      type: REPORT_TYPE,
+      version: 1,
+      result,
+      status,
+    });
+  } catch (error) {
+    console.warn(`storybook-vrhythm: could not add a report: ${error}`);
+  }
+};
 
-const warn = async (
+const auditStory = async (
   context: AfterEachContext,
-  error: Error,
-  result: RhythmReport | string = error.message
-) => {
-  console.warn(`storybook-vrhythm: ${error.message}`);
-  await addReport(context, 'warning', result);
+  resolved: ResolvedParams
+): Promise<{ report?: RhythmReport; error: Error | null }> => {
+  try {
+    const report = await auditRhythm(
+      context.canvasElement as Element,
+      toAuditOptions(resolved)
+    );
+    return { report, error: toAssertionError(report) };
+  } catch (error) {
+    return { error: error as Error };
+  }
 };
 
 /**
@@ -84,28 +102,19 @@ export const runAutoAudit = async (
     return;
   }
 
-  try {
-    const report = await auditRhythm(
-      context.canvasElement as Element,
-      toAuditOptions(resolved)
-    );
-    const error = toAssertionError(report);
+  const { report, error } = await auditStory(context, resolved);
 
-    if (!error) {
-      await addReport(context, 'passed', report);
-      return;
-    }
-    if (audit === 'todo') {
-      await warn(context, error, report);
-      return;
-    }
-
-    await addReport(context, 'failed', report);
-    throw error;
-  } catch (error) {
-    if (audit !== 'todo') {
-      throw error;
-    }
-    await warn(context, error as Error);
+  if (!error) {
+    await addReport(context, 'passed', report as RhythmReport);
+    return;
   }
+  if (audit === 'todo') {
+    console.warn(`storybook-vrhythm: ${error.message}`);
+    await addReport(context, 'warning', report ?? error.message);
+    return;
+  }
+  if (report) {
+    await addReport(context, 'failed', report);
+  }
+  throw error;
 };
