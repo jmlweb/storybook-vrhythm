@@ -6,6 +6,7 @@ import { injectStyle, removeElement } from '../src/utils';
 
 vi.mock('../src/utils', () => ({
   injectStyle: vi.fn(),
+  keepOverlayInSync: vi.fn(),
   removeElement: vi.fn(),
 }));
 
@@ -41,7 +42,7 @@ describe('withVRhythm', () => {
   it('publishes the default line height for the audit', () => {
     withVRhythm(vi.fn(), {} as Context);
 
-    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+    expect(mockInjectStyle.mock.calls[0][1]).toMatchObject({
       vrhythmLineHeight: '16px',
     });
   });
@@ -51,7 +52,7 @@ describe('withVRhythm', () => {
       parameters: { vrhythm: { lineHeight: undefined } },
     } as Context);
 
-    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+    expect(mockInjectStyle.mock.calls[0][1]).toMatchObject({
       vrhythmLineHeight: DEFAULT_LINE_HEIGHT,
     });
   });
@@ -61,7 +62,7 @@ describe('withVRhythm', () => {
       parameters: { vrhythm: { lineHeight: 8 } },
     } as Context);
 
-    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+    expect(mockInjectStyle.mock.calls[0][1]).toMatchObject({
       vrhythmLineHeight: '8px',
     });
   });
@@ -72,7 +73,7 @@ describe('withVRhythm', () => {
       globals: { vrhythm: 'material' },
     } as Context);
 
-    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+    expect(mockInjectStyle.mock.calls[0][1]).toMatchObject({
       vrhythmLineHeight: '4px',
     });
   });
@@ -151,14 +152,20 @@ describe('withVRhythm', () => {
       }
     );
 
-    it('ignores invalid preset names', () => {
-      const storyFn = vi.fn();
-      withVRhythm(storyFn, {
+    it('warns about an unknown preset and flags it for the audit', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      withVRhythm(vi.fn(), {
         parameters: { vrhythm: { preset: 'nonexistent' } },
       } as Context);
 
-      const style = mockInjectStyle.mock.calls[0][0];
-      expect(style.background).toContain(DEFAULT_LINE_HEIGHT);
+      expect(mockInjectStyle.mock.calls[0][0].background).toContain(
+        DEFAULT_LINE_HEIGHT
+      );
+      expect(mockInjectStyle.mock.calls[0][1]).toMatchObject({
+        vrhythmUnknownPreset: 'nonexistent',
+      });
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('nonexistent'));
+      warn.mockRestore();
     });
 
     it('allows custom props to override preset values', () => {
@@ -289,6 +296,38 @@ describe('default export', () => {
       'carbon',
     ]);
     expect(addon.initialGlobals).toEqual({ vrhythm: 'true' });
+  });
+});
+
+describe('anchor', () => {
+  const anchorOf = (context: unknown) => {
+    withVRhythm(vi.fn(), context as Context);
+    return mockInjectStyle.mock.calls[0][1]?.vrhythmAnchor;
+  };
+
+  it('defaults to the story', () => {
+    expect(anchorOf({})).toBe('story');
+  });
+
+  it('accepts a page or selector anchor', () => {
+    expect(anchorOf({ parameters: { vrhythm: { anchor: '#app' } } })).toBe(
+      '#app'
+    );
+  });
+
+  it('treats container as a selector anchor', () => {
+    expect(anchorOf({ parameters: { vrhythm: { container: '#old' } } })).toBe(
+      '#old'
+    );
+  });
+
+  it('always uses the page on Docs', () => {
+    expect(
+      anchorOf({
+        viewMode: 'docs',
+        parameters: { vrhythm: { anchor: '#app' } },
+      })
+    ).toBe('page');
   });
 });
 

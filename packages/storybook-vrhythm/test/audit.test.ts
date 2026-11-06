@@ -73,7 +73,7 @@ describe('auditRhythm', () => {
 
   it('reads the grid size and origin from the overlay', async () => {
     const root = createRoot();
-    injectStyle({ top: '4px' }, undefined, { vrhythmLineHeight: '12px' });
+    injectStyle({ top: '4px' }, { vrhythmLineHeight: '12px' });
     place(document.getElementById(DIV_ID) as HTMLElement, {
       top: 4,
       height: 800,
@@ -88,7 +88,7 @@ describe('auditRhythm', () => {
 
   it('uses the explicit offset from root instead of the overlay', async () => {
     const root = add(document.body, { top: 100, height: 800 });
-    injectStyle({}, undefined, { vrhythmLineHeight: '8px' });
+    injectStyle({}, { vrhythmLineHeight: '8px' });
     place(document.getElementById(DIV_ID) as HTMLElement, {
       top: 0,
       height: 800,
@@ -184,7 +184,7 @@ describe('auditRhythm', () => {
   });
 
   it('names the overlay when its line height is unsupported', async () => {
-    injectStyle({}, undefined, { vrhythmLineHeight: '1.5em' });
+    injectStyle({}, { vrhythmLineHeight: '1.5em' });
 
     await expect(auditRhythm(createRoot())).rejects.toThrow(
       'Unsupported lineHeight from the overlay "1.5em"'
@@ -540,5 +540,133 @@ describe('expectRhythm', () => {
     await expect(expectRhythm(createRoot(), { lineHeight: 8 })).rejects.toThrow(
       'Nothing was measured'
     );
+  });
+});
+
+describe('overlay checks', () => {
+  const overlayAt = (box: Box, dataset: Record<string, string> = {}) => {
+    injectStyle({}, { vrhythmLineHeight: '8px', ...dataset });
+    return place(document.getElementById(DIV_ID) as HTMLElement, box);
+  };
+
+  const codeOf = (promise: Promise<unknown>) =>
+    promise.then(
+      () => null,
+      (error: { code: string }) => error.code
+    );
+
+  it('rejects a zero-height overlay', async () => {
+    const root = createRoot();
+    overlayAt({ top: 700, height: 0 });
+
+    expect(await codeOf(auditRhythm(root))).toBe('UNUSABLE_OVERLAY');
+  });
+
+  it('rejects a zero-width overlay', async () => {
+    const root = createRoot();
+    overlayAt({ top: 0, height: 800, width: 0 });
+
+    expect(await codeOf(auditRhythm(root))).toBe('UNUSABLE_OVERLAY');
+  });
+
+  it('rejects an overlay outside the canvas', async () => {
+    const root = createRoot();
+    overlayAt({ top: 900, height: 100 });
+
+    expect(await codeOf(auditRhythm(root))).toBe('UNUSABLE_OVERLAY');
+  });
+
+  it('accepts a bad overlay when offset replaces it', async () => {
+    const root = createRoot();
+    add(root, { top: 8, height: 16 });
+    overlayAt({ top: 700, height: 0 });
+
+    const { ok } = await auditRhythm(root, { offset: 0 });
+    expect(ok).toBe(true);
+  });
+
+  it('leaves an empty root to the checked count', async () => {
+    const root = add(document.body, { top: 0, height: 0 });
+    overlayAt({ top: 0, height: 0 });
+
+    expect((await auditRhythm(root)).checked).toBe(0);
+  });
+
+  it('rejects a grid from an unknown preset', async () => {
+    const root = createRoot();
+    overlayAt({ top: 0, height: 800 }, { vrhythmUnknownPreset: 'nope' });
+
+    expect(await codeOf(auditRhythm(root))).toBe('UNKNOWN_PRESET');
+    await expect(auditRhythm(root, { lineHeight: 8 })).resolves.toBeDefined();
+  });
+
+  it('names an anchor that matches nothing', async () => {
+    const root = createRoot();
+    overlayAt({ top: 0, height: 800 }, { vrhythmAnchor: '#gone' });
+
+    await expect(auditRhythm(root)).rejects.toThrow('"#gone"');
+    expect(await codeOf(auditRhythm(root))).toBe('ANCHOR_NOT_FOUND');
+  });
+});
+
+describe('edges', () => {
+  it('measures only the named edges and counts what it measured', async () => {
+    const root = createRoot();
+    add(root, { top: 8, height: 11 });
+
+    const report = await auditRhythm(root, {
+      lineHeight: 8,
+      edges: ['top'],
+    });
+
+    expect(report).toMatchObject({ ok: true, checked: 1 });
+  });
+
+  it('rejects an empty list', async () => {
+    await expect(
+      auditRhythm(createRoot(), { lineHeight: 8, edges: [] })
+    ).rejects.toMatchObject({ code: 'INVALID_EDGES' });
+  });
+});
+
+describe('failure message', () => {
+  const failure = (root: Element) =>
+    expectRhythm(root, { lineHeight: 8 }).catch((error: Error) => error);
+
+  it('groups equal deltas that are not adjacent', async () => {
+    const root = createRoot();
+    add(root, { top: 7, height: 9 }).className = 'a';
+    add(root, { top: 26, height: 6 }).className = 'b';
+    add(root, { top: 47, height: 9 }).className = 'c';
+
+    const { message, code } = (await failure(root)) as Error & { code: string };
+
+    expect(code).toBe('OFF_GRID');
+    expect(message).toContain('2 with delta -1px:');
+    expect(message).toContain('div.a:nth-of-type(1) top: 7px, nearest 8px');
+    expect(message).toContain('div.c:nth-of-type(3) top: 47px, nearest 48px');
+    expect(message).toContain('(delta 2px)');
+  });
+
+  it('tells the reader how to fix the first violation', async () => {
+    const root = createRoot();
+    add(root, { top: 21, height: 19 }, 'h2').className = 'title';
+
+    const { message } = (await failure(root)) as Error;
+
+    expect(message).toContain('move h2.title top by 3px');
+  });
+
+  it('keeps every violation in the report when grouping', async () => {
+    const root = createRoot();
+    for (const top of [7, 15, 23]) {
+      add(root, { top, height: 9 });
+    }
+
+    const { report } = (await failure(root)) as Error & {
+      report: { violations: unknown[] };
+    };
+
+    expect(report.violations).toHaveLength(3);
   });
 });
