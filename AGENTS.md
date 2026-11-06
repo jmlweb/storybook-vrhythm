@@ -20,7 +20,7 @@ packages/
       utils.ts              # DOM manipulation (inject/remove overlay element)
       find-violations.ts    # Compares measurements to the grid
       audit.ts              # auditRhythm and expectRhythm (storybook-vrhythm/audit export)
-      presets.ts            # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
+      presets.ts            # Built-in rhythm presets (4px, 8px, 12px, 16px, 24px, 32px, material, tailwind, bootstrap)
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
       storybook-parameter-augmentation.ts  # Type augmentation for Storybook parameters/globals

@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 import { DEFAULT_COLOR, DEFAULT_LINE_HEIGHT, DIV_ID } from '../src/constants';
 import vrhythm, { withVRhythm } from '../src/index';
+import { type PresetAliasName, presetAliases, presets } from '../src/presets';
 import { injectStyle, removeElement } from '../src/utils';
 
 vi.mock('../src/utils', () => ({
@@ -141,6 +142,15 @@ describe('withVRhythm', () => {
       expect(style.background).toContain('4px');
     });
 
+    it.each(Object.entries(presetAliases))(
+      'alias %s resolves to the %s preset',
+      (alias, base) => {
+        expect(presets[alias as PresetAliasName]).toBe(
+          presets[base as keyof typeof presets]
+        );
+      }
+    );
+
     it('ignores invalid preset names', () => {
       const storyFn = vi.fn();
       withVRhythm(storyFn, {
@@ -269,11 +279,14 @@ describe('default export', () => {
       'false',
       '4px',
       '8px',
+      '12px',
       '16px',
       '24px',
+      '32px',
       'material',
       'tailwind',
       'bootstrap',
+      'carbon',
     ]);
     expect(addon.initialGlobals).toEqual({ vrhythm: 'true' });
   });

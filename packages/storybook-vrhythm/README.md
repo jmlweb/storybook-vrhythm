@@ -116,11 +116,19 @@ export const MaterialGrid = {
 | ----------- | ----------- | -------------------------- | ------------------------- |
 | `4px`       | 4px         | `rgba(0, 150, 255, 0.15)`  | Dense UIs, compact grids  |
 | `8px`       | 8px         | `rgba(0, 150, 255, 0.2)`   | Standard 8pt grid systems |
+| `12px`      | 12px        | `rgba(0, 150, 255, 0.2)`   | 12px grids, mid-density UIs |
 | `16px`      | 16px        | `rgba(204, 204, 204, 0.5)` | Body text baseline        |
 | `24px`      | 24px        | `rgba(204, 204, 204, 0.5)` | Heading alignment         |
-| `material`  | 4px         | `rgba(244, 67, 54, 0.15)`  | Material Design           |
-| `tailwind`  | 4px         | `rgba(99, 102, 241, 0.15)` | Tailwind CSS              |
-| `bootstrap` | 8px         | `rgba(13, 110, 253, 0.2)`  | Bootstrap                 |
+| `32px`      | 32px        | `rgba(204, 204, 204, 0.5)` | Large-scale layout grids  |
+
+**Aliases.** These names add no style of their own. Each one is exactly the base preset shown, under a name you may recognize from a design system:
+
+| Alias       | Same as | Reason                                    |
+| ----------- | ------- | ----------------------------------------- |
+| `material`  | `4px`   | Material Design uses a 4dp grid           |
+| `tailwind`  | `4px`   | Tailwind's spacing unit is 0.25rem        |
+| `bootstrap` | `8px`   | Bootstrap spacing steps are multiples of 8px |
+| `carbon`    | `8px`   | IBM Carbon uses an 8px mini-unit          |
 
 ### Column grid
 

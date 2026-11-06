@@ -26,7 +26,8 @@ export interface ConfigProps {
   hide?: boolean;
   /**
    * Name of a built-in preset to apply. Story-level params override preset values.
-   * Available: `'4px'`, `'8px'`, `'16px'`, `'24px'`, `'material'`, `'tailwind'`, `'bootstrap'`
+   * Available: `'4px'`, `'8px'`, `'12px'`, `'16px'`, `'24px'`, `'32px'`, `'material'`, `'tailwind'`, `'bootstrap'`, `'carbon'`.
+   * The last four are aliases of `'4px'`, `'4px'`, `'8px'` and `'8px'`.
    */
   preset?: string;
   /** CSS selector for the overlay's parent element. Defaults to `body`. */
