@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -16,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
 
@@ -42,7 +47,7 @@ jobs:
       - name: Check the published package
         working-directory: packages/storybook-vrhythm
         run: |
-          pnpm dlx publint@0.3.25 .
-          pnpm dlx @arethetypeswrong/cli@0.18.5 --pack . --profile esm-only --exclude-entrypoints ./preset
+          pnpm exec publint .
+          pnpm exec attw --pack . --profile esm-only --exclude-entrypoints ./preset
 
       - run: pnpm turbo run build-storybook --cache-dir=.turbo
