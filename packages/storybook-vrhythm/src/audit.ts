@@ -20,6 +20,7 @@ import {
 } from './rhythm-errors';
 import {
   isAnchorMissing,
+  measurePageTop,
   queryOrNull,
   resolveAnchor,
   syncOverlay,
@@ -159,7 +160,7 @@ const resolveExplicitBase = (root: Element, anchor?: string): number => {
     return root.getBoundingClientRect().top;
   }
   if (anchor === ANCHOR_PAGE) {
-    return -window.scrollY;
+    return measurePageTop();
   }
 
   const element =

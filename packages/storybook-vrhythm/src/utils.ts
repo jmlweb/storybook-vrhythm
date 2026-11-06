@@ -122,6 +122,22 @@ export function syncOverlay(
 }
 
 /**
+ * The viewport Y of `top: 0` for an overlay on `body`, even with no overlay
+ * present. A positioned `body` moves it off the top of the document.
+ */
+export function measurePageTop(): number {
+  const probe = createElement();
+  probe.removeAttribute('id');
+  probe.style.cssText = 'position: absolute; top: 0; height: 0;';
+  document.querySelector(PARENT_SELECTOR)?.append(probe);
+
+  const { top } = probe.getBoundingClientRect();
+  probe.remove();
+
+  return top;
+}
+
+/**
  * Keeps the overlay on its anchor across renders and resizes. Stories render
  * after decorators run and hooks fire after `play`, so an observer is what puts
  * the picture in place. The audit syncs for itself before it measures.

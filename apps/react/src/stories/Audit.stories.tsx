@@ -256,6 +256,29 @@ export const PageAnchor = meta.story({
   },
 });
 
+export const PageAnchorOnPositionedBody = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', anchor: 'page' } },
+  play: async ({ canvasElement }) => {
+    const { body } = document;
+    body.style.position = 'relative';
+    body.style.margin = '8px';
+    try {
+      const visible = await auditRhythm(canvasElement);
+      const hidden = await auditRhythm(canvasElement, {
+        lineHeight: '8px',
+        anchor: 'page',
+      });
+
+      await expect(visible.grid.origin).toBe(8);
+      await expect(hidden.grid.origin).toBe(visible.grid.origin);
+    } finally {
+      body.style.position = '';
+      body.style.margin = '';
+    }
+  },
+});
+
 export const SelectorAnchor = meta.story({
   args: { top: 16, height: 24 },
   parameters: { vrhythm: { preset: '8px', anchor: '[data-testid="block"]' } },
