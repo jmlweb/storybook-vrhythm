@@ -47,15 +47,20 @@ export const createError = <T extends object>(
 
 const groupByDelta = (
   violations: readonly RhythmViolation[]
-): Map<number, RhythmViolation[]> =>
-  violations.reduce(
-    (groups, violation) =>
-      groups.set(violation.delta, [
-        ...(groups.get(violation.delta) ?? []),
-        violation,
-      ]),
-    new Map<number, RhythmViolation[]>()
-  );
+): Map<number, RhythmViolation[]> => {
+  const groups = new Map<number, RhythmViolation[]>();
+
+  for (const violation of violations) {
+    const group = groups.get(violation.delta);
+    if (group) {
+      group.push(violation);
+    } else {
+      groups.set(violation.delta, [violation]);
+    }
+  }
+
+  return groups;
+};
 
 const formatPosition = ({
   selector,

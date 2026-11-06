@@ -717,6 +717,18 @@ describe('failure message', () => {
     expect(message).toContain('(delta 2px)');
   });
 
+  it('counts a large group of equal deltas', async () => {
+    const root = createRoot();
+    for (const index of Array.from({ length: 300 }, (_, i) => i + 1)) {
+      add(root, { top: 8 * index - 1, height: 9 });
+    }
+
+    const { message } = (await failure(root)) as Error;
+
+    expect(message).toContain('300 with delta -1px:');
+    expect(message).toContain('...and 290 more');
+  });
+
   it('tells the reader how to fix the first violation', async () => {
     const root = createRoot();
     add(root, { top: 21, height: 19 }, 'h2').className = 'title';
