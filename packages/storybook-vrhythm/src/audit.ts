@@ -328,10 +328,29 @@ export const auditRhythm = async (
   }
 
   const grid = resolveGrid(root, options);
+  // Nothing can sit further than half a line from the nearest grid line.
+  if (tolerance >= grid.lineHeight / 2) {
+    throw createError(
+      'RhythmConfigError',
+      `tolerance must be under half of lineHeight, got ${tolerance} on a ${grid.lineHeight}px grid: no layout could fail.`
+    );
+  }
+
   const ignoreSelector = ignore
     ? `${IGNORE_SELECTOR}, ${ignore}`
     : IGNORE_SELECTOR;
   const measurements = collectMeasurements(root, checks, ignoreSelector);
+  // A NaN delta passes every tolerance check, so it must not reach findViolations.
+  const unmeasurable = measurements.find(
+    ({ y }) => !Number.isFinite(y - grid.origin)
+  );
+  if (unmeasurable) {
+    throw createError(
+      'RhythmConfigError',
+      `Could not measure ${unmeasurable.selector} ${unmeasurable.edge}: got "${unmeasurable.y}" against origin "${grid.origin}". This environment lacks the layout or font metrics the audit needs.`
+    );
+  }
+
   const violations = findViolations(measurements, grid, tolerance);
 
   return {

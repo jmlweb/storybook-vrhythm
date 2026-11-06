@@ -71,6 +71,18 @@ export const NumericLineHeight = meta.story({
   },
 });
 
+export const NumericOverlayLengths = meta.story({
+  args: { top: 20, height: 24 },
+  parameters: { vrhythm: { lineHeight: 8, lineWidth: 2, offset: 4 } },
+  play: async ({ canvasElement }) => {
+    const overlay = document.getElementById('storybook-rhythm');
+
+    await expect(overlay?.style.top).toBe('4px');
+    await expect(overlay?.style.backgroundImage).toContain('2px');
+    await expectRhythm(canvasElement);
+  },
+});
+
 export const HiddenOverlayNeedsOptions = meta.story({
   args: { top: 16, height: 24 },
   parameters: { vrhythm: { hide: true } },
@@ -87,8 +99,8 @@ export const HiddenOverlayNeedsOptions = meta.story({
   },
 });
 
-// The default tolerance is the accuracy the audit promises. Measured against local
-// macOS only; layout ascent rounding may differ per platform, so stay at that bound.
+// Holds the measurement to the default tolerance, tighter than the 1px the README
+// allows across fonts and platforms. Passes on macOS and on Ubuntu in CI.
 const BASELINE_ACCURACY = 0.5;
 
 const Probe = () => <span data-probe style={{ display: 'inline-block' }} />;

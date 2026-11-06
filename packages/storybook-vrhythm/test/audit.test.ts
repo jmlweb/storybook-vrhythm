@@ -149,6 +149,40 @@ describe('auditRhythm', () => {
     }
   );
 
+  it.each([
+    [4, 8],
+    [5, 8],
+    [0.5, 1],
+  ])(
+    'rejects the tolerance %s on a %spx grid, which no layout can fail',
+    async (tolerance, lineHeight) => {
+      const root = createRoot();
+      add(root, { top: 21, height: 19 });
+
+      await expect(
+        expectRhythm(root, { lineHeight, tolerance })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
+    }
+  );
+
+  it('accepts a tolerance just under half the grid', async () => {
+    const root = createRoot();
+    add(root, { top: 4, height: 8 });
+
+    const { ok } = await auditRhythm(root, { lineHeight: 8, tolerance: 3.99 });
+
+    expect(ok).toBe(false);
+  });
+
+  it('rejects a box it cannot measure instead of passing', async () => {
+    const root = createRoot();
+    add(root, { top: Number.NaN, height: 8 });
+
+    await expect(auditRhythm(root, { lineHeight: 8 })).rejects.toMatchObject({
+      name: 'RhythmConfigError',
+    });
+  });
+
   it('names the overlay when its line height is unsupported', async () => {
     injectStyle({}, undefined, { vrhythmLineHeight: '1.5em' });
 
@@ -289,7 +323,7 @@ describe('auditRhythm', () => {
       return getClientRects;
     };
 
-    const fakeCanvas = (ascent: number) => {
+    const fakeCanvas = (ascent: number | undefined) => {
       const context = {
         font: '',
         measureText: () => ({ fontBoundingBoxAscent: ascent }),
@@ -351,6 +385,17 @@ describe('auditRhythm', () => {
       expect(violations).toEqual([
         { selector: 'p', edge: 'baseline', actual: 17, nearest: 16, delta: 1 },
       ]);
+    });
+
+    it('rejects a baseline it cannot measure instead of passing', async () => {
+      textRects([5]);
+      fakeCanvas(undefined);
+      const root = createRoot();
+      add(root, { top: 0, height: 24 }, 'p').textContent = 'Text';
+
+      await expect(
+        expectRhythm(root, { lineHeight: 8, checks: ['baseline'] })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
     });
 
     it('measures text placed directly in root', async () => {
