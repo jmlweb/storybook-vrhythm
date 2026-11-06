@@ -79,6 +79,10 @@ jobs:
           "
           pnpm install --no-frozen-lockfile
           grep -Eq "^ +'?storybook@10\." pnpm-lock.yaml
+          if grep -E "^ +'?(@storybook/[a-z0-9-]+|storybook)@11\." pnpm-lock.yaml; then
+            echo "Storybook 11 packages survived the override" >&2
+            exit 1
+          fi
 
       - run: pnpm -F @apps/react exec playwright install --with-deps chromium
 
