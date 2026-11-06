@@ -4,3 +4,7 @@ packages:
 allowBuilds:
   esbuild: true
 engineStrict: true
+overrides:
+  # Storybook 11 beta pulls glob 13 through this plugin (GHSA-3g3m-2fjr-6pw4, GHSA-g3hv-75wg-m249).
+  # Drop once @storybook/react-vite depends on a plugin version without glob (0.9.1 or later).
+  "@joshwooding/vite-plugin-react-docgen-typescript>glob": 14.0.3
