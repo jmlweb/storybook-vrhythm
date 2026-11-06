@@ -59,9 +59,13 @@ const addReport = (
   result: RhythmReport | string
 ) => reporting.addReport({ type: REPORT_TYPE, version: 1, result, status });
 
-const warn = async (context: AfterEachContext, error: Error) => {
+const warn = async (
+  context: AfterEachContext,
+  error: Error,
+  result: RhythmReport | string = error.message
+) => {
   console.warn(`storybook-vrhythm: ${error.message}`);
-  await addReport(context, 'warning', error.message);
+  await addReport(context, 'warning', result);
 };
 
 /**
@@ -87,10 +91,17 @@ export const runAutoAudit = async (
     );
     const error = toAssertionError(report);
 
-    await addReport(context, error ? 'failed' : 'passed', report);
-    if (error) {
-      throw error;
+    if (!error) {
+      await addReport(context, 'passed', report);
+      return;
     }
+    if (audit === 'todo') {
+      await warn(context, error, report);
+      return;
+    }
+
+    await addReport(context, 'failed', report);
+    throw error;
   } catch (error) {
     if (audit !== 'todo') {
       throw error;

@@ -76,8 +76,12 @@ describe('runAutoAudit', () => {
     await expect(runAutoAudit(context)).resolves.toBeUndefined();
 
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('delta 3px'));
+    expect(context.reporting.addReport).toHaveBeenCalledTimes(1);
     expect(context.reporting.addReport).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'warning' })
+      expect.objectContaining({
+        status: 'warning',
+        result: expect.objectContaining({ ok: false }),
+      })
     );
     warn.mockRestore();
   });
