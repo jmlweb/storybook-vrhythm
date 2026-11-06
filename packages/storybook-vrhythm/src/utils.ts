@@ -22,9 +22,14 @@ export function removeElement(): void {
   }
 }
 
-export function injectStyle(style: StyleObj, container?: string): void {
+export function injectStyle(
+  style: StyleObj,
+  container?: string,
+  dataset: Record<string, string> = {}
+): void {
   const element = getOrCreateElement();
   Object.assign(element.style, style);
+  Object.assign(element.dataset, dataset);
 
   let parent: Element | null = null;
   try {

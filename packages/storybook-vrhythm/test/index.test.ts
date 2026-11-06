@@ -37,6 +37,25 @@ describe('withVRhythm', () => {
     expect(mockRemoveElement).not.toHaveBeenCalled();
   });
 
+  it('publishes the default line height for the audit', () => {
+    withVRhythm(vi.fn(), {} as Context);
+
+    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+      vrhythmLineHeight: '16px',
+    });
+  });
+
+  it('publishes the final line height for the audit', () => {
+    withVRhythm(vi.fn(), {
+      parameters: { vrhythm: { lineHeight: '24px' } },
+      globals: { vrhythm: 'material' },
+    } as Context);
+
+    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+      vrhythmLineHeight: '4px',
+    });
+  });
+
   it('uses default parameters when none are provided', () => {
     const storyFn = vi.fn();
     withVRhythm(storyFn, {} as Context);

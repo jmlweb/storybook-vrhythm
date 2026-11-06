@@ -18,6 +18,8 @@ packages/
       constants.ts          # Default values and DOM selectors
       getStyle.ts           # Generates CSS style object for the rhythm overlay
       utils.ts              # DOM manipulation (inject/remove overlay element)
+      find-violations.ts    # Compares measurements to the grid
+      audit.ts              # auditRhythm and expectRhythm (storybook-vrhythm/audit export)
       presets.ts            # Built-in rhythm presets (4px, 8px, 16px, 24px, material, tailwind, bootstrap)
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
@@ -112,6 +114,8 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `presets`   | Built-in rhythm configs       | Yes                      |
 | `getStyle`  | StyleProps -> CSS style obj   | Yes                      |
 | `utils`     | DOM inject/remove             | No (DOM side effects)    |
+| `find-violations` | Measurements -> violations | Yes                     |
+| `audit`     | Measure DOM, assert rhythm    | No (reads layout)        |
 | `index`     | Public API, CSF Next factory  | No (re-exports, default factory) |
 | `withVRhythm` | Decorator wiring            | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
@@ -124,11 +128,13 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Test file naming: `<module>.test.ts`
 - Focus on pure function testing (`getStyle`), decorator behavior (`index`), and DOM manipulation (`utils`)
 - Use `jsdom` environment for DOM tests
+- jsdom has no layout, so `audit` tests stub rects. `apps/react/src/stories/Audit.stories.tsx` checks real layout through `play` functions (`pnpm -F @apps/react test`, needs `playwright install chromium`)
 
 ## Publishing
 
 - Published to npm as `storybook-vrhythm`
-- Only `dist/` is included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
+- Only `dist/` and `llms.txt` are included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
+- `packages/storybook-vrhythm/llms.txt` is the source. The root `llms.txt` is a symlink to it
 - Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing
 - The repo is in Changesets prerelease mode (`.changeset/pre.json`), so releases go to the `next` dist-tag. At Storybook 11 GA, run `pnpm changeset pre exit` to release `1.0.0` to `latest`
 - ESM-only (`"type": "module"`)

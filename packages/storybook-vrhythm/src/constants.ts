@@ -6,3 +6,4 @@ export const DEFAULT_OPACITY = 1;
 export const DEFAULT_Z_INDEX = 9999;
 export const PARENT_SELECTOR = 'body';
 export const DIV_ID = 'storybook-rhythm';
+export const LINE_HEIGHT_DATA_KEY = 'vrhythmLineHeight';
