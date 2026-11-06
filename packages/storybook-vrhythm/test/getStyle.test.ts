@@ -1,9 +1,29 @@
 import { getStyle } from '../src/getStyle';
 
 describe('getStyle', () => {
+  it('draws a numeric lineHeight in px', () => {
+    expect(getStyle({ lineHeight: 8 }).background).toContain('/ 1px 8px');
+  });
+
+  it('treats every numeric length as px', () => {
+    const style = getStyle({
+      offset: 4,
+      lineWidth: 2,
+      maxWidth: 1200,
+      columnWidth: 80,
+      gutterWidth: 16,
+    });
+
+    expect(style.top).toBe('4px');
+    expect(style.width).toBe('1200px');
+    expect(style.background).toBe(
+      'linear-gradient(rgb(204, 204, 204) 2px, transparent 2px) left top / 2px 16px, linear-gradient(90deg, transparent calc(80px - 16px), rgb(204, 204, 204) calc(80px - 16px)) left top / 80px 100%'
+    );
+  });
+
   it('works with default values', () => {
     const style = getStyle({});
-    expect(style.top).toBe(0);
+    expect(style.top).toBe('0px');
     expect(style.background).toBe(
       'linear-gradient(rgb(204, 204, 204) 1px, transparent 1px) left top / 1px 16px'
     );

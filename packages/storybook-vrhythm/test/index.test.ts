@@ -45,6 +45,26 @@ describe('withVRhythm', () => {
     });
   });
 
+  it('falls back to the default when lineHeight is explicitly undefined', () => {
+    withVRhythm(vi.fn(), {
+      parameters: { vrhythm: { lineHeight: undefined } },
+    } as Context);
+
+    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+      vrhythmLineHeight: DEFAULT_LINE_HEIGHT,
+    });
+  });
+
+  it('publishes a numeric line height in px', () => {
+    withVRhythm(vi.fn(), {
+      parameters: { vrhythm: { lineHeight: 8 } },
+    } as Context);
+
+    expect(mockInjectStyle.mock.calls[0][2]).toEqual({
+      vrhythmLineHeight: '8px',
+    });
+  });
+
   it('publishes the final line height for the audit', () => {
     withVRhythm(vi.fn(), {
       parameters: { vrhythm: { lineHeight: '24px' } },

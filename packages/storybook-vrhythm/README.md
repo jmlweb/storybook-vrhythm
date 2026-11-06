@@ -232,6 +232,7 @@ Options for both functions:
 
 - **`box`** checks the top and bottom of each visible element, except the `root` itself, inline text elements and inline `svg`. It suits spacing grids such as 4px and 8px.
 - **`baseline`** checks each line of text. It suits type-driven grids. Don't use it on a spacing grid: 16px text in a 24px line sits about 17px below an on-grid box. Results can differ by up to 1px, and more with `font-stretch` or `font-size-adjust`, so raise `tolerance` if needed.
+- **Invalid setups throw:** `RhythmConfigError` means the audit could not give a real answer. It covers a `lineHeight` or `offset` that is not a finite `px` or `rem` length, a `lineHeight` of 0 or less, a `tolerance` that is negative, not finite, or half of `lineHeight` or more (no layout could fail it), and an edge or baseline the environment cannot measure.
 - **Fixing violations:** work from the top down and rerun after each change. Moving an edge shifts everything below it, so `delta` values further down go stale, and on-grid edges can move off.
 - **Off-grid on purpose?** Add `data-vrhythm-ignore` to skip an element and everything inside it. Use it when the component owns the decision. Use the `ignore` option, which also skips subtrees, to exclude something for one story or without touching markup.
 - **Real layout required:** run it in a browser, such as `@storybook/addon-vitest` with Playwright. jsdom has no layout, so `expectRhythm` fails there with `Nothing was measured`.

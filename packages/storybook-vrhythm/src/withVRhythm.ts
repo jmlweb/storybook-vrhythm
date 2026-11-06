@@ -9,7 +9,7 @@ import {
   DEFAULT_Z_INDEX,
   LINE_HEIGHT_DATA_KEY,
 } from './constants';
-import { getStyle } from './getStyle';
+import { getStyle, toCssLength } from './getStyle';
 import { type PresetName, presets } from './presets';
 import type { ConfigProps, StyleProps } from './types';
 import { injectStyle, removeElement } from './utils';
@@ -84,7 +84,7 @@ export const withVRhythm: DecoratorFunction<Renderer> = (storyFn, context) => {
     const finalParams: VRhythmParams = { ...params, ...globalPresetStyles };
     const style = getStyle(finalParams);
     injectStyle(style, params.container || undefined, {
-      [LINE_HEIGHT_DATA_KEY]: String(
+      [LINE_HEIGHT_DATA_KEY]: toCssLength(
         finalParams.lineHeight ?? DEFAULT_LINE_HEIGHT
       ),
     });

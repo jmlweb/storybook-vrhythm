@@ -169,6 +169,7 @@ Options: `lineHeight` and `offset` (default: read from the overlay), `tolerance`
 - Use the `ignore` option to skip a selector and its subtree for one story, or without touching markup.
 - `grid.origin` is the viewport Y of the first grid line, also printed in the failure message. `actual` and `nearest` are relative to it. It is the overlay's top, or the top of `root` plus `offset` when `offset` is set or the overlay is hidden.
 - With a hidden overlay, pass `lineHeight`, or the audit throws `No grid found`.
+- `RhythmConfigError` means no real answer was possible: a `lineHeight` or `offset` that is not a finite `px` or `rem` length, a `lineHeight` of 0 or less, a `tolerance` that is negative, not finite, or half of `lineHeight` or more, or an edge or baseline the environment cannot measure. Fix the setup; do not catch it.
 
 ## Toolbar Globals
 

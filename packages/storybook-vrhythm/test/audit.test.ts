@@ -116,7 +116,7 @@ describe('auditRhythm', () => {
     expect(grid.lineHeight).toBe(10);
   });
 
-  it.each(['1em', '8', 'auto', '0px', 0, -8])(
+  it.each(['1em', '8', 'auto', '0px', 0, -8, Number.NaN, Infinity])(
     'rejects the lineHeight %s',
     async (lineHeight) => {
       await expect(
@@ -124,6 +124,64 @@ describe('auditRhythm', () => {
       ).rejects.toMatchObject({ name: 'RhythmConfigError' });
     }
   );
+
+  it.each([Number.NaN, Infinity, -Infinity])(
+    'rejects the offset %s instead of passing',
+    async (offset) => {
+      const root = createRoot();
+      add(root, { top: 21, height: 19 });
+
+      await expect(
+        expectRhythm(root, { lineHeight: 8, offset })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
+    }
+  );
+
+  it.each([Number.NaN, Infinity, -1])(
+    'rejects the tolerance %s',
+    async (tolerance) => {
+      const root = createRoot();
+      add(root, { top: 21, height: 19 });
+
+      await expect(
+        expectRhythm(root, { lineHeight: 8, tolerance })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
+    }
+  );
+
+  it.each([
+    [4, 8],
+    [5, 8],
+    [0.5, 1],
+  ])(
+    'rejects the tolerance %s on a %spx grid, which no layout can fail',
+    async (tolerance, lineHeight) => {
+      const root = createRoot();
+      add(root, { top: 21, height: 19 });
+
+      await expect(
+        expectRhythm(root, { lineHeight, tolerance })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
+    }
+  );
+
+  it('accepts a tolerance just under half the grid', async () => {
+    const root = createRoot();
+    add(root, { top: 4, height: 8 });
+
+    const { ok } = await auditRhythm(root, { lineHeight: 8, tolerance: 3.99 });
+
+    expect(ok).toBe(false);
+  });
+
+  it('rejects a box it cannot measure instead of passing', async () => {
+    const root = createRoot();
+    add(root, { top: Number.NaN, height: 8 });
+
+    await expect(auditRhythm(root, { lineHeight: 8 })).rejects.toMatchObject({
+      name: 'RhythmConfigError',
+    });
+  });
 
   it('names the overlay when its line height is unsupported', async () => {
     injectStyle({}, undefined, { vrhythmLineHeight: '1.5em' });
@@ -265,11 +323,16 @@ describe('auditRhythm', () => {
       return getClientRects;
     };
 
-    const fakeCanvas = (ascent: number) =>
-      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+    const fakeCanvas = (ascent: number | undefined) => {
+      const context = {
         font: '',
         measureText: () => ({ fontBoundingBoxAscent: ascent }),
-      } as unknown as RenderingContext);
+      };
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
+        context as unknown as RenderingContext
+      );
+      return context;
+    };
 
     afterEach(() => {
       vi.restoreAllMocks();
@@ -290,6 +353,24 @@ describe('auditRhythm', () => {
       expect(violations).toEqual([]);
     });
 
+    it('measures with the font of the element', async () => {
+      textRects([4]);
+      const context = fakeCanvas(12);
+      const root = createRoot();
+      const text = add(root, { top: 0, height: 24 }, 'p');
+      text.textContent = 'Text';
+      Object.assign(text.style, {
+        fontStyle: 'italic',
+        fontWeight: '700',
+        fontSize: '20px',
+        fontFamily: 'Georgia',
+      });
+
+      await auditRhythm(root, { lineHeight: 8, checks: ['baseline'] });
+
+      expect(context.font).toBe('italic 700 20px Georgia');
+    });
+
     it('reports an off-grid baseline', async () => {
       textRects([5]);
       fakeCanvas(12);
@@ -304,6 +385,17 @@ describe('auditRhythm', () => {
       expect(violations).toEqual([
         { selector: 'p', edge: 'baseline', actual: 17, nearest: 16, delta: 1 },
       ]);
+    });
+
+    it('rejects a baseline it cannot measure instead of passing', async () => {
+      textRects([5]);
+      fakeCanvas(undefined);
+      const root = createRoot();
+      add(root, { top: 0, height: 24 }, 'p').textContent = 'Text';
+
+      await expect(
+        expectRhythm(root, { lineHeight: 8, checks: ['baseline'] })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
     });
 
     it('measures text placed directly in root', async () => {

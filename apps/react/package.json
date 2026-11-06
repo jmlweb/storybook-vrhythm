@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
-    "test": "vitest run",
+    "test": "node scripts/run-story-tests.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

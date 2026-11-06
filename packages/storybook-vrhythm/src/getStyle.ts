@@ -8,6 +8,9 @@ import {
 } from './constants';
 import type { StyleObj, StyleProps } from './types';
 
+export const toCssLength = (value: string | number): string =>
+  typeof value === 'number' ? `${value}px` : value;
+
 export const getStyle = ({
   color = DEFAULT_COLOR,
   lineHeight = DEFAULT_LINE_HEIGHT,
@@ -20,13 +23,16 @@ export const getStyle = ({
   columnColor,
   gutterWidth,
 }: StyleProps): StyleObj => {
-  const horizontal = `linear-gradient(${color} ${lineWidth}, transparent ${lineWidth}) left top / ${lineWidth} ${lineHeight}`;
+  const line = toCssLength(lineWidth);
+  const horizontal = `linear-gradient(${color} ${line}, transparent ${line}) left top / ${line} ${toCssLength(lineHeight)}`;
 
+  const column = columnWidth != null ? toCssLength(columnWidth) : null;
+  const gutter = gutterWidth != null ? toCssLength(gutterWidth) : null;
   const columnGradient =
-    columnWidth != null
-      ? gutterWidth != null
-        ? `linear-gradient(90deg, transparent calc(${columnWidth} - ${gutterWidth}), ${columnColor ?? color} calc(${columnWidth} - ${gutterWidth})) left top / ${columnWidth} 100%`
-        : `linear-gradient(90deg, ${columnColor ?? color} ${lineWidth}, transparent ${lineWidth}) left top / ${columnWidth} 100%`
+    column != null
+      ? gutter != null
+        ? `linear-gradient(90deg, transparent calc(${column} - ${gutter}), ${columnColor ?? color} calc(${column} - ${gutter})) left top / ${column} 100%`
+        : `linear-gradient(90deg, ${columnColor ?? color} ${line}, transparent ${line}) left top / ${column} 100%`
       : null;
 
   const background =
@@ -34,12 +40,16 @@ export const getStyle = ({
 
   const positioning: StyleObj =
     maxWidth != null
-      ? { left: '50%', width: maxWidth, transform: 'translateX(-50%)' }
+      ? {
+          left: '50%',
+          width: toCssLength(maxWidth),
+          transform: 'translateX(-50%)',
+        }
       : { left: 0, right: 0 };
 
   return {
     position: 'absolute',
-    top: offset,
+    top: toCssLength(offset),
     ...positioning,
     bottom: 0,
     background,
