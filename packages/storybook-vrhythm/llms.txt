@@ -194,7 +194,7 @@ import type { VRhythmParams, StyleProps, ConfigProps, PresetName } from 'storybo
 - `presetAliases` — record mapping each alias (`material`, `tailwind`, `bootstrap`, `carbon`) to its base preset
 - `VRhythmParams` — `StyleProps & ConfigProps` (all parameters combined)
 - `StyleProps` — visual style parameters
-- `ConfigProps` — behavior parameters (`hide`, `preset`, `container`)
+- `ConfigProps` — behavior parameters (`audit`, `auditOptions`, `anchor`, `hide`, `preset`, `container`)
 - `PresetName` — union type of valid preset names (`'4px' | '8px' | '12px' | '16px' | '24px' | '32px' | 'material' | 'tailwind' | 'bootstrap' | 'carbon'`)
 
 ```typescript
@@ -225,7 +225,7 @@ The failure message lists violations with equal `delta` together: a pattern, not
 
 Gradual adoption: `audit: 'todo'` first, then `audit: 'error'` with `auditOptions: { edges: ['top'] }`, then the default edges.
 
-Options: `lineHeight` and `offset` (default: read from the overlay), `tolerance` (default `0.5`), `checks` (default `['box']`), `edges` (default both), `ignore` (selector).
+Options: `lineHeight` and `offset` (default: read from the overlay), `anchor` (default `root`), `tolerance` (default `0.5`), `checks` (default `['box']`), `edges` (default both), `ignore` (selector).
 
 - `edges: ['top']` skips bottom edges, so it misses a wrong height.
 - `checked` counts what was measured after `checks`, `edges` and `ignore` apply. `0` means nothing was tested.
@@ -236,7 +236,10 @@ Options: `lineHeight` and `offset` (default: read from the overlay), `tolerance`
 - Add `data-vrhythm-ignore` when the component is off-grid on purpose. It skips the element and its subtree.
 - Use the `ignore` option to skip a selector and its subtree for one story, or without touching markup.
 - `grid.origin` is the viewport Y of the first grid line, also printed in the failure message. `actual` and `nearest` are relative to it. It is the overlay's top, or the top of `root` plus `offset` when `offset` is set or the overlay is hidden.
-- With a hidden overlay, pass `lineHeight`, or the audit throws `No grid found`.
+- With a hidden overlay, the `audit` parameter uses the grid the overlay would have drawn. `expectRhythm` and `auditRhythm` need `lineHeight` from you, or they throw `No grid found`. Pass `anchor` or `offset` to set the origin.
+- `audit: 'error'` fails with `NOTHING_MEASURED` when nothing was measured. Set `audit: 'off'` on stories that render outside the canvas, such as portals. `audit: 'todo'` never fails a story: it warns about off-grid edges and bad setups alike.
+- A preset picked in the toolbar overrides the story's style params, including the grid the audit reads from the overlay.
+- Audit option `offset` starts at `root`, or at the `anchor` audit option. The story's `offset` starts at the story's anchor.
 - `RhythmConfigError` means no real answer was possible. Fix the setup; do not catch it.
 
 Error codes (`error.code`):
@@ -281,7 +284,7 @@ Story-level `hide: true` always overrides the toolbar toggle.
 2. Its `background` is set to a `linear-gradient` that repeats at `lineHeight` intervals
 3. If `columnWidth` is set, a second `linear-gradient(90deg, ...)` layer creates vertical columns
 4. The div stays on `body`, positioned `absolute` with `pointer-events: none`, so it never interferes with stories
-5. It starts at the anchor plus `offset`, runs to the end of the document, and follows resizes
+5. It starts at the anchor plus `offset`, runs to the end of the document, and follows resizes. Content that scrolls inside its own container has no grid past the first screen, but the audit is not affected
 6. On hide, the div is removed from the DOM entirely
 
 ## TypeScript

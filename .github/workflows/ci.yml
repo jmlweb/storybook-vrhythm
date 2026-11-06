@@ -78,6 +78,7 @@ jobs:
             writeFileSync(file, readFileSync(file, 'utf8').replace('overrides:', 'overrides:\n' + entries));
           "
           pnpm install --no-frozen-lockfile
+          grep -Eq "^ +'?storybook@10\." pnpm-lock.yaml
 
       - run: pnpm -F @apps/react exec playwright install --with-deps chromium
 

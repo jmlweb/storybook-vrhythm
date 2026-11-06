@@ -25,7 +25,7 @@ function getOrCreateElement(): HTMLDivElement {
   return createElement();
 }
 
-function queryOrNull(selector: string): Element | null {
+export function queryOrNull(selector: string): Element | null {
   try {
     return document.querySelector(selector);
   } catch {
@@ -131,20 +131,31 @@ export function keepOverlayInSync(storyRoot?: Element): void {
   stopWatching = null;
   storyRoot?.setAttribute(STORY_ROOT_ATTRIBUTE, '');
 
-  const sync = (): void => {
+  const observer =
+    typeof ResizeObserver === 'undefined'
+      ? null
+      : new ResizeObserver(() => sync());
+
+  function sync(): void {
     const overlay = document.getElementById(DIV_ID);
-    if (overlay) {
-      syncOverlay(overlay, resolveAnchor(overlay, storyRoot));
+    if (!overlay) {
+      return;
     }
-  };
+
+    const anchor = resolveAnchor(overlay, storyRoot);
+    syncOverlay(overlay, anchor);
+    // A selector anchor may render late, and may resize without its parents.
+    if (anchor) {
+      observer?.observe(anchor);
+    }
+  }
 
   sync();
 
-  if (typeof ResizeObserver === 'undefined') {
+  if (!observer) {
     return;
   }
 
-  const observer = new ResizeObserver(sync);
   observer.observe(document.documentElement);
   observer.observe(document.body);
   if (storyRoot) {

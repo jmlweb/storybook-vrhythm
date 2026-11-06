@@ -1,5 +1,5 @@
 import { auditRhythm, expectRhythm } from '../src/audit';
-import { DIV_ID } from '../src/constants';
+import { DIV_ID, STORY_ROOT_ATTRIBUTE } from '../src/constants';
 import { injectStyle } from '../src/utils';
 
 type Box = { top: number; height: number; width?: number };
@@ -606,6 +606,43 @@ describe('overlay checks', () => {
 
     await expect(auditRhythm(root)).rejects.toThrow('"#gone"');
     expect(await codeOf(auditRhythm(root))).toBe('ANCHOR_NOT_FOUND');
+  });
+});
+
+describe('anchor option', () => {
+  const originOf = async (root: Element, anchor: string, offset?: number) =>
+    (await auditRhythm(root, { lineHeight: 8, anchor, offset })).grid.origin;
+
+  it('measures from the page', async () => {
+    const root = add(document.body, { top: 100, height: 800 });
+
+    expect(await originOf(root, 'page', 4)).toBe(4);
+  });
+
+  it('measures from the story root', async () => {
+    const story = add(document.body, { top: 100, height: 800 });
+    story.setAttribute(STORY_ROOT_ATTRIBUTE, '');
+    const inner = add(story, { top: 140, height: 80 });
+
+    expect(await originOf(inner, 'story')).toBe(100);
+  });
+
+  it('measures from a selector, and rejects one that matches nothing', async () => {
+    const root = createRoot();
+    add(root, { top: 40, height: 80 }).id = 'target';
+
+    expect(await originOf(root, '#target')).toBe(40);
+    await expect(originOf(root, '#gone')).rejects.toMatchObject({
+      code: 'ANCHOR_NOT_FOUND',
+    });
+  });
+
+  it('ignores an overlay with a broken anchor', async () => {
+    const root = createRoot();
+    injectStyle({}, { vrhythmLineHeight: '8px', vrhythmAnchor: '#gone' });
+
+    const { ok } = await auditRhythm(root, { offset: 0 });
+    expect(ok).toBe(true);
   });
 });
 

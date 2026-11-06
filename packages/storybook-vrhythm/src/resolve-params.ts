@@ -21,7 +21,11 @@ const DEFAULT_PARAMS: VRhythmParams = {
   zIndex: DEFAULT_Z_INDEX,
 };
 
-const isPresetName = (name: string): name is PresetName => name in presets;
+// `in` would accept inherited keys such as `constructor` as preset names.
+const PRESET_NAMES: ReadonlySet<string> = new Set(Object.keys(presets));
+
+const isPresetName = (name: string): name is PresetName =>
+  PRESET_NAMES.has(name);
 
 export interface VRhythmContext {
   parameters?: { vrhythm?: VRhythmParams };

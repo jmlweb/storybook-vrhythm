@@ -168,6 +168,18 @@ describe('withVRhythm', () => {
       warn.mockRestore();
     });
 
+    it('does not take an inherited key for a preset', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      withVRhythm(vi.fn(), {
+        parameters: { vrhythm: { preset: 'constructor' } },
+      } as Context);
+
+      expect(mockInjectStyle.mock.calls[0][1]).toMatchObject({
+        vrhythmUnknownPreset: 'constructor',
+      });
+      warn.mockRestore();
+    });
+
     it('allows custom props to override preset values', () => {
       const storyFn = vi.fn();
       withVRhythm(storyFn, {

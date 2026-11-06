@@ -1,4 +1,5 @@
-import type { RhythmGrid, RhythmViolation } from './find-violations';
+import type { RhythmReport } from './audit';
+import type { RhythmViolation } from './find-violations';
 import { roundPx } from './find-violations';
 
 /** Stable identifiers for audit errors. Branch on these, not on messages. */
@@ -18,16 +19,18 @@ export const RhythmErrorCode = {
 export type RhythmErrorCode =
   (typeof RhythmErrorCode)[keyof typeof RhythmErrorCode];
 
-interface FailureReport {
-  grid: RhythmGrid;
-  violations: RhythmViolation[];
-}
+type RhythmAssertionCode = Extract<
+  RhythmErrorCode,
+  'OFF_GRID' | 'NOTHING_MEASURED'
+>;
 
-export type RhythmConfigError = Error & { code: RhythmErrorCode };
+export type RhythmConfigError = Error & {
+  code: Exclude<RhythmErrorCode, RhythmAssertionCode>;
+};
 
-export type RhythmAssertionError<Report = FailureReport> = Error & {
-  code: RhythmErrorCode;
-  report: Report;
+export type RhythmAssertionError = Error & {
+  code: RhythmAssertionCode;
+  report: RhythmReport;
 };
 
 const MAX_REPORTED_VIOLATIONS = 10;
@@ -76,7 +79,10 @@ const formatGroup = (
 const formatFix = ({ selector, edge, delta }: RhythmViolation): string =>
   `Fix from the top: move ${selector} ${edge} by ${-delta}px, then rerun. Moving an edge shifts everything below it, so later deltas go stale.`;
 
-export const formatFailure = ({ grid, violations }: FailureReport): string => {
+const formatFailure = ({
+  grid,
+  violations,
+}: Pick<RhythmReport, 'grid' | 'violations'>): string => {
   const groups = groupByDelta(violations);
   const shown = [...groups.values()].flat().slice(0, MAX_REPORTED_VIOLATIONS);
   const hiddenCount = violations.length - shown.length;
@@ -89,4 +95,27 @@ export const formatFailure = ({ grid, violations }: FailureReport): string => {
     ...(hiddenCount > 0 ? [`  ...and ${hiddenCount} more`] : []),
     formatFix(violations[0]),
   ].join('\n');
+};
+
+/** The error a report deserves, or `null` when it can be trusted as a pass. */
+export const toAssertionError = (
+  report: RhythmReport
+): RhythmAssertionError | null => {
+  if (report.checked === 0) {
+    return createError(
+      'RhythmAssertionError',
+      RhythmErrorCode.NOTHING_MEASURED,
+      'Nothing was measured, so rhythm cannot be asserted. Check that root has rendered content and the environment has layout (jsdom does not).',
+      { report }
+    ) as RhythmAssertionError;
+  }
+  if (!report.ok) {
+    return createError(
+      'RhythmAssertionError',
+      RhythmErrorCode.OFF_GRID,
+      formatFailure(report),
+      { report }
+    ) as RhythmAssertionError;
+  }
+  return null;
 };

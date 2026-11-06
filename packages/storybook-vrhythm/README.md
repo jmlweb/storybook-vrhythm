@@ -306,10 +306,10 @@ An unknown `preset` warns in the console and falls back to the default grid. The
 ### Parameter resolution order
 
 ```text
-DEFAULT_PARAMS → preset styles → story-level parameters
+DEFAULT_PARAMS → preset styles → story-level parameters → toolbar preset
 ```
 
-Later sources override earlier ones. The story-level `hide` param takes precedence over the toolbar toggle.
+Later sources override earlier ones, so a preset picked in the toolbar also changes the grid the audit reads from the overlay. The story-level `hide` param takes precedence over the toolbar toggle.
 
 ## Auditing rhythm in tests
 
@@ -360,7 +360,8 @@ Options for both functions:
 | Option       | Type                      | Default          | Description                                                            |
 | ------------ | ------------------------- | ---------------- | ---------------------------------------------------------------------- |
 | `lineHeight` | `string \| number`        | From the overlay | Grid size in `px`, `rem`, or a number of pixels                        |
-| `offset`     | `string \| number`        | Overlay position | Grid start below the top of `root`, replacing the overlay's position   |
+| `offset`     | `string \| number`        | Overlay position | Grid start below the top of `root`, or of `anchor`. Replaces the overlay's position, and differs from the story's `offset`, which starts at the story's anchor |
+| `anchor`     | `'story' \| 'page' \| string` | `root`        | What `offset` is measured from. Replaces the overlay's position        |
 | `tolerance`  | `number`                  | `0.5`            | Allowed distance from a grid line, in pixels                           |
 | `checks`     | `('box' \| 'baseline')[]` | `['box']`        | What to measure                                                        |
 | `edges`      | `('top' \| 'bottom')[]`    | Both             | Box edges to measure. `['top']` misses a wrong height                  |
@@ -372,7 +373,9 @@ Options for both functions:
 - **Fixing violations:** work from the top down and rerun after each change. Moving an edge shifts everything below it, so `delta` values further down go stale, and on-grid edges can move off.
 - **Off-grid on purpose?** Add `data-vrhythm-ignore` to skip an element and everything inside it. Use it when the component owns the decision. Use the `ignore` option, which also skips subtrees, to exclude something for one story or without touching markup.
 - **Real layout required:** run it in a browser, such as `@storybook/addon-vitest` with Playwright. jsdom has no layout, so `expectRhythm` fails there with `Nothing was measured`.
-- **Hidden overlay:** with `hide: true` or the toolbar set to Hide, pass `lineHeight` yourself. The origin is then the top of `root`, not the top of the page.
+- **Hidden overlay:** `audit` needs nothing extra: it uses the grid the overlay would have drawn. `expectRhythm` and `auditRhythm` need `lineHeight` from you, and the origin is the top of `root` unless you pass `anchor` or `offset`.
+- **`audit` and empty stories:** `audit: 'error'` fails with `NOTHING_MEASURED` when nothing was measured, as `expectRhythm` does. Set `audit: 'off'` on stories that render outside the canvas, such as portals. `audit: 'todo'` never fails a story: it warns about off-grid edges and bad setups alike.
+- **Nested scrolling:** the overlay runs to the end of the document. Content that scrolls inside its own container has no grid past the first screen. The audit is not affected.
 - **Any layout:** `centered`, `padded` and `fullscreen` give the same result at any viewport height, because the grid starts at the story root. `anchor: 'page'` gives that up: `centered` then depends on viewport height.
 - **Top margins:** a top margin on the first element collapses through the root and moves it, and the grid with it. That margin is not measured.
 

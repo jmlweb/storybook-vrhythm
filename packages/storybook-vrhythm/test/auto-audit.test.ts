@@ -82,6 +82,19 @@ describe('runAutoAudit', () => {
     warn.mockRestore();
   });
 
+  it('does not fail on a bad setup in todo mode', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const context = contextFor(createStory(3), {
+      audit: 'todo',
+      auditOptions: { edges: [] },
+    });
+
+    await expect(runAutoAudit(context)).resolves.toBeUndefined();
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('edges'));
+    warn.mockRestore();
+  });
+
   it('reports a pass', async () => {
     showOverlay();
     const context = contextFor(createStory(8), { audit: 'error' });
@@ -103,14 +116,41 @@ describe('runAutoAudit', () => {
     await expect(runAutoAudit(context)).rejects.toThrow('8px grid');
   });
 
-  it('passes a story with nothing to measure', async () => {
+  it('audits a hidden overlay on the grid a visible one would use', async () => {
+    const root = createStory(12);
+
+    await expect(
+      runAutoAudit(
+        contextFor(root, {
+          audit: 'error',
+          hide: true,
+          preset: '8px',
+          offset: 4,
+        })
+      )
+    ).resolves.toBeUndefined();
+  });
+
+  it('rejects an unknown preset with a hidden overlay', async () => {
+    const context = contextFor(createStory(8), {
+      audit: 'error',
+      hide: true,
+      preset: 'nope',
+    });
+
+    await expect(runAutoAudit(context)).rejects.toMatchObject({
+      code: 'UNKNOWN_PRESET',
+    });
+  });
+
+  it('fails a story with nothing to measure', async () => {
     showOverlay();
     const root = document.body.appendChild(document.createElement('div'));
     root.getBoundingClientRect = () => rect(0, 0);
 
     await expect(
       runAutoAudit(contextFor(root, { audit: 'error' }))
-    ).resolves.toBeUndefined();
+    ).rejects.toMatchObject({ code: 'NOTHING_MEASURED' });
   });
 
   it('forwards auditOptions', async () => {

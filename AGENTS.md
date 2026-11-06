@@ -103,7 +103,7 @@ pnpm -F storybook-vrhythm typecheck
 ### Parameter Resolution Order
 
 ```text
-DEFAULT_PARAMS → preset styles → story-level parameters (raw)
+DEFAULT_PARAMS → preset styles → story-level parameters (raw) → toolbar preset
 ```
 
 Later sources override earlier ones. The story-level `hide` param takes precedence over the `globals.vrhythm` toolbar toggle (author intent wins over interactive toggle).

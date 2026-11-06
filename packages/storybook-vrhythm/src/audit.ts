@@ -1,6 +1,10 @@
 import {
+  ANCHOR_DATA_KEY,
+  ANCHOR_PAGE,
+  ANCHOR_STORY,
   DIV_ID,
   LINE_HEIGHT_DATA_KEY,
+  STORY_ROOT_ATTRIBUTE,
   UNKNOWN_PRESET_DATA_KEY,
 } from './constants';
 import type {
@@ -9,8 +13,17 @@ import type {
   RhythmViolation,
 } from './find-violations';
 import { findViolations } from './find-violations';
-import { createError, formatFailure, RhythmErrorCode } from './rhythm-errors';
-import { isAnchorMissing, resolveAnchor, syncOverlay } from './utils';
+import {
+  createError,
+  RhythmErrorCode,
+  toAssertionError,
+} from './rhythm-errors';
+import {
+  isAnchorMissing,
+  queryOrNull,
+  resolveAnchor,
+  syncOverlay,
+} from './utils';
 
 export type {
   RhythmEdge,
@@ -32,11 +45,18 @@ export interface AuditOptions {
   /** Grid size (`px`, `rem`, or a number of pixels). Default: read from the overlay. */
   lineHeight?: string | number;
   /**
-   * Grid start below the top of `root`. When set, it replaces the overlay's
-   * position as the origin. Default: the overlay's top, which is the anchor
-   * plus the story's `offset`, or the top of `root` when there is no overlay.
+   * Grid start below the top of `root`, or of `anchor` when set. This differs
+   * from the story's `offset`, which is always relative to the story's anchor.
+   * When set, it replaces the overlay's position as the origin. Default: the
+   * overlay's top, or the top of `root` when there is no overlay.
    */
   offset?: string | number;
+  /**
+   * What `offset` is measured from: `'story'`, `'page'` or a selector. When set,
+   * it replaces the overlay's position as the origin, so a hidden overlay can
+   * audit the same grid as a visible one. Default: `root`
+   */
+  anchor?: 'story' | 'page' | (string & {});
   /**
    * Allowed distance from a grid line, in pixels. Must be finite, 0 or more, and
    * under half of `lineHeight`, because no layout could fail a wider one.
@@ -118,24 +138,38 @@ const parseLength = (
   return pixels;
 };
 
-// The overlay can lag the layout by a frame, and the origin must be exact now.
-const prepareOverlay = (root: Element): HTMLElement | null => {
-  const overlay = document.getElementById(DIV_ID);
-  if (!overlay) {
-    return null;
-  }
+const anchorNotFound = (anchor: string | undefined): Error =>
+  createError(
+    'RhythmConfigError',
+    RhythmErrorCode.ANCHOR_NOT_FOUND,
+    `The anchor "${anchor}" matches no element. Fix the anchor selector.`
+  );
 
+// The overlay can lag the layout by a frame, and the origin must be exact now.
+const syncToAnchor = (overlay: HTMLElement, root: Element): void => {
   const anchor = resolveAnchor(overlay, root);
   if (isAnchorMissing(overlay, anchor)) {
-    throw createError(
-      'RhythmConfigError',
-      RhythmErrorCode.ANCHOR_NOT_FOUND,
-      `The anchor "${overlay.dataset.vrhythmAnchor}" matches no element. Fix the anchor selector.`
-    );
+    throw anchorNotFound(overlay.dataset[ANCHOR_DATA_KEY]);
   }
   syncOverlay(overlay, anchor);
+};
 
-  return overlay;
+const resolveExplicitBase = (root: Element, anchor?: string): number => {
+  if (anchor === undefined) {
+    return root.getBoundingClientRect().top;
+  }
+  if (anchor === ANCHOR_PAGE) {
+    return -window.scrollY;
+  }
+
+  const element =
+    anchor === ANCHOR_STORY
+      ? (root.closest(`[${STORY_ROOT_ATTRIBUTE}]`) ?? root)
+      : queryOrNull(anchor);
+  if (!element) {
+    throw anchorNotFound(anchor);
+  }
+  return element.getBoundingClientRect().top;
 };
 
 const assertUsableOverlay = (overlay: Element, root: Element): void => {
@@ -163,7 +197,9 @@ const assertUsableOverlay = (overlay: Element, root: Element): void => {
 };
 
 const resolveGrid = (root: Element, options: AuditOptions): RhythmGrid => {
-  const overlay = prepareOverlay(root);
+  const overlay = document.getElementById(DIV_ID);
+  const hasExplicitOrigin =
+    options.offset !== undefined || options.anchor !== undefined;
   const unknownPreset = overlay?.dataset[UNKNOWN_PRESET_DATA_KEY];
   if (unknownPreset && options.lineHeight === undefined) {
     throw createError(
@@ -197,21 +233,22 @@ const resolveGrid = (root: Element, options: AuditOptions): RhythmGrid => {
     );
   }
 
-  const rootTop = root.getBoundingClientRect().top;
-  if (options.offset !== undefined) {
+  if (hasExplicitOrigin) {
     return {
       lineHeight,
-      origin: rootTop + parseLength(options.offset, 'offset'),
+      origin:
+        resolveExplicitBase(root, options.anchor) +
+        parseLength(options.offset ?? 0, 'offset'),
     };
   }
-  if (overlay) {
-    assertUsableOverlay(overlay, root);
+  if (!overlay) {
+    return { lineHeight, origin: root.getBoundingClientRect().top };
   }
 
-  return {
-    lineHeight,
-    origin: overlay?.getBoundingClientRect().top ?? rootTop,
-  };
+  syncToAnchor(overlay, root);
+  assertUsableOverlay(overlay, root);
+
+  return { lineHeight, origin: overlay.getBoundingClientRect().top };
 };
 
 const describeStep = (element: Element): string => {
@@ -476,22 +513,9 @@ export const expectRhythm = async (
   root: Element,
   options?: AuditOptions
 ): Promise<void> => {
-  const report = await auditRhythm(root, options);
+  const error = toAssertionError(await auditRhythm(root, options));
 
-  if (report.checked === 0) {
-    throw createError(
-      'RhythmAssertionError',
-      RhythmErrorCode.NOTHING_MEASURED,
-      'Nothing was measured, so rhythm cannot be asserted. Check that root has rendered content and the environment has layout (jsdom does not).',
-      { report }
-    );
-  }
-  if (!report.ok) {
-    throw createError(
-      'RhythmAssertionError',
-      RhythmErrorCode.OFF_GRID,
-      formatFailure(report),
-      { report }
-    );
+  if (error) {
+    throw error;
   }
 };
