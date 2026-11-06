@@ -1,12 +1,15 @@
 import { definePreviewAddon } from 'storybook/internal/csf';
 
-import { type VRhythmParams, withVRhythm } from './withVRhythm';
+import { runAutoAudit } from './auto-audit';
+import type { VRhythmParams } from './types';
+import { withVRhythm } from './withVRhythm';
 
 export default definePreviewAddon<{
   parameters: { vrhythm?: VRhythmParams };
   globals: { vrhythm?: string | boolean };
 }>({
   decorators: [withVRhythm],
+  afterEach: runAutoAudit,
   globalTypes: {
     vrhythm: {
       description: 'Toggle vertical rhythm grid overlay',

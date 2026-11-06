@@ -1,5 +1,12 @@
-import { DIV_ID } from '../src/constants';
-import { injectStyle, removeElement } from '../src/utils';
+import { DIV_ID, STORY_ROOT_ATTRIBUTE } from '../src/constants';
+import {
+  injectStyle,
+  isAnchorMissing,
+  keepOverlayInSync,
+  removeElement,
+  resolveAnchor,
+  syncOverlay,
+} from '../src/utils';
 
 beforeEach(() => {
   const existing = document.getElementById(DIV_ID);
@@ -16,7 +23,7 @@ describe('injectStyle', () => {
   });
 
   it('writes the given dataset to the element', () => {
-    injectStyle({}, undefined, { vrhythmLineHeight: '8px' });
+    injectStyle({}, { vrhythmLineHeight: '8px' });
     const el = document.getElementById(DIV_ID);
     expect(el?.getAttribute('data-vrhythm-line-height')).toBe('8px');
   });
@@ -33,41 +40,6 @@ describe('injectStyle', () => {
     expect(el?.parentNode).toBe(document.body);
   });
 
-  it('appends the element to a custom container when specified', () => {
-    const container = document.createElement('div');
-    container.id = 'custom-root';
-    document.body.appendChild(container);
-
-    injectStyle({ color: 'green' }, '#custom-root');
-    const el = document.getElementById(DIV_ID);
-    expect(el?.parentNode).toBe(container);
-
-    container.remove();
-  });
-
-  it('moves element to a new container when container changes', () => {
-    const containerA = document.createElement('div');
-    containerA.id = 'container-a';
-    const containerB = document.createElement('div');
-    containerB.id = 'container-b';
-    document.body.append(containerA, containerB);
-
-    injectStyle({ color: 'red' }, '#container-a');
-    expect(document.getElementById(DIV_ID)?.parentNode).toBe(containerA);
-
-    injectStyle({ color: 'blue' }, '#container-b');
-    expect(document.getElementById(DIV_ID)?.parentNode).toBe(containerB);
-    expect(containerA.querySelector(`#${DIV_ID}`)).toBeNull();
-
-    containerA.remove();
-    containerB.remove();
-  });
-
-  it('falls back to body when container selector is invalid', () => {
-    injectStyle({ color: 'red' }, '[unclosed');
-    expect(document.getElementById(DIV_ID)?.parentNode).toBe(document.body);
-  });
-
   it('does not re-append element if it already exists in the DOM', () => {
     injectStyle({ color: 'red' });
     injectStyle({ color: 'blue' });
@@ -82,6 +54,159 @@ describe('injectStyle', () => {
 
     const el = document.getElementById(DIV_ID) as HTMLDivElement;
     expect(el.style.position).toBe('fixed');
+  });
+});
+
+describe('reused overlay', () => {
+  it('drops styles the new story does not set', () => {
+    injectStyle({ left: '50%', width: '400px', transform: 'translateX(-50%)' });
+    injectStyle({ left: 0, right: 0 });
+
+    const { style } = document.getElementById(DIV_ID) as HTMLDivElement;
+    expect(style.transform).toBe('');
+    expect(style.width).toBe('');
+  });
+
+  it('drops data the new story does not set', () => {
+    injectStyle({}, { vrhythmUnknownPreset: 'nope' });
+    injectStyle({}, { vrhythmLineHeight: '8px' });
+
+    const { dataset } = document.getElementById(DIV_ID) as HTMLDivElement;
+    expect(dataset.vrhythmUnknownPreset).toBeUndefined();
+  });
+});
+
+describe('resolveAnchor', () => {
+  const overlayWith = (anchor?: string): HTMLElement => {
+    injectStyle({}, anchor ? { vrhythmAnchor: anchor } : {});
+    return document.getElementById(DIV_ID) as HTMLElement;
+  };
+
+  afterEach(() => {
+    document.body.replaceChildren();
+  });
+
+  it('is the page without an anchor', () => {
+    expect(resolveAnchor(overlayWith())).toBeNull();
+  });
+
+  it('is the marked story root, for a root inside the story', () => {
+    const story = document.body.appendChild(document.createElement('div'));
+    story.setAttribute(STORY_ROOT_ATTRIBUTE, '');
+    const inner = story.appendChild(document.createElement('div'));
+
+    expect(resolveAnchor(overlayWith('story'), inner)).toBe(story);
+  });
+
+  it('finds a selector, and flags one that matches nothing', () => {
+    const target = document.body.appendChild(document.createElement('div'));
+    target.id = 'target';
+
+    expect(resolveAnchor(overlayWith('#target'))).toBe(target);
+
+    const overlay = overlayWith('[unclosed');
+    expect(resolveAnchor(overlay)).toBeNull();
+    expect(isAnchorMissing(overlay, null)).toBe(true);
+  });
+
+  it('does not flag the page as missing', () => {
+    expect(isAnchorMissing(overlayWith('page'), null)).toBe(false);
+  });
+});
+
+describe('syncOverlay', () => {
+  it('starts at the anchor and adds the offset', () => {
+    injectStyle({}, { vrhythmOffset: '4px' });
+    const overlay = document.getElementById(DIV_ID) as HTMLElement;
+    const anchor = document.createElement('div');
+    anchor.getBoundingClientRect = () => ({ top: 100 }) as DOMRect;
+
+    syncOverlay(overlay, anchor);
+
+    expect(overlay.style.top).toBe('calc(104px)');
+    expect(overlay.style.bottom).toBe('auto');
+  });
+});
+
+describe('keepOverlayInSync', () => {
+  const disconnect = vi.fn();
+  const observe = vi.fn();
+  const unobserve = vi.fn();
+  let notify: () => void;
+
+  beforeEach(() => {
+    disconnect.mockClear();
+    observe.mockClear();
+    unobserve.mockClear();
+    vi.stubGlobal(
+      'ResizeObserver',
+      vi.fn(function ResizeObserverStub(callback: () => void) {
+        notify = callback;
+        return { observe, unobserve, disconnect };
+      })
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('marks the story root', () => {
+    const story = document.createElement('div');
+    keepOverlayInSync(story);
+
+    expect(story.hasAttribute(STORY_ROOT_ATTRIBUTE)).toBe(true);
+    removeElement();
+  });
+
+  it('stops watching when replaced or removed', () => {
+    keepOverlayInSync();
+    keepOverlayInSync();
+    expect(disconnect).toHaveBeenCalledTimes(1);
+
+    removeElement();
+    expect(disconnect).toHaveBeenCalledTimes(2);
+  });
+
+  it('stops observing an anchor it no longer follows', () => {
+    const addTarget = () => {
+      const target = document.body.appendChild(document.createElement('div'));
+      target.className = 'target';
+      return target;
+    };
+    const first = addTarget();
+    injectStyle({}, { vrhythmAnchor: '.target' });
+    keepOverlayInSync();
+
+    first.remove();
+    const second = addTarget();
+    notify();
+
+    expect(unobserve).toHaveBeenCalledWith(first);
+    expect(observe).toHaveBeenCalledWith(second);
+
+    second.remove();
+    removeElement();
+  });
+
+  it('keeps observing the story root after the anchor moves off it', () => {
+    const story = document.body.appendChild(document.createElement('div'));
+    injectStyle({}, { vrhythmAnchor: 'story' });
+    keepOverlayInSync(story);
+
+    (document.getElementById(DIV_ID) as HTMLElement).dataset.vrhythmAnchor =
+      'page';
+    notify();
+
+    expect(unobserve).not.toHaveBeenCalled();
+
+    story.remove();
+    removeElement();
+  });
+
+  it('works without ResizeObserver', () => {
+    vi.stubGlobal('ResizeObserver', undefined);
+    expect(() => keepOverlayInSync()).not.toThrow();
   });
 });
 

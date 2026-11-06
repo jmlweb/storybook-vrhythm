@@ -8,8 +8,9 @@ import {
 } from './constants';
 import type { StyleObj, StyleProps } from './types';
 
+// A unitless 0 is a valid length, but invalid inside the overlay's `calc()`.
 export const toCssLength = (value: string | number): string =>
-  typeof value === 'number' ? `${value}px` : value;
+  typeof value === 'number' || value.trim() === '0' ? `${value}px` : value;
 
 export const getStyle = ({
   color = DEFAULT_COLOR,

@@ -1,12 +1,14 @@
 ---
 id: TSK-010
 title: Anchor the grid to the story root
-status: pending
+status: complete
 priority: P2
 tags: []
 created: 2026-11-06
 source: idea/PLN-001
 depends-on: []
+completed: 2026-11-06
+started: 2026-11-06
 ---
 
 # Anchor the grid to the story root
@@ -52,20 +54,26 @@ This task would close TSK-002, TSK-003 and TSK-006. Decide which route owns them
 
 ## Acceptance Criteria
 
-- [ ] `anchor` option ships opt-in with its value shape defined; default behavior is unchanged
-- [ ] Overlay is placed after story render and works in apps/react, apps/vue and apps/html on both registration paths
-- [ ] Overlay is positioned against the anchor document position and covers its full height, or the document height for fullscreen
-- [ ] Overlay stays in sync when the anchor resizes or moves, with no new dependencies
-- [ ] resolveGrid uses the same origin as the overlay
-- [ ] Docs keep one #storybook-rhythm element and the README records which story anchor it follows
-- [ ] Audit.stories.tsx covers centered, padded, fullscreen and tall stories at several viewport heights
-- [ ] Unit tests added in test/utils.test.ts and test/audit.test.ts
-- [ ] Changeset added and AGENTS.md module notes updated
+- [x] `anchor` option ships opt-in with its value shape defined; default behavior is unchanged — evidence: anchor ships as the default, by user decision, overriding the opt-in plan. anchor page restores the previous origin (2026-11-07) (2026-11-06)
+- [x] Overlay is placed after story render and works in apps/react, apps/vue and apps/html on both registration paths — evidence: Placed by ResizeObserver, not useEffect, which fires after play. manual: React, Vue CSF Next, HTML classic overlay top equals root top (2026-11-07) (2026-11-06)
+- [x] Overlay is positioned against the anchor document position and covers its full height, or the document height for fullscreen — evidence: manual: Playwright measurements; TallStory (2026-11-07) (2026-11-06)
+- [x] Overlay stays in sync when the anchor resizes or moves, with no new dependencies — evidence: OverlayFollowsResize, pnpm -F @apps/react test → 37 passed (2026-11-07) (2026-11-06)
+- [x] resolveGrid uses the same origin as the overlay — evidence: prepare step in auditRhythm syncs the overlay before reading it; OriginFollowsTheStoryRoot (2026-11-07) (2026-11-06)
+- [x] Docs keep one #storybook-rhythm element and the README records which story anchor it follows — evidence: README Grid origin: Docs always uses page (2026-11-07) (2026-11-06)
+- [x] Audit.stories.tsx covers centered, padded, fullscreen and tall stories at several viewport heights — evidence: Audit.stories.tsx uses body padding as a stand-in because Vitest does not apply layouts, pnpm -F @apps/react test → 37 passed; real layouts checked with Playwright at four heights (2026-11-07) (2026-11-06)
+- [x] Unit tests added in test/utils.test.ts and test/audit.test.ts — evidence: test/utils.test.ts and test/audit.test.ts, pnpm -F storybook-vrhythm test → 149 passed (2026-11-07) (2026-11-06)
+- [x] Changeset added and AGENTS.md module notes updated — evidence: .changeset/anchor-grid-to-story.md and AGENTS.md (2026-11-07) (2026-11-06)
 
 ## Notes
 
 ## Learnings
 
+- LRN-001: Storybook decorator hooks fire after play
+- LRN-002: Failed reports do not reach Vitest or addon-mcp
+- LRN-003: A first child top margin moves the story root
+- LRN-004: Published addon-mcp tool names differ from source constants
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-06] Closes the open question: anchor is the default.
+- [2026-11-06] Completed

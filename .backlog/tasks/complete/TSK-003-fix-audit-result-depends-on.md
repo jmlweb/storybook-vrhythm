@@ -1,12 +1,14 @@
 ---
 id: TSK-003
 title: Fix: Audit result depends on viewport height in centered layout
-status: pending
+status: complete
 priority: P2
 tags: []
 created: 2026-11-06
 source: report/RPT-003
 depends-on: []
+completed: 2026-11-06
+started: 2026-11-06
 ---
 
 # Fix: Audit result depends on viewport height in centered layout
@@ -26,9 +28,9 @@ depends-on: []
 
 ## Acceptance Criteria
 
-- [ ] The audit gives the same result for a layout-centered story at viewport heights 700, 701, 720 and 900
-- [ ] The overlay and the audit use the same origin
-- [ ] README explains which layouts the audit supports
+- [x] The audit gives the same result for a layout-centered story at viewport heights 700, 701, 720 and 900 — evidence: manual: Playwright, real centered layout at 700, 701, 720, 900, overlay top equals root top (2026-11-07) (2026-11-06)
+- [x] The overlay and the audit use the same origin — evidence: OriginFollowsTheStoryRoot, pnpm -F @apps/react test → 37 passed (2026-11-07) (2026-11-06)
+- [x] README explains which layouts the audit supports — evidence: README Auditing rhythm: Any layout, and Grid origin (2026-11-07) (2026-11-06)
 
 ## Notes
 
@@ -37,3 +39,4 @@ depends-on: []
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-06] Completed

@@ -1,11 +1,12 @@
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { auditRhythm, expectRhythm } from 'storybook-vrhythm/audit';
 
 import preview from '../../.storybook/preview';
 
+// A top margin would collapse through the root and move the origin with it.
 const Block = ({ top, height }: { top: number; height: number }) => (
   <div
-    style={{ marginTop: top, height, background: '#eee' }}
+    style={{ position: 'relative', top, height, background: '#eee' }}
     data-testid="block"
   />
 );
@@ -77,7 +78,7 @@ export const NumericOverlayLengths = meta.story({
   play: async ({ canvasElement }) => {
     const overlay = document.getElementById('storybook-rhythm');
 
-    await expect(overlay?.style.top).toBe('4px');
+    await expect(overlay?.style.top).toContain('4px');
     await expect(overlay?.style.backgroundImage).toContain('2px');
     await expectRhythm(canvasElement);
   },
@@ -193,4 +194,188 @@ export const BaselineOfInlineElement = meta.story({
     await expectBaseline(measured[0], line);
     await expectBaseline(measured[1], line);
   },
+});
+
+const originOf = (canvasElement: HTMLElement) =>
+  canvasElement.getBoundingClientRect().top;
+
+const expectOverlayOn = async (canvasElement: HTMLElement, offset = 0) => {
+  const { grid } = await auditRhythm(canvasElement);
+  const overlay = document.getElementById('storybook-rhythm');
+  const overlayTop = overlay?.getBoundingClientRect().top;
+
+  await expect(grid.origin).toBe(originOf(canvasElement) + offset);
+  await expect(overlayTop).toBe(grid.origin);
+};
+
+// Stands in for layouts that place the root anywhere, including half pixels.
+const SHIFTED_ROOT_TOPS = [0, 16, 326, 326.5, 327];
+
+const withRootAt = async (top: number, check: () => Promise<void>) => {
+  document.body.style.paddingTop = `${top}px`;
+  try {
+    await check();
+  } finally {
+    document.body.style.paddingTop = '';
+  }
+};
+
+export const OriginFollowsTheStoryRoot = meta.story({
+  args: { top: 16, height: 24 },
+  play: async ({ canvasElement }) => {
+    for (const top of SHIFTED_ROOT_TOPS) {
+      await withRootAt(top, async () => {
+        await expectRhythm(canvasElement);
+        await expectOverlayOn(canvasElement);
+      });
+    }
+  },
+});
+
+export const OffsetFollowsTheStoryRoot = meta.story({
+  args: { top: 12, height: 8 },
+  parameters: { vrhythm: { lineHeight: '8px', offset: '4px' } },
+  play: async ({ canvasElement }) => {
+    await withRootAt(33, async () => {
+      await expectRhythm(canvasElement);
+      await expectOverlayOn(canvasElement, 4);
+    });
+  },
+});
+
+export const PageAnchor = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', anchor: 'page' } },
+  play: async ({ canvasElement }) => {
+    await withRootAt(3, async () => {
+      const { grid, ok } = await auditRhythm(canvasElement);
+
+      await expect(grid.origin).toBe(0);
+      await expect(ok).toBe(false);
+    });
+  },
+});
+
+export const PageAnchorOnPositionedBody = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', anchor: 'page' } },
+  play: async ({ canvasElement }) => {
+    const { body } = document;
+    body.style.position = 'relative';
+    body.style.margin = '8px';
+    try {
+      const visible = await auditRhythm(canvasElement);
+      const hidden = await auditRhythm(canvasElement, {
+        lineHeight: '8px',
+        anchor: 'page',
+      });
+
+      await expect(visible.grid.origin).toBe(8);
+      await expect(hidden.grid.origin).toBe(visible.grid.origin);
+    } finally {
+      body.style.position = '';
+      body.style.margin = '';
+    }
+  },
+});
+
+export const SelectorAnchor = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', anchor: '[data-testid="block"]' } },
+  play: async ({ canvasElement }) => {
+    const block = canvasElement.querySelector('[data-testid="block"]');
+    const { grid } = await auditRhythm(canvasElement, { edges: ['top'] });
+
+    await expect(grid.origin).toBe(block?.getBoundingClientRect().top);
+  },
+});
+
+export const TallStory = meta.story({
+  args: { top: 16, height: 4000 },
+  play: async ({ canvasElement }) => {
+    await expectRhythm(canvasElement);
+
+    const overlay = document.getElementById('storybook-rhythm');
+    const { scrollHeight } = document.documentElement;
+
+    await expect(scrollHeight).toBeGreaterThan(window.innerHeight);
+    await expect(overlay?.getBoundingClientRect().height).toBe(scrollHeight);
+  },
+});
+
+export const OverlayFollowsResize = meta.story({
+  args: { top: 16, height: 24 },
+  play: async ({ canvasElement }) => {
+    const overlay = document.getElementById('storybook-rhythm');
+    const block = canvasElement.querySelector<HTMLElement>(
+      '[data-testid="block"]'
+    );
+    if (block) {
+      block.style.height = '4000px';
+    }
+
+    await waitFor(() =>
+      expect(overlay?.getBoundingClientRect().height).toBe(
+        document.documentElement.scrollHeight
+      )
+    );
+  },
+});
+
+export const MaxWidthDoesNotLeak = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', maxWidth: '400px' } },
+  play: async ({ canvasElement }) => {
+    const overlay = document.getElementById('storybook-rhythm');
+
+    await expect(overlay?.getBoundingClientRect().width).toBe(400);
+    await expectRhythm(canvasElement);
+  },
+});
+
+export const NoLeakAfterMaxWidth = meta.story({
+  args: { top: 16, height: 24 },
+  play: async () => {
+    const overlay = document.getElementById('storybook-rhythm');
+
+    await expect(overlay?.style.transform).toBe('');
+    await expect(overlay?.getBoundingClientRect().width).toBe(
+      document.documentElement.clientWidth
+    );
+  },
+});
+
+export const OffsetOutsideTheRootIsRejected = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', offset: 100000 } },
+  play: async ({ canvasElement }) => {
+    await expect(auditRhythm(canvasElement)).rejects.toMatchObject({
+      code: 'UNUSABLE_OVERLAY',
+    });
+  },
+});
+
+export const UnknownPresetIsRejected = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: 'nope' } },
+  play: async ({ canvasElement }) => {
+    await expect(auditRhythm(canvasElement)).rejects.toMatchObject({
+      code: 'UNKNOWN_PRESET',
+    });
+  },
+});
+
+export const AutomaticAudit = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', audit: 'error' } },
+});
+
+export const AutomaticAuditWithHiddenOverlay = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { preset: '8px', audit: 'error', hide: true } },
+});
+
+export const AutomaticAuditTodo = meta.story({
+  args: { top: 21, height: 19 },
+  parameters: { vrhythm: { preset: '8px', audit: 'todo' } },
 });

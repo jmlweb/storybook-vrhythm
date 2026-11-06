@@ -2,7 +2,7 @@
   "name": "@apps/html",
   "private": true,
   "scripts": {
-    "dev": "storybook dev -p 6008 --no-open",
+    "dev": "storybook dev -p 6008 --ci",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit"
   },

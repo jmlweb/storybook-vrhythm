@@ -1,12 +1,14 @@
 ---
 id: TSK-004
 title: Fix: Documented global config is ignored with a default-exported preview
-status: pending
+status: complete
 priority: P3
 tags: []
 created: 2026-11-06
 source: report/RPT-004
 depends-on: []
+completed: 2026-11-06
+started: 2026-11-06
 ---
 
 # Fix: Documented global config is ignored with a default-exported preview
@@ -25,9 +27,9 @@ The global defaults snippet uses `export const parameters`. Next to the `export 
 
 ## Acceptance Criteria
 
-- [ ] README and llms.txt show parameters inside the default-exported preview object
-- [ ] The manual decorator snippet is verified on the storybook init scaffold, and fixed if it fails
-- [ ] Following the docs on a fresh scaffold changes lineHeight from 16px to the configured value
+- [x] README and llms.txt show parameters inside the default-exported preview object — evidence: README Global defaults, llms.txt Global defaults (2026-11-07) (2026-11-06)
+- [x] The manual decorator snippet is verified on the storybook init scaffold, and fixed if it fails — evidence: manual: decorators in the default export ran on Storybook 10.6.6 scaffold; README and llms.txt updated (2026-11-07) (2026-11-06)
+- [x] Following the docs on a fresh scaffold changes lineHeight from 16px to the configured value — evidence: manual: scaffold audit reported the 8px grid (2026-11-07) (2026-11-06)
 
 ## Notes
 
@@ -36,3 +38,4 @@ The global defaults snippet uses `export const parameters`. Next to the `export 
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-06] Completed

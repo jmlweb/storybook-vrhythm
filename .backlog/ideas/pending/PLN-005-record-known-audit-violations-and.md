@@ -51,3 +51,4 @@ Split from PLN-003. On the Storybook scaffold, 7 of 8 Header edges and 25 of 26 
 
 - [2026-11-06] Added the PLN-003 and TSK-003 precondition, a comparison with `ignore` and `data-vrhythm-ignore`, the browser write limitation, tests, changeset and the `llms.txt` agent rule.
 - [2026-11-06] Pointed preconditions to TSK-011 and TSK-010 and added a re-review after TSK-011; moved matching to a new pure function with `tolerance`-based delta comparison and a `RhythmReport` field for stale entries; added origin-change and font-metrics risks.
+- [2026-11-07] TSK-010 and TSK-011 landed, so its preconditions are met and it is due for re-review. audit todo and auditOptions edges top now cover gradual adoption, so it may be unnecessary. The story anchor default removes the flapping deltas risk for centered stories.

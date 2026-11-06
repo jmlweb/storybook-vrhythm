@@ -1,10 +1,30 @@
-import { DIV_ID, LINE_HEIGHT_DATA_KEY } from './constants';
+import {
+  ANCHOR_DATA_KEY,
+  ANCHOR_PAGE,
+  ANCHOR_STORY,
+  DIV_ID,
+  LINE_HEIGHT_DATA_KEY,
+  STORY_ROOT_ATTRIBUTE,
+  UNKNOWN_PRESET_DATA_KEY,
+} from './constants';
 import type {
   RhythmGrid,
   RhythmMeasurement,
   RhythmViolation,
 } from './find-violations';
-import { findViolations, roundPx } from './find-violations';
+import { findViolations } from './find-violations';
+import {
+  createError,
+  RhythmErrorCode,
+  toAssertionError,
+} from './rhythm-errors';
+import {
+  isAnchorMissing,
+  measurePageTop,
+  queryOrNull,
+  resolveAnchor,
+  syncOverlay,
+} from './utils';
 
 export type {
   RhythmEdge,
@@ -12,18 +32,32 @@ export type {
   RhythmViolation,
 } from './find-violations';
 
+export type {
+  RhythmAssertionError,
+  RhythmConfigError,
+} from './rhythm-errors';
+export { RhythmErrorCode } from './rhythm-errors';
+
 export type RhythmCheck = 'box' | 'baseline';
+
+export type RhythmBoxEdge = 'top' | 'bottom';
 
 export interface AuditOptions {
   /** Grid size (`px`, `rem`, or a number of pixels). Default: read from the overlay. */
   lineHeight?: string | number;
   /**
-   * Grid start below the top of `root`. When set, it replaces the overlay's
-   * position as the origin. This differs from the story's `offset`, which is
-   * measured from the overlay's containing block. Default: the overlay's top,
-   * or the top of `root` when there is no overlay.
+   * Grid start below the top of `root`, or of `anchor` when set. This differs
+   * from the story's `offset`, which is always relative to the story's anchor.
+   * When set, it replaces the overlay's position as the origin. Default: the
+   * overlay's top, or the top of `root` when there is no overlay.
    */
   offset?: string | number;
+  /**
+   * What `offset` is measured from: `'story'`, `'page'` or a selector. When set,
+   * it replaces the overlay's position as the origin, so a hidden overlay can
+   * audit the same grid as a visible one. Default: `root`
+   */
+  anchor?: 'story' | 'page' | (string & {});
   /**
    * Allowed distance from a grid line, in pixels. Must be finite, 0 or more, and
    * under half of `lineHeight`, because no layout could fail a wider one.
@@ -32,23 +66,29 @@ export interface AuditOptions {
   tolerance?: number;
   /** What to measure. Default: `['box']` */
   checks?: readonly RhythmCheck[];
+  /**
+   * Which box edges to measure, for the `box` check. Checking `['top']` misses a
+   * wrong height. Default: `['top', 'bottom']`
+   */
+  edges?: readonly RhythmBoxEdge[];
   /** Selector for elements to skip, on top of `[data-vrhythm-ignore]`. */
   ignore?: string;
 }
 
-export type RhythmAssertionError = Error & { report: RhythmReport };
-
 export interface RhythmReport {
   ok: boolean;
   grid: RhythmGrid;
-  /** Edges and baselines measured. `0` means nothing was tested. */
+  /**
+   * Edges and baselines measured, after `checks`, `edges` and `ignore` apply.
+   * `0` means nothing was tested.
+   */
   checked: number;
   violations: RhythmViolation[];
 }
 
 const DEFAULT_TOLERANCE = 0.5;
 const IGNORE_SELECTOR = '[data-vrhythm-ignore]';
-const MAX_REPORTED_VIOLATIONS = 10;
+const DEFAULT_EDGES: readonly RhythmBoxEdge[] = ['top', 'bottom'];
 const LENGTH_PATTERN = /^(-?\d*\.?\d+)(px|rem)$/;
 const SAFE_IDENTIFIER = /^[A-Za-z][\w-]*$/;
 // Inline boxes fragment across lines, these don't. Inline `svg` stays out: it is
@@ -61,12 +101,6 @@ const REPLACED_TAGS = new Set([
   'OBJECT',
   'EMBED',
 ]);
-
-const createError = <T extends object>(
-  name: string,
-  message: string,
-  details?: T
-): Error & T => Object.assign(new Error(message), { name }, details);
 
 const toPixels = (value: string | number): number => {
   if (typeof value === 'number') {
@@ -97,6 +131,7 @@ const parseLength = (
   if (!Number.isFinite(pixels)) {
     throw createError(
       'RhythmConfigError',
+      RhythmErrorCode.INVALID_LENGTH,
       `Unsupported ${option}${source} "${value}": set the ${option} option in px, rem, or a number of pixels.`
     );
   }
@@ -104,15 +139,85 @@ const parseLength = (
   return pixels;
 };
 
+const anchorNotFound = (anchor: string | undefined): Error =>
+  createError(
+    'RhythmConfigError',
+    RhythmErrorCode.ANCHOR_NOT_FOUND,
+    `The anchor "${anchor}" matches no element. Fix the anchor selector.`
+  );
+
+// The overlay can lag the layout by a frame, and the origin must be exact now.
+const syncToAnchor = (overlay: HTMLElement, root: Element): void => {
+  const anchor = resolveAnchor(overlay, root);
+  if (isAnchorMissing(overlay, anchor)) {
+    throw anchorNotFound(overlay.dataset[ANCHOR_DATA_KEY]);
+  }
+  syncOverlay(overlay, anchor);
+};
+
+const resolveExplicitBase = (root: Element, anchor?: string): number => {
+  if (anchor === undefined) {
+    return root.getBoundingClientRect().top;
+  }
+  if (anchor === ANCHOR_PAGE) {
+    return measurePageTop();
+  }
+
+  const element =
+    anchor === ANCHOR_STORY
+      ? (root.closest(`[${STORY_ROOT_ATTRIBUTE}]`) ?? root)
+      : queryOrNull(anchor);
+  if (!element) {
+    throw anchorNotFound(anchor);
+  }
+  return element.getBoundingClientRect().top;
+};
+
+const assertUsableOverlay = (overlay: Element, root: Element): void => {
+  const area = overlay.getBoundingClientRect();
+  const box = root.getBoundingClientRect();
+  // An empty root has nothing to compare with, and `checked` reports it instead.
+  if (!box.height) {
+    return;
+  }
+
+  if (!area.height || !area.width) {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.UNUSABLE_OVERLAY,
+      `The overlay has no area (${area.width}x${area.height}px), so its position is not a grid. Check offset and maxWidth, or pass the offset option.`
+    );
+  }
+  if (area.top > box.bottom || area.bottom < box.top) {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.UNUSABLE_OVERLAY,
+      `The overlay (y=${area.top} to ${area.bottom}) lies outside root (y=${box.top} to ${box.bottom}). Check offset and anchor.`
+    );
+  }
+};
+
 const resolveGrid = (root: Element, options: AuditOptions): RhythmGrid => {
   const overlay = document.getElementById(DIV_ID);
+  const hasExplicitOrigin =
+    options.offset !== undefined || options.anchor !== undefined;
+  const unknownPreset = overlay?.dataset[UNKNOWN_PRESET_DATA_KEY];
+  if (unknownPreset) {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.UNKNOWN_PRESET,
+      `Unknown preset "${unknownPreset}": the overlay fell back to its default grid. Fix the preset name.`
+    );
+  }
+
   const lineHeightSource =
     options.lineHeight ?? overlay?.dataset[LINE_HEIGHT_DATA_KEY];
 
   if (lineHeightSource === undefined) {
     throw createError(
       'RhythmConfigError',
-      'No grid found: the overlay is hidden or missing. Pass the lineHeight option.'
+      RhythmErrorCode.NO_GRID,
+      'No grid found: there is no overlay, because it is hidden or the addon is not registered. Pass the lineHeight option.'
     );
   }
 
@@ -124,17 +229,27 @@ const resolveGrid = (root: Element, options: AuditOptions): RhythmGrid => {
   if (!(lineHeight > 0)) {
     throw createError(
       'RhythmConfigError',
+      RhythmErrorCode.INVALID_LENGTH,
       `lineHeight must be greater than 0, got "${lineHeightSource}".`
     );
   }
 
-  const rootTop = root.getBoundingClientRect().top;
-  const origin =
-    options.offset !== undefined
-      ? rootTop + parseLength(options.offset, 'offset')
-      : (overlay?.getBoundingClientRect().top ?? rootTop);
+  if (hasExplicitOrigin) {
+    return {
+      lineHeight,
+      origin:
+        resolveExplicitBase(root, options.anchor) +
+        parseLength(options.offset ?? 0, 'offset'),
+    };
+  }
+  if (!overlay) {
+    return { lineHeight, origin: root.getBoundingClientRect().top };
+  }
 
-  return { lineHeight, origin };
+  syncToAnchor(overlay, root);
+  assertUsableOverlay(overlay, root);
+
+  return { lineHeight, origin: overlay.getBoundingClientRect().top };
 };
 
 const describeStep = (element: Element): string => {
@@ -181,6 +296,7 @@ const createTextMeasurer = (): MeasureText => {
   if (!context) {
     throw createError(
       'RhythmConfigError',
+      RhythmErrorCode.UNMEASURABLE,
       'The baseline check needs canvas 2D, which this environment lacks.'
     );
   }
@@ -218,6 +334,7 @@ const createTextMeasurer = (): MeasureText => {
 const collectMeasurements = (
   root: Element,
   checks: readonly RhythmCheck[],
+  boxEdges: readonly RhythmBoxEdge[],
   ignoreSelector: string
 ): RhythmMeasurement[] => {
   const hasBoxCheck = checks.includes('box');
@@ -235,16 +352,17 @@ const collectMeasurements = (
       return { measurements: [], edges: parentEdges };
     }
 
-    const selector = describeElement(element, root);
+    const describe = () => describeElement(element, root);
     const edges = [
-      { selector, edge: 'top', y: top },
-      { selector, edge: 'bottom', y: bottom },
+      { describe, edge: 'top', y: top },
+      { describe, edge: 'bottom', y: bottom },
     ] as const;
 
     return {
       // A wrapper and its only child share edges: report the wrapper alone.
       measurements: edges.filter(
-        ({ edge, y }) => !parentEdges.has(`${edge}:${y}`)
+        ({ edge, y }) =>
+          boxEdges.includes(edge) && !parentEdges.has(`${edge}:${y}`)
       ),
       edges: new Set([
         ...parentEdges,
@@ -259,7 +377,7 @@ const collectMeasurements = (
     describe: () => string
   ): RhythmMeasurement[] =>
     (measureText?.(element, style) ?? []).map((y) => ({
-      selector: describe(),
+      describe,
       edge: 'baseline',
       y,
     }));
@@ -294,13 +412,31 @@ const collectMeasurements = (
 
   return [
     // `root` gets no box check, but a story may render bare text straight into it.
-    ...measureBaselines(
-      root,
-      getComputedStyle(root),
-      () => describeAnchor(root) ?? describeStep(root)
-    ),
+    ...(root.matches(ignoreSelector)
+      ? []
+      : measureBaselines(
+          root,
+          getComputedStyle(root),
+          () => describeAnchor(root) ?? describeStep(root)
+        )),
     ...Array.from(root.children).flatMap((child) => walk(child, new Set())),
   ];
+};
+
+const assertValidIgnore = (root: Element, ignore?: string): void => {
+  if (!ignore) {
+    return;
+  }
+
+  try {
+    root.matches(ignore);
+  } catch {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.INVALID_SELECTOR,
+      `ignore is not a valid selector: "${ignore}".`
+    );
+  }
 };
 
 const waitForFonts = async (): Promise<void> => {
@@ -323,19 +459,35 @@ export const auditRhythm = async (
 ): Promise<RhythmReport> => {
   await waitForFonts();
 
-  const { tolerance = DEFAULT_TOLERANCE, checks = ['box'], ignore } = options;
+  const {
+    tolerance = DEFAULT_TOLERANCE,
+    checks = ['box'],
+    edges = DEFAULT_EDGES,
+    ignore,
+  } = options;
+  if (edges.length === 0) {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.INVALID_EDGES,
+      'edges must name at least one of top or bottom: an empty list measures no box.'
+    );
+  }
   if (!Number.isFinite(tolerance) || tolerance < 0) {
     throw createError(
       'RhythmConfigError',
+      RhythmErrorCode.INVALID_TOLERANCE,
       `tolerance must be a finite number of pixels, 0 or more, got "${tolerance}".`
     );
   }
+
+  assertValidIgnore(root, ignore);
 
   const grid = resolveGrid(root, options);
   // Nothing can sit further than half a line from the nearest grid line.
   if (tolerance >= grid.lineHeight / 2) {
     throw createError(
       'RhythmConfigError',
+      RhythmErrorCode.INVALID_TOLERANCE,
       `tolerance must be under half of lineHeight, got ${tolerance} on a ${grid.lineHeight}px grid: no layout could fail.`
     );
   }
@@ -343,7 +495,7 @@ export const auditRhythm = async (
   const ignoreSelector = ignore
     ? `${IGNORE_SELECTOR}, ${ignore}`
     : IGNORE_SELECTOR;
-  const measurements = collectMeasurements(root, checks, ignoreSelector);
+  const measurements = collectMeasurements(root, checks, edges, ignoreSelector);
   // A NaN delta passes every tolerance check, so it must not reach findViolations.
   const unmeasurable = measurements.find(
     ({ y }) => !Number.isFinite(y - grid.origin)
@@ -351,7 +503,8 @@ export const auditRhythm = async (
   if (unmeasurable) {
     throw createError(
       'RhythmConfigError',
-      `Could not measure ${unmeasurable.selector} ${unmeasurable.edge}: got "${unmeasurable.y}" against origin "${grid.origin}". This environment lacks the layout or font metrics the audit needs.`
+      RhythmErrorCode.UNMEASURABLE,
+      `Could not measure ${unmeasurable.describe()} ${unmeasurable.edge}: got "${unmeasurable.y}" against origin "${grid.origin}". This environment lacks the layout or font metrics the audit needs.`
     );
   }
 
@@ -363,25 +516,6 @@ export const auditRhythm = async (
     checked: measurements.length,
     violations,
   };
-};
-
-const formatViolation = ({
-  selector,
-  edge,
-  actual,
-  nearest,
-  delta,
-}: RhythmViolation): string =>
-  `  ${selector} ${edge}: ${actual}px, nearest ${nearest}px (delta ${delta}px)`;
-
-const formatFailure = ({ grid, violations }: RhythmReport): string => {
-  const hiddenCount = violations.length - MAX_REPORTED_VIOLATIONS;
-
-  return [
-    `Expected elements on the ${grid.lineHeight}px grid starting at y=${roundPx(grid.origin)}px, found ${violations.length} off-grid:`,
-    ...violations.slice(0, MAX_REPORTED_VIOLATIONS).map(formatViolation),
-    ...(hiddenCount > 0 ? [`  ...and ${hiddenCount} more`] : []),
-  ].join('\n');
 };
 
 /**
@@ -400,18 +534,9 @@ export const expectRhythm = async (
   root: Element,
   options?: AuditOptions
 ): Promise<void> => {
-  const report = await auditRhythm(root, options);
+  const error = toAssertionError(await auditRhythm(root, options));
 
-  if (report.checked === 0) {
-    throw createError(
-      'RhythmAssertionError',
-      'Nothing was measured, so rhythm cannot be asserted. Check that root has rendered content and the environment has layout (jsdom does not).',
-      { report }
-    );
-  }
-  if (!report.ok) {
-    throw createError('RhythmAssertionError', formatFailure(report), {
-      report,
-    });
+  if (error) {
+    throw error;
   }
 };

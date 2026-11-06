@@ -1,7 +1,11 @@
 import { findViolations } from '../src/find-violations';
 
 const grid = { lineHeight: 8, origin: 0 };
-const measure = (y: number) => ({ selector: 'div', edge: 'top' as const, y });
+const measure = (y: number) => ({
+  describe: () => 'div',
+  edge: 'top' as const,
+  y,
+});
 
 describe('findViolations', () => {
   it('returns nothing for positions on the grid', () => {

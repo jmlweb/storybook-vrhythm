@@ -2,7 +2,7 @@
   "name": "@apps/vue",
   "private": true,
   "scripts": {
-    "dev": "storybook dev -p 6007 --no-open",
+    "dev": "storybook dev -p 6007 --ci",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit"
   },
