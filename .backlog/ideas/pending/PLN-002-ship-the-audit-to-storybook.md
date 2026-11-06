@@ -53,3 +53,4 @@ Docs only until Storybook 11 GA: `latest` stays on 0.5.0, and Storybook 10 reade
 
 - [2026-11-06] Added next.2 precondition and the dist-tag option; replaced the README step with a link to TSK-001; split out Storybook 10 CI work; noted that prerelease mode blocks a `0.6.0` from `main`.
 - [2026-11-06] Chose docs only until Storybook 11 GA; moved the dist-tag and `0.6.0` routes to rejected alternatives; recorded the Node `>=22.12` break; made the Storybook 10 CI job the main work; closed the open questions; complexity noted as medium in the body.
+- [2026-11-07] Fixed the npm-release branch policy (master to main), added the storybook-10 CI job and updated the README. Unit and browser tests pass on Storybook 10.6.6. Only the publish remains: it happens when the version PR for feat/agent-first merges.

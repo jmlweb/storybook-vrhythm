@@ -1,12 +1,14 @@
 ---
 id: TSK-005
 title: Fix: Overlay is on by default with no documented opt-out
-status: pending
+status: complete
 priority: P3
 tags: []
 created: 2026-11-06
 source: report/RPT-005
 depends-on: []
+completed: 2026-11-06
+started: 2026-11-06
 ---
 
 # Fix: Overlay is on by default with no documented opt-out
@@ -28,9 +30,9 @@ Installing the addon draws solid lines on every story and Docs page, and the doc
 
 ## Acceptance Criteria
 
-- [ ] A recipe to default the grid off is verified in a real Storybook and documented in README and llms.txt
-- [ ] The docs say how to keep the grid out of visual regression tests
-- [ ] Whether to soften the default colour and whether Docs shows the overlay is decided and recorded
+- [x] A recipe to default the grid off is verified in a real Storybook and documented in README and llms.txt — evidence: manual: scaffold with initialGlobals, overlay null, hidden audit passed on the offset grid; README Off by default, llms.txt Off by default (2026-11-07) (2026-11-06)
+- [x] The docs say how to keep the grid out of visual regression tests — evidence: README Off by default covers Chromatic (2026-11-07) (2026-11-06)
+- [x] Whether to soften the default colour and whether Docs shows the overlay is decided and recorded — evidence: Decided: default colour stays; Docs shows one page-anchored overlay. README Grid origin (2026-11-07) (2026-11-06)
 
 ## Notes
 
@@ -39,3 +41,4 @@ Installing the addon draws solid lines on every story and Docs page, and the doc
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-06] Completed

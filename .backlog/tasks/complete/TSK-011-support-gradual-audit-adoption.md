@@ -1,12 +1,14 @@
 ---
 id: TSK-011
 title: Support gradual audit adoption
-status: pending
+status: complete
 priority: P2
 tags: []
 created: 2026-11-06
 source: idea/PLN-003
 depends-on: []
+completed: 2026-11-06
+started: 2026-11-06
 ---
 
 # Support gradual audit adoption
@@ -42,14 +44,14 @@ The first run on scaffold components failed 7 of 8 edges on Header and 25 of 26 
 
 ## Acceptance Criteria
 
-- [ ] `edges` option typed as top or bottom, defaulting to both edges, so default behaviour is unchanged
-- [ ] `edges` filters in collectMeasurements, so report.checked counts what was measured and the checked === 0 guard still works; the meaning of checked is documented
-- [ ] Empty `edges` throws RhythmConfigError
-- [ ] expectRhythm message groups violations by equal delta, not adjacency, worded as a pattern and not a diagnosis; report.violations keeps the full list
-- [ ] MAX_REPORTED_VIOLATIONS counting is decided and the ...and N more count stays truthful
-- [ ] Tests cover the option and the message in test/audit.test.ts, and in test/find-violations.test.ts if grouping lives there
-- [ ] llms.txt fix workflow and README adoption path are updated, and say a top-only check misses a wrong height
-- [ ] Changeset added
+- [x] `edges` option typed as top or bottom, defaulting to both edges, so default behaviour is unchanged — evidence: edges tests, pnpm -F storybook-vrhythm test → 149 passed (2026-11-07) (2026-11-06)
+- [x] `edges` filters in collectMeasurements, so report.checked counts what was measured and the checked === 0 guard still works; the meaning of checked is documented — evidence: checked counted after filtering, pnpm -F storybook-vrhythm test → 149 passed; documented in README and llms.txt (2026-11-07) (2026-11-06)
+- [x] Empty `edges` throws RhythmConfigError — evidence: INVALID_EDGES, pnpm -F storybook-vrhythm test → 149 passed (2026-11-07) (2026-11-06)
+- [x] expectRhythm message groups violations by equal delta, not adjacency, worded as a pattern and not a diagnosis; report.violations keeps the full list — evidence: failure message tests, pnpm -F storybook-vrhythm test → 149 passed (2026-11-07) (2026-11-06)
+- [x] MAX_REPORTED_VIOLATIONS counting is decided and the ...and N more count stays truthful — evidence: Cap counts violations across groups, so the more count stays truthful; test in test/audit.test.ts (2026-11-07) (2026-11-06)
+- [x] Tests cover the option and the message in test/audit.test.ts, and in test/find-violations.test.ts if grouping lives there — evidence: test/audit.test.ts, pnpm -F storybook-vrhythm test → 149 passed (2026-11-07) (2026-11-06)
+- [x] llms.txt fix workflow and README adoption path are updated, and say a top-only check misses a wrong height — evidence: llms.txt Auditing rhythm and README Adopt it gradually (2026-11-07) (2026-11-06)
+- [x] Changeset added — evidence: .changeset/agent-readable-audit.md (2026-11-07) (2026-11-06)
 
 ## Notes
 
@@ -58,3 +60,4 @@ The first run on scaffold components failed 7 of 8 edges on Header and 25 of 26 
 ## Progress Log
 
 - [2026-11-06] Created
+- [2026-11-06] Completed
