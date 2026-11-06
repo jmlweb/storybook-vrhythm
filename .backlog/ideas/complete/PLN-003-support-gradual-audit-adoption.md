@@ -1,9 +1,11 @@
 ---
 id: PLN-003
 title: Support gradual audit adoption
-status: pending
+status: approved
 created: 2026-11-06
 complexity: medium
+reviewed: 2026-11-06
+task-id: TSK-011
 ---
 
 ## Goal

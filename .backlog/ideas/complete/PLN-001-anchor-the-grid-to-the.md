@@ -1,9 +1,11 @@
 ---
 id: PLN-001
 title: Anchor the grid to the story root
-status: pending
+status: approved
 created: 2026-11-06
 complexity: high
+reviewed: 2026-11-06
+task-id: TSK-010
 ---
 
 ## Goal

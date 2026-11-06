@@ -4,7 +4,7 @@
 
 | Status | Count |
 |--------|-------|
-| Pending | 9 |
+| Pending | 11 |
 | Active | 0 |
 | Blocked | 0 |
 | Complete | 0 |
@@ -26,6 +26,8 @@ _No active tasks._
 | TSK-007 | Fix: maxWidth styles leak into the next story and Docs | P3 |  | 2026-11-06 |
 | TSK-008 | Fix: Audit should reject a collapsed or off-canvas overlay | P3 |  | 2026-11-06 |
 | TSK-009 | Fix: Full type safety claim does not hold for classic registration | P4 |  | 2026-11-06 |
+| TSK-010 | Anchor the grid to the story root | P2 |  | 2026-11-06 |
+| TSK-011 | Support gradual audit adoption | P2 |  | 2026-11-06 |
 
 ## Recently Completed
 
