@@ -127,7 +127,7 @@ export const MaterialGrid = {
 | ----------- | ------- | ----------------------------------------- |
 | `material`  | `4px`   | Material Design uses a 4dp grid           |
 | `tailwind`  | `4px`   | Tailwind's spacing unit is 0.25rem        |
-| `bootstrap` | `8px`   | Bootstrap spacing steps are multiples of 8px |
+| `bootstrap` | `24px`  | Body text is 1rem × 1.5 line-height       |
 | `carbon`    | `8px`   | IBM Carbon uses an 8px mini-unit          |
 
 ### Column grid

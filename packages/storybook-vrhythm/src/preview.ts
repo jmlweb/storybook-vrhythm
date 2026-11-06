@@ -34,7 +34,7 @@ export default definePreviewAddon<{
           },
           {
             value: 'bootstrap',
-            title: 'Bootstrap (alias of 8px)',
+            title: 'Bootstrap (alias of 24px)',
             icon: 'grid',
           },
           { value: 'carbon', title: 'Carbon (alias of 8px)', icon: 'grid' },

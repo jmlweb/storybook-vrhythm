@@ -18,7 +18,7 @@ type BasePresetName = keyof typeof basePresets;
 export const presetAliases = {
   material: '4px',
   tailwind: '4px',
-  bootstrap: '8px',
+  bootstrap: '24px',
   carbon: '8px',
 } as const satisfies Record<string, BasePresetName>;
 

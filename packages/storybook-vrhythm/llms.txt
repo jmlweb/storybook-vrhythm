@@ -131,7 +131,7 @@ Aliases: these names add no style of their own. Each one is exactly the base pre
 | ----------- | ------- | ----------------------------------------- |
 | `material`  | `4px`   | Material Design uses a 4dp grid           |
 | `tailwind`  | `4px`   | Tailwind's spacing unit is 0.25rem        |
-| `bootstrap` | `8px`   | Bootstrap spacing steps are multiples of 8px |
+| `bootstrap` | `24px`  | Body text is 1rem × 1.5 line-height       |
 | `carbon`    | `8px`   | IBM Carbon uses an 8px mini-unit          |
 
 ## Exports
@@ -196,7 +196,7 @@ The addon registers a `vrhythm` global with these toolbar values:
 | `'32px'`     | Override with 32px preset                    |
 | `'material'` | Alias of `'4px'`                              |
 | `'tailwind'` | Alias of `'4px'`                              |
-| `'bootstrap'`| Alias of `'8px'`                              |
+| `'bootstrap'`| Alias of `'24px'`                             |
 | `'carbon'`   | Alias of `'8px'`                              |
 
 Story-level `hide: true` always overrides the toolbar toggle.
