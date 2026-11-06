@@ -22,7 +22,7 @@ Copy this into your agent:
 ```text
 Put <Component> on a <8px> baseline grid with storybook-vrhythm.
 
-1. Read https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/llms.txt, or node_modules/storybook-vrhythm/llms.txt if it is installed.
+1. Read https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/packages/storybook-vrhythm/llms.txt, or node_modules/storybook-vrhythm/llms.txt if it is installed.
 2. Install it with `npx storybook add storybook-vrhythm@next` and set `vrhythm: { lineHeight: '<8px>', audit: 'error' }` in the story's parameters.
 3. Run that story's tests in a real browser.
 4. Fix violations from the top: move each reported edge by -delta pixels, rerun after every change, and repeat until it passes.
@@ -42,7 +42,7 @@ npx storybook add storybook-vrhythm@next
 npx storybook add @storybook/addon-vitest # if you have no story tests yet
 ```
 
-Install `@next` even on Storybook 10: the `latest` tag is 0.x and has no audit.
+Install `@next` even on Storybook 10: the `latest` tag is 0.x and has no audit. The `audit` parameter needs `1.0.0-next.3` or later: older versions ignore it, so nothing fails.
 
 Audit every story from `.storybook/preview.ts`, with no `play` functions to write:
 

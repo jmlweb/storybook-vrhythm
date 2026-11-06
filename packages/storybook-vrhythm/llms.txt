@@ -6,7 +6,7 @@
 
 Do not judge a screenshot of the overlay. Use the audit's numbers.
 
-1. Install: `npx storybook add storybook-vrhythm@next`. Always use `@next`, also on Storybook 10: `latest` is 0.x and has no audit.
+1. Install: `npx storybook add storybook-vrhythm@next`. Always use `@next`, also on Storybook 10: `latest` is 0.x and has no audit. Confirm that `node_modules/storybook-vrhythm/package.json` says `1.0.0-next.3` or later: older versions ignore the `audit` parameter, so a pass proves nothing.
 2. Make sure the project runs story tests in a real browser: `@storybook/addon-vitest` with Playwright. Install it with `npx storybook add @storybook/addon-vitest` if missing. jsdom has no layout.
 3. Set the grid and turn on the audit, inside the default-exported object of `.storybook/preview.ts`, or in one component's `parameters`:
 

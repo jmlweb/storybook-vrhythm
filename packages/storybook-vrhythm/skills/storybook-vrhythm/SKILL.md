@@ -11,7 +11,7 @@ The audit reports each off-grid edge with an exact pixel delta. Use those number
 
 Skip any step the project already has. Check `package.json` and `.storybook/` first.
 
-1. Install: `npx storybook add storybook-vrhythm@next`. The `next` tag is required: `latest` is 0.x and has no audit. It supports Storybook 10 and 11.
+1. Install: `npx storybook add storybook-vrhythm@next`. The `next` tag is required: `latest` is 0.x and has no audit. It supports Storybook 10 and 11. Confirm that `node_modules/storybook-vrhythm/package.json` says `1.0.0-next.3` or later: older versions ignore the `audit` parameter, so a pass proves nothing.
 2. Install a test runner if missing: `npx storybook add @storybook/addon-vitest`. The audit needs a real browser. jsdom has no layout.
 3. Set the grid and turn on the audit inside the default-exported object in `.storybook/preview.ts`. A separate `export const parameters` next to `export default` is ignored.
 
