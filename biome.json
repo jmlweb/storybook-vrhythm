@@ -4,7 +4,7 @@
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true,
-    "defaultBranch": "master"
+    "defaultBranch": "main"
   },
   "files": {
     "includes": ["**", "!pnpm-lock.yaml", "!**/*.md"]

@@ -58,7 +58,7 @@
   },
   "storybook": {
     "displayName": "Vertical Rhythm Grid",
-    "icon": "https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/master/packages/storybook-vrhythm/icon.png",
+    "icon": "https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/packages/storybook-vrhythm/icon.png",
     "supportedFrameworks": [
       "react",
       "vue",

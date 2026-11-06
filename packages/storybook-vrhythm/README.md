@@ -7,7 +7,7 @@
 
 > Baseline grid overlay for Storybook. See your vertical rhythm while you build.
 
-![Vertical rhythm overlay example](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/master/storybook-vrhythm.jpg)
+![Vertical rhythm overlay example](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/storybook-vrhythm.jpg)
 
 Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customizable baseline grid on top of your stories so you can **see** alignment issues as you develop — not after you ship.
 
@@ -247,7 +247,7 @@ This addon makes the invisible grid visible during development, so spacing incon
 
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](https://github.com/jmlweb/storybook-vrhythm/blob/master/CONTRIBUTING.md) for the setup, or open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues).
+Contributions are welcome. See [CONTRIBUTING.md](https://github.com/jmlweb/storybook-vrhythm/blob/main/CONTRIBUTING.md) for the setup, or open an [issue](https://github.com/jmlweb/storybook-vrhythm/issues).
 
 ## Inspiration
 
@@ -255,9 +255,9 @@ Contributions are welcome. See [CONTRIBUTING.md](https://github.com/jmlweb/story
 
 ## License
 
-[MIT](https://github.com/jmlweb/storybook-vrhythm/blob/master/LICENSE)
+[MIT](https://github.com/jmlweb/storybook-vrhythm/blob/main/LICENSE)
 
 [npm-badge]: https://img.shields.io/npm/v/storybook-vrhythm.svg
 [npm]: https://www.npmjs.org/package/storybook-vrhythm
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license]: https://github.com/jmlweb/storybook-vrhythm/blob/master/LICENSE
+[license]: https://github.com/jmlweb/storybook-vrhythm/blob/main/LICENSE

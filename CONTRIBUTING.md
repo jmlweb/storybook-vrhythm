@@ -1,6 +1,6 @@
 # Contributing to storybook-vrhythm
 
-Bug reports, fixes and new ideas are all welcome. Everything happens through [GitHub issues](https://github.com/jmlweb/storybook-vrhythm/issues) and pull requests against `master`.
+Bug reports, fixes and new ideas are all welcome. Everything happens through [GitHub issues](https://github.com/jmlweb/storybook-vrhythm/issues) and pull requests against `main`.
 
 ## Setup
 
