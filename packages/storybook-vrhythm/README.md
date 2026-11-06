@@ -19,6 +19,7 @@ Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customi
 - **Column grids** — Optional vertical column overlay with configurable gutter width
 - **Fully customizable** — Color, line height, line width, offset, opacity, z-index, max width
 - **Rhythm audit** — Assert grid alignment in `play` functions, with exact pixel offsets in the failure
+- **Agent ready** — Ships `llms.txt` and a numeric audit, so coding agents can set it up and fix alignment without screenshots
 - **Lightweight** — Pure CSS overlay via `linear-gradient`. Zero runtime dependencies
 - **Non-intrusive** — `pointer-events: none` keeps your stories fully interactive
 - **TypeScript first** — Full type safety with Storybook parameter augmentation
@@ -183,7 +184,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 
 ## Auditing rhythm in tests
 
-The overlay shows the grid to people. `storybook-vrhythm/audit` measures it, so tests, CI and coding agents get numbers instead of a picture. Coding agents can read the usage guide at `node_modules/storybook-vrhythm/llms.txt`.
+The overlay shows the grid to people. `storybook-vrhythm/audit` measures it, so tests, CI and coding agents get numbers instead of a picture. See [Using with coding agents](#using-with-coding-agents) for a ready-made prompt.
 
 ```ts
 import { expectRhythm } from 'storybook-vrhythm/audit';
@@ -238,6 +239,28 @@ Options for both functions:
 - **Real layout required:** run it in a browser, such as `@storybook/addon-vitest` with Playwright. jsdom has no layout, so `expectRhythm` fails there with `Nothing was measured`.
 - **Hidden overlay:** with `hide: true` or the toolbar set to Hide, pass `lineHeight` yourself. The origin is then the top of `root`, not the top of the page.
 - **Default Storybook layout:** the `padded` layout adds 1rem of body padding, which is off a 24px grid. Use `layout: 'fullscreen'` for those stories.
+
+## Using with coding agents
+
+Coding agents such as Claude Code, Cursor and Copilot can set up the addon and fix alignment on their own. Two things make that work:
+
+- **`llms.txt`** ships in the package at `node_modules/storybook-vrhythm/llms.txt`. It holds the API, the options and the fix workflow in a form agents read well. It is also on [GitHub](https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/llms.txt).
+- **`storybook-vrhythm/audit`** returns numbers, not pixels. An agent can't judge a screenshot of a grid overlay, but it can move an edge by `-delta` pixels and rerun the test.
+
+Copy this prompt into your agent and replace the parts in `<...>`:
+
+```text
+Put <Component> on a <8px> baseline grid with storybook-vrhythm.
+
+1. Read node_modules/storybook-vrhythm/llms.txt first. If the package is not installed, add it as a dev dependency and register it in .storybook/main.ts, or in .storybook/preview.ts with definePreview if this project uses CSF Next.
+2. Set lineHeight to <8px> in parameters.vrhythm, globally in .storybook/preview.ts or in the story.
+3. Add `await expectRhythm(canvasElement)` from 'storybook-vrhythm/audit' to the play function of <path/to/Component.stories.tsx>.
+4. Run that story's tests with this project's Storybook test command. It must run in a real browser (Vitest + Playwright), not jsdom.
+5. Fix violations from the top down: move each reported edge by -delta pixels, rerun after every change, and repeat until the audit passes.
+6. Add data-vrhythm-ignore only to elements that are off-grid on purpose, and say why. Do not raise tolerance, lower lineHeight or delete the assertion to make the test pass.
+
+Report what you changed and the final audit result.
+```
 
 ## Why vertical rhythm?
 
