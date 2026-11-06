@@ -1,6 +1,10 @@
 import { getStyle } from '../src/getStyle';
 
 describe('getStyle', () => {
+  it('draws a numeric lineHeight in px', () => {
+    expect(getStyle({ lineHeight: 8 }).background).toContain('/ 1px 8px');
+  });
+
   it('works with default values', () => {
     const style = getStyle({});
     expect(style.top).toBe(0);

@@ -116,11 +116,35 @@ describe('auditRhythm', () => {
     expect(grid.lineHeight).toBe(10);
   });
 
-  it.each(['1em', '8', 'auto', '0px', 0, -8])(
+  it.each(['1em', '8', 'auto', '0px', 0, -8, Number.NaN, Infinity])(
     'rejects the lineHeight %s',
     async (lineHeight) => {
       await expect(
         auditRhythm(createRoot(), { lineHeight })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
+    }
+  );
+
+  it.each([Number.NaN, Infinity, -Infinity])(
+    'rejects the offset %s instead of passing',
+    async (offset) => {
+      const root = createRoot();
+      add(root, { top: 21, height: 19 });
+
+      await expect(
+        expectRhythm(root, { lineHeight: 8, offset })
+      ).rejects.toMatchObject({ name: 'RhythmConfigError' });
+    }
+  );
+
+  it.each([Number.NaN, Infinity, -1])(
+    'rejects the tolerance %s',
+    async (tolerance) => {
+      const root = createRoot();
+      add(root, { top: 21, height: 19 });
+
+      await expect(
+        expectRhythm(root, { lineHeight: 8, tolerance })
       ).rejects.toMatchObject({ name: 'RhythmConfigError' });
     }
   );
@@ -265,11 +289,16 @@ describe('auditRhythm', () => {
       return getClientRects;
     };
 
-    const fakeCanvas = (ascent: number) =>
-      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+    const fakeCanvas = (ascent: number) => {
+      const context = {
         font: '',
         measureText: () => ({ fontBoundingBoxAscent: ascent }),
-      } as unknown as RenderingContext);
+      };
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
+        context as unknown as RenderingContext
+      );
+      return context;
+    };
 
     afterEach(() => {
       vi.restoreAllMocks();
@@ -288,6 +317,24 @@ describe('auditRhythm', () => {
 
       expect(checked).toBe(2);
       expect(violations).toEqual([]);
+    });
+
+    it('measures with the font of the element', async () => {
+      textRects([4]);
+      const context = fakeCanvas(12);
+      const root = createRoot();
+      const text = add(root, { top: 0, height: 24 }, 'p');
+      text.textContent = 'Text';
+      Object.assign(text.style, {
+        fontStyle: 'italic',
+        fontWeight: '700',
+        fontSize: '20px',
+        fontFamily: 'Georgia',
+      });
+
+      await auditRhythm(root, { lineHeight: 8, checks: ['baseline'] });
+
+      expect(context.font).toBe('italic 700 20px Georgia');
     });
 
     it('reports an off-grid baseline', async () => {

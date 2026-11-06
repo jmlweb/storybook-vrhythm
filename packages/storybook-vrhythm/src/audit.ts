@@ -64,11 +64,7 @@ const createError = <T extends object>(
   details?: T
 ): Error & T => Object.assign(new Error(message), { name }, details);
 
-const parseLength = (
-  value: string | number,
-  option: string,
-  source = ''
-): number => {
+const toPixels = (value: string | number): number => {
   if (typeof value === 'number') {
     return value;
   }
@@ -78,16 +74,30 @@ const parseLength = (
 
   const match = LENGTH_PATTERN.exec(value.trim());
   if (!match) {
-    throw createError(
-      'RhythmConfigError',
-      `Unsupported ${option}${source} "${value}": set the ${option} option in px, rem, or a number of pixels.`
-    );
+    return Number.NaN;
   }
 
   const size = Number(match[1]);
   return match[2] === 'rem'
     ? size * parseFloat(getComputedStyle(document.documentElement).fontSize)
     : size;
+};
+
+// A non-finite grid turns every delta into NaN, which no tolerance check can flag.
+const parseLength = (
+  value: string | number,
+  option: string,
+  source = ''
+): number => {
+  const pixels = toPixels(value);
+  if (!Number.isFinite(pixels)) {
+    throw createError(
+      'RhythmConfigError',
+      `Unsupported ${option}${source} "${value}": set the ${option} option in px, rem, or a number of pixels.`
+    );
+  }
+
+  return pixels;
 };
 
 const resolveGrid = (root: Element, options: AuditOptions): RhythmGrid => {
@@ -310,6 +320,13 @@ export const auditRhythm = async (
   await waitForFonts();
 
   const { tolerance = DEFAULT_TOLERANCE, checks = ['box'], ignore } = options;
+  if (!Number.isFinite(tolerance) || tolerance < 0) {
+    throw createError(
+      'RhythmConfigError',
+      `tolerance must be a finite number of pixels, 0 or more, got "${tolerance}".`
+    );
+  }
+
   const grid = resolveGrid(root, options);
   const ignoreSelector = ignore
     ? `${IGNORE_SELECTOR}, ${ignore}`

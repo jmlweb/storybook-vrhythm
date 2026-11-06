@@ -47,9 +47,10 @@ export const GridFromPreset = meta.story({
   args: { top: 12, height: 24 },
   parameters: { vrhythm: { preset: '4px' } },
   play: async ({ canvasElement }) => {
-    const { grid, ok } = await auditRhythm(canvasElement);
+    const { grid, ok, checked } = await auditRhythm(canvasElement);
 
     await expect(grid.lineHeight).toBe(4);
+    await expect(checked).toBe(2);
     await expect(ok).toBe(true);
   },
 });
@@ -62,52 +63,122 @@ export const GridWithOffset = meta.story({
   },
 });
 
+export const NumericLineHeight = meta.story({
+  args: { top: 16, height: 24 },
+  parameters: { vrhythm: { lineHeight: 8 } },
+  play: async ({ canvasElement }) => {
+    await expectRhythm(canvasElement);
+  },
+});
+
 export const HiddenOverlayNeedsOptions = meta.story({
   args: { top: 16, height: 24 },
   parameters: { vrhythm: { hide: true } },
   play: async ({ canvasElement }) => {
     await expect(expectRhythm(canvasElement)).rejects.toThrow('No grid found');
 
-    const { grid, ok } = await auditRhythm(canvasElement, {
+    const { grid, ok, checked } = await auditRhythm(canvasElement, {
       lineHeight: '8px',
     });
 
     await expect(grid.origin).toBe(canvasElement.getBoundingClientRect().top);
+    await expect(checked).toBe(2);
     await expect(ok).toBe(true);
   },
 });
 
-const FONT_SIZES = [12, 16, 24, 40];
+// The default tolerance is the accuracy the audit promises. Measured against local
+// macOS only; layout ascent rounding may differ per platform, so stay at that bound.
+const BASELINE_ACCURACY = 0.5;
+
+const Probe = () => <span data-probe style={{ display: 'inline-block' }} />;
+
+// An empty inline-block sits on the baseline, so it gives the browser's own answer.
+const probeBaselines = (canvasElement: HTMLElement) =>
+  Array.from(canvasElement.querySelectorAll('[data-probe]')).map(
+    (probe) => probe.getBoundingClientRect().bottom
+  );
+
+const auditBaselines = async (canvasElement: HTMLElement) => {
+  // A huge grid at zero tolerance reports every baseline as a violation.
+  const { grid, violations } = await auditRhythm(canvasElement, {
+    lineHeight: 100000,
+    tolerance: 0,
+    checks: ['baseline'],
+  });
+
+  return violations.map(({ actual }) => actual + grid.origin);
+};
+
+const expectBaseline = (measured: number, expected: number) =>
+  expect(Math.abs(measured - expected)).toBeLessThanOrEqual(BASELINE_ACCURACY);
+
+const TEXT_STYLES = [
+  { fontSize: 12 },
+  { fontSize: 16 },
+  { fontSize: 24 },
+  { fontSize: 40 },
+  { fontWeight: 'bold' },
+  { fontStyle: 'italic' },
+  { lineHeight: '32px' },
+];
 
 export const BaselineMatchesBrowser = meta.story({
   args: { top: 0, height: 0 },
   render: () => (
     <>
-      {FONT_SIZES.map((fontSize) => (
-        <p key={fontSize} style={{ fontSize, margin: 0 }}>
+      {TEXT_STYLES.map((style) => (
+        <p key={JSON.stringify(style)} style={{ ...style, margin: 0 }}>
           Baseline
-          <span data-probe style={{ display: 'inline-block' }} />
+          <Probe />
         </p>
       ))}
     </>
   ),
   play: async ({ canvasElement }) => {
-    // An empty inline-block sits on the baseline, so it gives the browser's own answer.
-    const expected = Array.from(
-      canvasElement.querySelectorAll('[data-probe]')
-    ).map((probe) => probe.getBoundingClientRect().bottom);
+    const expected = probeBaselines(canvasElement);
+    const measured = await auditBaselines(canvasElement);
 
-    const { grid, violations } = await auditRhythm(canvasElement, {
-      lineHeight: 100000,
-      tolerance: 0,
-      checks: ['baseline'],
-    });
+    await expect(measured).toHaveLength(TEXT_STYLES.length);
+    for (const [index, baseline] of measured.entries()) {
+      await expectBaseline(baseline, expected[index]);
+    }
+  },
+});
 
-    await expect(violations).toHaveLength(FONT_SIZES.length);
-    violations.forEach(({ actual }, index) => {
-      expect(
-        Math.abs(actual + grid.origin - expected[index])
-      ).toBeLessThanOrEqual(1);
-    });
+export const BaselineOfWrappedText = meta.story({
+  args: { top: 0, height: 0 },
+  render: () => (
+    <p style={{ margin: 0, width: 'min-content' }}>
+      <Probe />
+      Three wrapped lines
+      <Probe />
+    </p>
+  ),
+  play: async ({ canvasElement }) => {
+    const [firstLine, lastLine] = probeBaselines(canvasElement);
+    const measured = await auditBaselines(canvasElement);
+
+    await expect(measured).toHaveLength(3);
+    await expectBaseline(measured[0], firstLine);
+    await expectBaseline(measured[2], lastLine);
+  },
+});
+
+export const BaselineOfInlineElement = meta.story({
+  args: { top: 0, height: 0 },
+  render: () => (
+    <p style={{ margin: 0 }}>
+      Plain <em>emphasised</em>
+      <Probe />
+    </p>
+  ),
+  play: async ({ canvasElement }) => {
+    const [line] = probeBaselines(canvasElement);
+    const measured = await auditBaselines(canvasElement);
+
+    await expect(measured).toHaveLength(2);
+    await expectBaseline(measured[0], line);
+    await expectBaseline(measured[1], line);
   },
 });

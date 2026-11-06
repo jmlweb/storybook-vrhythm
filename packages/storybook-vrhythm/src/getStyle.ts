@@ -8,6 +8,9 @@ import {
 } from './constants';
 import type { StyleObj, StyleProps } from './types';
 
+export const toCssLength = (value: string | number): string =>
+  typeof value === 'number' ? `${value}px` : value;
+
 export const getStyle = ({
   color = DEFAULT_COLOR,
   lineHeight = DEFAULT_LINE_HEIGHT,
@@ -20,7 +23,7 @@ export const getStyle = ({
   columnColor,
   gutterWidth,
 }: StyleProps): StyleObj => {
-  const horizontal = `linear-gradient(${color} ${lineWidth}, transparent ${lineWidth}) left top / ${lineWidth} ${lineHeight}`;
+  const horizontal = `linear-gradient(${color} ${lineWidth}, transparent ${lineWidth}) left top / ${lineWidth} ${toCssLength(lineHeight)}`;
 
   const columnGradient =
     columnWidth != null
