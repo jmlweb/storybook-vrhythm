@@ -3,8 +3,10 @@ id: RPT-006
 title: container option has no working obvious target
 type: bug
 severity: medium
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-006
 ---
 
 ## Summary

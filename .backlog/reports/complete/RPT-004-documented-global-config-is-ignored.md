@@ -3,8 +3,10 @@ id: RPT-004
 title: Documented global config is ignored with a default-exported preview
 type: bug
 severity: medium
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-004
 ---
 
 ## Summary

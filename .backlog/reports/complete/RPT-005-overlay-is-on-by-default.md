@@ -3,8 +3,10 @@ id: RPT-005
 title: Overlay is on by default with no documented opt-out
 type: improvement
 severity: medium
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-005
 ---
 
 ## Summary

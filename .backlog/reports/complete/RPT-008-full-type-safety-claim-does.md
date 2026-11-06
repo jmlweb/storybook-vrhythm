@@ -3,8 +3,10 @@ id: RPT-008
 title: Full type safety claim does not hold for classic registration
 type: finding
 severity: low
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-009
 ---
 
 ## Summary

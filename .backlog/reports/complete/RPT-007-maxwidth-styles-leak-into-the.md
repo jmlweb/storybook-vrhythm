@@ -3,8 +3,10 @@ id: RPT-007
 title: maxWidth styles leak into the next story and Docs
 type: bug
 severity: medium
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-007
 ---
 
 ## Summary

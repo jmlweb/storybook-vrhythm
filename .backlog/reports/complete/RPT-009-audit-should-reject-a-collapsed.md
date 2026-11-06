@@ -3,8 +3,10 @@ id: RPT-009
 title: Audit should reject a collapsed or off-canvas overlay
 type: improvement
 severity: medium
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-008
 ---
 
 ## Summary

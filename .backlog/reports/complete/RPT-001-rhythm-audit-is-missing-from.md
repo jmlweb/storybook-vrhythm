@@ -3,8 +3,10 @@ id: RPT-001
 title: Rhythm audit is missing from the default install
 type: finding
 severity: high
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-001
 ---
 
 ## Summary

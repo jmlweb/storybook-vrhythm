@@ -3,8 +3,10 @@ id: RPT-003
 title: Audit result depends on viewport height in centered layout
 type: bug
 severity: high
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-003
 ---
 
 ## Summary

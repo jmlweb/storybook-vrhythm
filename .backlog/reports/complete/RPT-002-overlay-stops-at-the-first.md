@@ -3,8 +3,10 @@ id: RPT-002
 title: Overlay stops at the first viewport on tall stories
 type: bug
 severity: high
-status: pending
+status: triaged
 created: 2026-11-06
+triaged: 2026-11-06
+task-id: TSK-002
 ---
 
 ## Summary
