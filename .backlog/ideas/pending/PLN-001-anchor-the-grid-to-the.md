@@ -16,12 +16,15 @@ The overlay is `position: absolute` on `body`, so the grid starts at y=0 and sto
 
 ## Approach
 
-1. Add a way to resolve the anchor element after the story has rendered, since the decorator runs before `storyFn`.
-2. Position the overlay against that element's document position and cover its full height, or the document's for `fullscreen`.
-3. Keep it in sync when the element resizes or moves, without adding dependencies.
-4. Make `resolveGrid` use the same origin, so picture and numbers agree.
-5. Define Docs behaviour, with one anchor per story rather than one body-wide overlay.
-6. Add `Audit.stories.tsx` coverage for `centered`, `padded`, `fullscreen` and tall stories at several viewport heights.
+1. Ship the anchor as an opt-in `anchor` option first. Leave the default unchanged, so no existing grid moves. Decide the default separately, before `1.0.0` GA.
+2. Place the overlay after the story renders. The decorator runs before `storyFn`, so use a hook such as `useEffect` from `storybook/preview-api`. Prove it works in `apps/react`, `apps/vue` and `apps/html`, and on both registration paths.
+3. Position the overlay against the anchor's document position and cover its full height, or the document's for `fullscreen`.
+4. Keep it in sync when the element resizes or moves, without adding dependencies.
+5. Make `resolveGrid` use the same origin, so picture and numbers agree.
+6. Docs: keep one `#storybook-rhythm` element, because `audit.ts` finds the overlay with `getElementById(DIV_ID)`. Define which story's anchor it follows in Docs, and record that rule in the README.
+7. Add `Audit.stories.tsx` coverage for `centered`, `padded`, `fullscreen` and tall stories at several viewport heights. Today the file has only `layout: 'fullscreen'` stories.
+8. Add unit tests in `test/utils.test.ts` and `test/audit.test.ts`.
+9. Add a changeset and update the module notes in `AGENTS.md`.
 
 ## Files to Modify
 
@@ -29,18 +32,34 @@ The overlay is `position: absolute` on `body`, so the grid starts at y=0 and sto
 - `packages/storybook-vrhythm/src/utils.ts` — anchor resolution and placement
 - `packages/storybook-vrhythm/src/getStyle.ts` — sizing no longer tied to `body`
 - `packages/storybook-vrhythm/src/audit.ts` — shared origin
-- `packages/storybook-vrhythm/src/types.ts` — new option, if it is an option
+- `packages/storybook-vrhythm/src/types.ts` — the `anchor` option
+- `packages/storybook-vrhythm/test/utils.test.ts` and `test/audit.test.ts` — new coverage
 - `packages/storybook-vrhythm/README.md` and `packages/storybook-vrhythm/llms.txt` — layout guidance
 - `apps/react/src/stories/Audit.stories.tsx` — real layout coverage
+- `AGENTS.md` — module notes
+- `.changeset/` — new changeset
 
 ## Risks & Considerations
 
 - `DIV_ID` and `PARENT_SELECTOR` must not change, since consumers may depend on `#storybook-rhythm`.
-- Do not append inside a framework root: `#storybook-root` lost the overlay in testing.
+- Do not append inside a framework root: `#storybook-root` lost the overlay in testing (React only; the cause is unconfirmed).
+- Hook-based placement may flash the grid at the old position for one frame.
 - All three apps and both registration paths must keep working.
-- A changed default shifts the grid for existing users, so it belongs before `1.0.0`.
+- Making `anchor` the default later shifts the grid for existing users, so decide it before `1.0.0` GA.
+
+## Tasks this idea would close
+
+- TSK-002: overlay stops at the first viewport on tall stories
+- TSK-003: audit result depends on viewport height in centered layout
+- TSK-006: `container` option has no working obvious target
+
+Do not approve this idea and those tasks separately. Decide which route owns them first.
 
 ## Open Questions
 
-- Should this be the new default, or an opt-in `anchor` option?
+- Should `anchor` become the default at `1.0.0` GA?
 - In `fullscreen`, is the root the same as the page for every framework?
+
+## Revision History
+
+- [2026-11-06] Opt-in `anchor` first; hook-based placement named; Docs rule that keeps `DIV_ID`; test, changeset and `AGENTS.md` steps added; overlapping tasks listed.
