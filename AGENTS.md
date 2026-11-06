@@ -135,7 +135,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Published to npm as `storybook-vrhythm`
 - Only `dist/` and `llms.txt` are included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
 - `packages/storybook-vrhythm/llms.txt` is the source. The root `llms.txt` is a symlink to it
-- Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing
+- Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing. The npm entry names workflow `publish.yml` and environment `npm-release`, so keep both names in sync
 - The repo is in Changesets prerelease mode (`.changeset/pre.json`), so releases go to the `next` dist-tag. At Storybook 11 GA, run `pnpm changeset pre exit` to release `1.0.0` to `latest`
 - ESM-only (`"type": "module"`)
 
