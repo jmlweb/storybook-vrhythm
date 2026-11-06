@@ -8,7 +8,8 @@ export interface RhythmGrid {
 }
 
 export interface RhythmMeasurement {
-  selector: string;
+  /** Building a selector walks the tree, so only violations pay for it. */
+  describe: () => string;
   edge: RhythmEdge;
   /** Viewport Y coordinate, in pixels. */
   y: number;
@@ -34,7 +35,7 @@ export const findViolations = (
   { lineHeight, origin }: RhythmGrid,
   tolerance: number
 ): RhythmViolation[] =>
-  measurements.flatMap(({ selector, edge, y }) => {
+  measurements.flatMap(({ describe, edge, y }) => {
     const actual = y - origin;
     const nearest = Math.round(actual / lineHeight) * lineHeight;
     const delta = actual - nearest;
@@ -42,7 +43,7 @@ export const findViolations = (
     return Math.abs(delta) > tolerance
       ? [
           {
-            selector,
+            selector: describe(),
             edge,
             actual: roundPx(actual),
             nearest: roundPx(nearest),

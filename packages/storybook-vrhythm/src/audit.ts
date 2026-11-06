@@ -352,10 +352,10 @@ const collectMeasurements = (
       return { measurements: [], edges: parentEdges };
     }
 
-    const selector = describeElement(element, root);
+    const describe = () => describeElement(element, root);
     const edges = [
-      { selector, edge: 'top', y: top },
-      { selector, edge: 'bottom', y: bottom },
+      { describe, edge: 'top', y: top },
+      { describe, edge: 'bottom', y: bottom },
     ] as const;
 
     return {
@@ -377,7 +377,7 @@ const collectMeasurements = (
     describe: () => string
   ): RhythmMeasurement[] =>
     (measureText?.(element, style) ?? []).map((y) => ({
-      selector: describe(),
+      describe,
       edge: 'baseline',
       y,
     }));
@@ -504,7 +504,7 @@ export const auditRhythm = async (
     throw createError(
       'RhythmConfigError',
       RhythmErrorCode.UNMEASURABLE,
-      `Could not measure ${unmeasurable.selector} ${unmeasurable.edge}: got "${unmeasurable.y}" against origin "${grid.origin}". This environment lacks the layout or font metrics the audit needs.`
+      `Could not measure ${unmeasurable.describe()} ${unmeasurable.edge}: got "${unmeasurable.y}" against origin "${grid.origin}". This environment lacks the layout or font metrics the audit needs.`
     );
   }
 

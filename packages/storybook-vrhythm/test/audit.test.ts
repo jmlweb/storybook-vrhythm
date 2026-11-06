@@ -669,6 +669,19 @@ describe('anchor option', () => {
   });
 });
 
+describe('selectors', () => {
+  it('are not built for on-grid elements', async () => {
+    const root = createRoot();
+    const child = add(root, { top: 8, height: 16 });
+    const readClassList = vi.fn(() => child.ownerDocument.body.classList);
+    Object.defineProperty(child, 'classList', { get: readClassList });
+
+    await auditRhythm(root, { lineHeight: 8 });
+
+    expect(readClassList).not.toHaveBeenCalled();
+  });
+});
+
 describe('edges', () => {
   it('measures only the named edges and counts what it measured', async () => {
     const root = createRoot();
