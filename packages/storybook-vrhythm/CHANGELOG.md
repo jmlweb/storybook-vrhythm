@@ -1,5 +1,11 @@
 # storybook-vrhythm
 
+## 1.0.0-next.2
+
+### Patch Changes
+
+- [#43](https://github.com/jmlweb/storybook-vrhythm/pull/43) [`ee857f8`](https://github.com/jmlweb/storybook-vrhythm/commit/ee857f8da44495ea4f0ee827fdb4f46d83496779) Thanks [@jmlweb](https://github.com/jmlweb)! - `auditRhythm` and `expectRhythm` now throw `RhythmConfigError` instead of passing when `offset`, `lineHeight` or `tolerance` is not finite, when `tolerance` is negative or at least half of `lineHeight`, or when an edge or baseline cannot be measured. Numeric `lineHeight`, `lineWidth`, `offset`, `maxWidth`, `columnWidth` and `gutterWidth` values now mean pixels, so the overlay no longer drops or ignores them.
+
 ## 1.0.0-next.1
 
 ### Minor Changes
