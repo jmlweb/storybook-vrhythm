@@ -20,7 +20,7 @@ packages/
       utils.ts              # DOM manipulation (inject/remove overlay element)
       find-violations.ts    # Compares measurements to the grid
       audit.ts              # auditRhythm and expectRhythm (storybook-vrhythm/audit export)
-      presets.ts            # Built-in rhythm presets (4px, 8px, 12px, 16px, 24px, 32px, material, tailwind, bootstrap)
+      presets.ts            # Built-in rhythm presets (pixel grids 4px to 32px, plus aliases material, tailwind, bootstrap, carbon)
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
       storybook-parameter-augmentation.ts  # Type augmentation for Storybook parameters/globals
@@ -86,7 +86,7 @@ pnpm -F storybook-vrhythm typecheck
 - `pointerEvents: 'none'` ensures the overlay doesn't interfere with interaction
 - Parameters are passed via Storybook's story-level `parameters.vrhythm`
 - Visibility can be toggled via Storybook toolbar (globals) or per-story `hide` param
-- Presets provide ready-made configurations (e.g., `material`, `tailwind`, `bootstrap`)
+- Presets provide ready-made configurations. Design-system names (`material`, `tailwind`, `bootstrap`, `carbon`) are aliases in `presetAliases`: they resolve to a base pixel preset and have no style of their own
 - The package supports manual decorator usage, automatic preset registration and CSF Next (`definePreview({ addons: [vrhythm()] })`)
 
 ## Architecture Notes

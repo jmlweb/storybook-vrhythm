@@ -15,7 +15,7 @@ Stop guessing if your spacing is consistent. `storybook-vrhythm` draws a customi
 
 - **Framework agnostic** — React, Vue, Angular, Svelte, Web Components, HTML
 - **Toolbar toggle** — Show/hide the grid from Storybook's toolbar, no reload needed
-- **Built-in presets** — Material, Tailwind, Bootstrap, and pixel-based grids ready to use
+- **Built-in presets** — pixel-based grids plus Material, Tailwind, Bootstrap, and Carbon aliases ready to use
 - **Column grids** — Optional vertical column overlay with configurable gutter width
 - **Fully customizable** — Color, line height, line width, offset, opacity, z-index, max width
 - **Rhythm audit** — Assert grid alignment in `play` functions, with exact pixel offsets in the failure
