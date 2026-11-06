@@ -1,5 +1,11 @@
 # storybook-vrhythm
 
+## 1.0.0-next.1
+
+### Minor Changes
+
+- [#40](https://github.com/jmlweb/storybook-vrhythm/pull/40) [`7e2e784`](https://github.com/jmlweb/storybook-vrhythm/commit/7e2e7848805368dd2ad595d4a0c78ead4cc7427b) Thanks [@jmlweb](https://github.com/jmlweb)! - Add `storybook-vrhythm/audit` with `auditRhythm` and `expectRhythm`. They measure elements against the baseline grid in a real browser and report exact pixel offsets, for use in `play` functions. The package now ships `llms.txt`.
+
 ## 1.0.0-next.0
 
 ### Major Changes
