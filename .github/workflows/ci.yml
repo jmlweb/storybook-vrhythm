@@ -70,10 +70,13 @@ jobs:
       # The lockfile pins Storybook 11, so this job resolves its own dependencies.
       - name: Override Storybook with version 10
         run: |
-          for package in storybook @storybook/react @storybook/react-vite @storybook/addon-vitest \
-            @storybook/vue3 @storybook/vue3-vite @storybook/html @storybook/html-vite; do
-            sed -i "/^overrides:/a\\  \"$package\": ^10.0.0" pnpm-workspace.yaml
-          done
+          node --input-type=module -e "
+            import { readFileSync, writeFileSync } from 'node:fs';
+            const packages = ['storybook', '@storybook/react', '@storybook/react-vite', '@storybook/addon-vitest', '@storybook/vue3', '@storybook/vue3-vite', '@storybook/html', '@storybook/html-vite'];
+            const entries = packages.map((name) => '  \"' + name + '\": ^10.0.0').join('\n');
+            const file = 'pnpm-workspace.yaml';
+            writeFileSync(file, readFileSync(file, 'utf8').replace('overrides:', 'overrides:\n' + entries));
+          "
           pnpm install --no-frozen-lockfile
 
       - run: pnpm -F @apps/react exec playwright install --with-deps chromium
