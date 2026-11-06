@@ -1,5 +1,25 @@
 # storybook-vrhythm
 
+## 1.0.0-next.3
+
+### Major Changes
+
+- [#48](https://github.com/jmlweb/storybook-vrhythm/pull/48) [`3b89152`](https://github.com/jmlweb/storybook-vrhythm/commit/3b89152d3d40704c6f2630b03dd4f46ee8c3f2ff) Thanks [@jmlweb](https://github.com/jmlweb)! - Anchor the grid to the story root by default, through the new `anchor` option (`'story'`, `'page'` or a selector). The overlay and the audit now share one origin, so audits give the same result in `centered`, `padded` and `fullscreen` at any viewport height. The overlay also covers tall stories and follows resizes. Use `anchor: 'page'` for the previous origin. `container` is deprecated: it now acts as a selector anchor, and the overlay always stays on `body`. Docs pages always use `'page'`.
+
+### Minor Changes
+
+- [#48](https://github.com/jmlweb/storybook-vrhythm/pull/48) [`3b89152`](https://github.com/jmlweb/storybook-vrhythm/commit/3b89152d3d40704c6f2630b03dd4f46ee8c3f2ff) Thanks [@jmlweb](https://github.com/jmlweb)! - Add the `edges` and `anchor` audit options, group equal deltas in the failure message, end it with a fix hint, and add a stable `code` to audit errors (`RhythmErrorCode`).
+
+- [#48](https://github.com/jmlweb/storybook-vrhythm/pull/48) [`7df7501`](https://github.com/jmlweb/storybook-vrhythm/commit/7df7501360e63de503eda39ddc0095c3b0c9185d) Thanks [@jmlweb](https://github.com/jmlweb)! - Ship an Agent Skill in `skills/`, and lead the README and `llms.txt` with the agent workflow.
+
+- [#48](https://github.com/jmlweb/storybook-vrhythm/pull/48) [`3b89152`](https://github.com/jmlweb/storybook-vrhythm/commit/3b89152d3d40704c6f2630b03dd4f46ee8c3f2ff) Thanks [@jmlweb](https://github.com/jmlweb)! - Add `parameters.vrhythm.audit` (`'error'`, `'todo'`, `'off'`) and `auditOptions` to audit every story with no `play` function. `'error'` fails the story, so the result reaches Vitest and `@storybook/addon-mcp`.
+
+### Patch Changes
+
+- [#48](https://github.com/jmlweb/storybook-vrhythm/pull/48) [`e2401af`](https://github.com/jmlweb/storybook-vrhythm/commit/e2401afd4771435d3f8c5ae8be3085ab44496b78) Thanks [@jmlweb](https://github.com/jmlweb)! - Report a malformed `ignore` selector as a `RhythmConfigError` with the code `INVALID_SELECTOR`, instead of a raw `DOMException`.
+
+- [#48](https://github.com/jmlweb/storybook-vrhythm/pull/48) [`3b89152`](https://github.com/jmlweb/storybook-vrhythm/commit/3b89152d3d40704c6f2630b03dd4f46ee8c3f2ff) Thanks [@jmlweb](https://github.com/jmlweb)! - Reject grids the audit cannot trust: an overlay with no area or outside `root`, and an unknown preset, which now also warns in the console. Clear stale styles from the reused overlay, so `maxWidth` no longer leaks into the next story.
+
 ## 1.0.0-next.2
 
 ### Minor Changes
