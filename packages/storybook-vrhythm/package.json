@@ -1,7 +1,7 @@
 {
   "name": "storybook-vrhythm",
   "version": "1.0.0-next.2",
-  "description": "Baseline grid overlay for Storybook — see your vertical rhythm while you build",
+  "description": "Baseline grid for Storybook that coding agents can run: a measured audit with exact pixel deltas, plus a visual overlay",
   "license": "MIT",
   "author": "jmlweb",
   "homepage": "https://github.com/jmlweb/storybook-vrhythm",
@@ -26,7 +26,15 @@
     "material-design",
     "tailwind",
     "bootstrap",
-    "carbon"
+    "carbon",
+    "testing",
+    "visual-testing",
+    "ai",
+    "ai-agents",
+    "coding-agents",
+    "agent-skills",
+    "mcp",
+    "llms-txt"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -50,7 +58,8 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "llms.txt"
+    "llms.txt",
+    "skills"
   ],
   "engines": {
     "node": ">=22.12"

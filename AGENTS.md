@@ -2,7 +2,7 @@
 
 ## What is this?
 
-An npm package that provides a Storybook decorator and preset addon for overlaying vertical rhythm guide lines on stories. It helps developers visually verify that their components align to a baseline grid.
+An npm package that measures Storybook stories against a baseline grid and draws that grid as an overlay. Coding agents are the primary audience: changes must keep the audit trustworthy and its output actionable without a screenshot.
 
 ## Project Structure
 
@@ -17,14 +17,21 @@ packages/
       types.ts              # TypeScript interfaces (StyleProps, ConfigProps, StyleObj)
       constants.ts          # Default values and DOM selectors
       getStyle.ts           # Generates CSS style object for the rhythm overlay
-      utils.ts              # DOM manipulation (inject/remove overlay element)
+      resolve-params.ts     # Merges defaults, presets, story params and toolbar globals
+      utils.ts              # DOM manipulation (inject/remove overlay element, anchor sync)
       find-violations.ts    # Compares measurements to the grid
       audit.ts              # auditRhythm and expectRhythm (storybook-vrhythm/audit export)
+      auto-audit.ts         # afterEach behind parameters.vrhythm.audit
+      rhythm-errors.ts      # Error codes, createError, failure message
       presets.ts            # Built-in rhythm presets (pixel grids 4px to 32px, plus aliases material, tailwind, bootstrap, carbon)
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
       storybook-parameter-augmentation.ts  # Type augmentation for Storybook parameters/globals
+    skills/storybook-vrhythm/SKILL.md  # Agent Skill, published. The root `skills` is a symlink to skills/
     test/
+      audit.test.ts         # Unit tests for the audit, with stubbed rects
+      auto-audit.test.ts    # Unit tests for parameters.vrhythm.audit
+      find-violations.test.ts  # Unit tests for grid comparison
       getStyle.test.ts      # Unit tests for getStyle
       index.test.ts         # Unit tests for the decorator (withVRhythm)
       utils.test.ts         # Unit tests for DOM manipulation utilities
@@ -81,7 +88,9 @@ pnpm -F storybook-vrhythm typecheck
 
 ## Key Design Decisions
 
-- The decorator injects a `<div>` with id `storybook-rhythm` into the DOM body
+- The decorator injects a `<div>` with id `storybook-rhythm` into the DOM body. It is never placed inside a framework root
+- The grid starts at the story root by default (`anchor`), so audit results do not depend on layout or viewport height. Docs pages always use `'page'`
+- `audit: 'error'` throws from `afterEach`: a `failed` report alone neither fails Vitest nor reaches `@storybook/addon-mcp`
 - It uses CSS `linear-gradient` for the rhythm lines (no images, no canvas)
 - `pointerEvents: 'none'` ensures the overlay doesn't interfere with interaction
 - Parameters are passed via Storybook's story-level `parameters.vrhythm`
@@ -102,7 +111,9 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 ### DOM Strategy
 
 - `getOrCreateElement()` reuses existing `#storybook-rhythm` div if present
-- `injectStyle()` appends to parent or moves element when container changes
+- `injectStyle()` clears the reused element's inline styles and dataset, so nothing leaks from the previous story
+- `keepOverlayInSync()` positions the overlay with a `ResizeObserver`. Decorators run before render and `useEffect` fires after `play`, so hooks cannot do this
+- `auditRhythm()` calls `syncOverlay()` itself before reading the origin, because the observer can lag by a frame
 - `removeElement()` removes the div entirely (not just hides it)
 
 ### Module Boundaries
@@ -113,9 +124,12 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 | `types`     | TypeScript interfaces         | N/A                      |
 | `presets`   | Built-in rhythm configs       | Yes                      |
 | `getStyle`  | StyleProps -> CSS style obj   | Yes                      |
-| `utils`     | DOM inject/remove             | No (DOM side effects)    |
+| `resolve-params` | Context -> final params  | Yes                      |
+| `utils`     | DOM inject/remove, anchor sync | No (DOM side effects)   |
 | `find-violations` | Measurements -> violations | Yes                     |
 | `audit`     | Measure DOM, assert rhythm    | No (reads layout)        |
+| `auto-audit` | `afterEach` for `audit` param | No (reads layout)       |
+| `rhythm-errors` | Error codes, failure message | Yes                   |
 | `index`     | Public API, CSF Next factory  | No (re-exports, default factory) |
 | `withVRhythm` | Decorator wiring            | No (orchestrates)        |
 | `preset`    | Empty (SB auto-discovers preview) | N/A                  |
@@ -133,7 +147,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 ## Publishing
 
 - Published to npm as `storybook-vrhythm`
-- Only `dist/` and `llms.txt` are included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
+- Only `dist/`, `llms.txt` and `skills/` are included in the published package, plus the files npm always ships (`LICENSE`, `README.md`, `package.json`)
 - `packages/storybook-vrhythm/llms.txt` is the source. The root `llms.txt` is a symlink to it
 - Versions come from Changesets: run `pnpm changeset`, CI opens the version PR, and merging it publishes through npm trusted publishing. The npm entry names workflow `publish.yml` and environment `npm-release`, so keep both names in sync
 - The repo is in Changesets prerelease mode (`.changeset/pre.json`), so releases go to the `next` dist-tag. At Storybook 11 GA, run `pnpm changeset pre exit` to release `1.0.0` to `latest`
@@ -147,5 +161,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - **Don't import `index.ts` from `preview.ts`** — `index.ts` imports `preview.ts` for the CSF Next factory, so the shared decorator lives in `withVRhythm.ts` to avoid a cycle
 - **Keep both registration paths working** — `apps/react` and `apps/vue` use CSF Next, while `apps/html` uses classic `main.ts` registration
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
+- **Keep agent docs in step** — a change to the public API updates `README.md`, `llms.txt` and `skills/storybook-vrhythm/SKILL.md`. Error codes are public: do not rename them
+- **Do not use a top margin in story fixtures** — it collapses through the root and moves the grid origin
 - **Always run `pnpm test` after changing `src/`** — tests catch regressions in style generation and DOM handling
 - **Don't modify `DIV_ID` or `PARENT_SELECTOR`** — consumers may depend on `#storybook-rhythm` for custom styling
