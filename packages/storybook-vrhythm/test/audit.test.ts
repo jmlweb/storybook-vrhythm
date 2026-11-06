@@ -338,6 +338,21 @@ describe('auditRhythm', () => {
       vi.restoreAllMocks();
     });
 
+    it('skips the baselines of an ignored root', async () => {
+      textRects([3]);
+      fakeCanvas(12);
+      const root = createRoot();
+      root.textContent = 'Bare text';
+      root.setAttribute('data-vrhythm-ignore', '');
+
+      const { checked } = await auditRhythm(root, {
+        lineHeight: 8,
+        checks: ['baseline'],
+      });
+
+      expect(checked).toBe(0);
+    });
+
     it('checks each line at rect top plus font ascent', async () => {
       textRects([4, 28]);
       fakeCanvas(12);

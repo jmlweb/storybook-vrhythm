@@ -412,11 +412,13 @@ const collectMeasurements = (
 
   return [
     // `root` gets no box check, but a story may render bare text straight into it.
-    ...measureBaselines(
-      root,
-      getComputedStyle(root),
-      () => describeAnchor(root) ?? describeStep(root)
-    ),
+    ...(root.matches(ignoreSelector)
+      ? []
+      : measureBaselines(
+          root,
+          getComputedStyle(root),
+          () => describeAnchor(root) ?? describeStep(root)
+        )),
     ...Array.from(root.children).flatMap((child) => walk(child, new Set())),
   ];
 };
