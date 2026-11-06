@@ -25,6 +25,7 @@ interface AfterEachContext extends VRhythmContext {
 }
 
 const REPORT_TYPE = 'vrhythm';
+const AUDIT_MODES: ReadonlySet<unknown> = new Set(['error', 'todo', 'off']);
 
 // A hidden overlay publishes no grid, and hiding the picture must not change the
 // check, so the audit gets the same grid the overlay would have drawn.
@@ -100,6 +101,14 @@ export const runAutoAudit = async (
 
   if (audit === 'off' || context.viewMode === 'docs') {
     return;
+  }
+  // Reading a typo as 'off' would turn the audit off with a green result.
+  if (!AUDIT_MODES.has(audit)) {
+    throw createError(
+      'RhythmConfigError',
+      RhythmErrorCode.INVALID_AUDIT_MODE,
+      `audit must be 'error', 'todo' or 'off', got "${audit}".`
+    );
   }
 
   const { report, error } = await auditStory(context, resolved);

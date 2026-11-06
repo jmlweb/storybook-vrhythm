@@ -64,7 +64,7 @@ Audit errors carry a stable `code`.
 | `UNKNOWN_PRESET` | `preset` names no preset | Fix the name |
 | `ANCHOR_NOT_FOUND` | `anchor` selector matched nothing | Fix the selector |
 | `UNUSABLE_OVERLAY` | Overlay has no area, or lies outside `root` | Check `offset`, `anchor` and `maxWidth` |
-| `INVALID_LENGTH`, `INVALID_TOLERANCE`, `INVALID_EDGES`, `INVALID_SELECTOR` | Bad option | Fix the option |
+| `INVALID_LENGTH`, `INVALID_TOLERANCE`, `INVALID_EDGES`, `INVALID_SELECTOR`, `INVALID_AUDIT_MODE` | Bad option | Fix the option |
 | `UNMEASURABLE` | The environment cannot measure | Run in a real browser |
 
 Full reference: `node_modules/storybook-vrhythm/llms.txt`.

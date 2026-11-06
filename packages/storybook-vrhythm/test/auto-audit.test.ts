@@ -45,6 +45,18 @@ describe('runAutoAudit', () => {
     expect(context.reporting.addReport).not.toHaveBeenCalled();
   });
 
+  it.each([true, 'warn', 'erorr'])(
+    'rejects the audit mode %s',
+    async (audit) => {
+      const context = contextFor(createStory(8), { audit });
+
+      await expect(runAutoAudit(context)).rejects.toMatchObject({
+        name: 'RhythmConfigError',
+        code: 'INVALID_AUDIT_MODE',
+      });
+    }
+  );
+
   it('skips Docs', async () => {
     const context = contextFor(
       createStory(3),
