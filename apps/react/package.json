@@ -2,7 +2,7 @@
   "name": "@apps/react",
   "private": true,
   "scripts": {
-    "dev": "storybook dev -p 6006 --no-open",
+    "dev": "storybook dev -p 6006 --ci",
     "build-storybook": "storybook build",
     "test": "node scripts/run-story-tests.mjs",
     "typecheck": "tsc --noEmit"
