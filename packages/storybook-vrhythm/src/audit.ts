@@ -24,7 +24,11 @@ export interface AuditOptions {
    * or the top of `root` when there is no overlay.
    */
   offset?: string | number;
-  /** Allowed distance from a grid line, in pixels. Default: `0.5` */
+  /**
+   * Allowed distance from a grid line, in pixels. Must be finite, 0 or more, and
+   * under half of `lineHeight`, because no layout could fail a wider one.
+   * Default: `0.5`
+   */
   tolerance?: number;
   /** What to measure. Default: `['box']` */
   checks?: readonly RhythmCheck[];
