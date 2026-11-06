@@ -72,16 +72,21 @@ const addReport = async (
   }
 };
 
+type AuditOutcome =
+  | { report: RhythmReport; error: null }
+  | { report?: RhythmReport; error: Error };
+
 const auditStory = async (
   context: AfterEachContext,
   resolved: ResolvedParams
-): Promise<{ report?: RhythmReport; error: Error | null }> => {
+): Promise<AuditOutcome> => {
   try {
     const report = await auditRhythm(
       context.canvasElement as Element,
       toAuditOptions(resolved)
     );
-    return { report, error: toAssertionError(report) };
+    const error = toAssertionError(report);
+    return error ? { report, error } : { report, error: null };
   } catch (error) {
     return { error: error as Error };
   }
@@ -113,8 +118,8 @@ export const runAutoAudit = async (
 
   const { report, error } = await auditStory(context, resolved);
 
-  if (!error) {
-    await addReport(context, 'passed', report as RhythmReport);
+  if (error === null) {
+    await addReport(context, 'passed', report);
     return;
   }
   if (audit === 'todo') {

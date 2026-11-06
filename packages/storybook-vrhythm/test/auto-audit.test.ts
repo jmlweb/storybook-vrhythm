@@ -111,6 +111,19 @@ describe('runAutoAudit', () => {
     warn.mockRestore();
   });
 
+  it('attaches the report to a pass', async () => {
+    showOverlay();
+    const context = contextFor(createStory(8), { audit: 'error' });
+
+    await runAutoAudit(context);
+
+    expect(context.reporting.addReport).toHaveBeenCalledWith(
+      expect.objectContaining({
+        result: expect.objectContaining({ ok: true, checked: 2 }),
+      })
+    );
+  });
+
   it('reports a pass', async () => {
     showOverlay();
     const context = contextFor(createStory(8), { audit: 'error' });
