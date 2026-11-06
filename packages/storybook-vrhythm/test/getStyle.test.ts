@@ -5,6 +5,10 @@ describe('getStyle', () => {
     expect(getStyle({ lineHeight: 8 }).background).toContain('/ 1px 8px');
   });
 
+  it('gives a unitless zero a unit', () => {
+    expect(getStyle({ offset: '0' }).top).toBe('0px');
+  });
+
   it('treats every numeric length as px', () => {
     const style = getStyle({
       offset: 4,
