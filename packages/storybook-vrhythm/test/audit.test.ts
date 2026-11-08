@@ -778,7 +778,9 @@ describe('failure message', () => {
 
     const { message } = (await failure(root)) as Error;
 
-    expect(message).toContain('div.late:nth-of-type(13) top: 51px, nearest 48px');
+    expect(message).toContain(
+      'div.late:nth-of-type(13) top: 51px, nearest 48px'
+    );
     expect(message).not.toContain(' top: 79px');
     expect(message).toContain('...and 3 more');
   });
