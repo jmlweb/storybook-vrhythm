@@ -751,6 +751,38 @@ describe('failure message', () => {
     expect(message).toContain('move h2.title top by 3px');
   });
 
+  it('names the highest edge as the fix, not the first in the DOM', async () => {
+    const root = createRoot();
+    const card = add(root, { top: 0, height: 61 }, 'article');
+    add(card, { top: 21, height: 19 }, 'button');
+
+    const { message, report } = (await failure(root)) as Error & {
+      report: { violations: { selector: string; edge: string }[] };
+    };
+
+    // The parent's bottom edge comes first in document order.
+    expect(report.violations[0]).toMatchObject({ edge: 'bottom' });
+    expect(message).toContain('move article > button top by 3px');
+    expect(message.indexOf('button top')).toBeLessThan(
+      message.indexOf('article bottom')
+    );
+  });
+
+  it('shows the highest violations when the list is cut', async () => {
+    const root = createRoot();
+    for (const index of Array.from({ length: 12 }, (_, i) => i + 1)) {
+      add(root, { top: 8 * index - 1, height: 9 });
+    }
+    // Last in the DOM and in a smaller delta group, but 7th from the top.
+    add(root, { top: 51, height: 5 }).className = 'late';
+
+    const { message } = (await failure(root)) as Error;
+
+    expect(message).toContain('div.late:nth-of-type(13) top: 51px, nearest 48px');
+    expect(message).not.toContain(' top: 79px');
+    expect(message).toContain('...and 3 more');
+  });
+
   it('keeps every violation in the report when grouping', async () => {
     const root = createRoot();
     for (const top of [7, 15, 23]) {

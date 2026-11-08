@@ -88,10 +88,13 @@ const formatFix = ({ selector, edge, delta }: RhythmViolation): string =>
 
 const formatFailure = ({
   grid,
-  violations,
+  violations: measured,
 }: Pick<RhythmReport, 'grid' | 'violations'>): string => {
+  // Violations arrive in document order, where a parent's bottom precedes its
+  // children's tops. Fixes cascade downwards, so read them top to bottom.
+  const violations = [...measured].sort((a, b) => a.actual - b.actual);
   const groups = groupByDelta(violations);
-  const shown = [...groups.values()].flat().slice(0, MAX_REPORTED_VIOLATIONS);
+  const shown = violations.slice(0, MAX_REPORTED_VIOLATIONS);
   const hiddenCount = violations.length - shown.length;
 
   return [
