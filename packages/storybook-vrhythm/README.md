@@ -5,11 +5,36 @@
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/storybook-vrhythm)](https://bundlephobia.com/package/storybook-vrhythm)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.org/package/storybook-vrhythm)
 
-> Baseline grid overlay for Storybook. See your vertical rhythm while you build.
+> A baseline grid for Storybook that coding agents can run: a measured audit with exact pixel deltas, plus a visual overlay.
 
-![Vertical rhythm overlay example](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/storybook-vrhythm.jpg)
+![An article card in Storybook with the 8px baseline grid drawn over it](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/storybook-vrhythm.jpg)
 
 Measures your stories against a baseline grid and draws that grid on top of them. Agents and tests get exact pixel offsets. You get a visible grid.
+
+## Quick start
+
+Requires Node.js 22.12+ and Storybook 10 or 11. CI runs unit and browser tests against both.
+
+```bash
+npx storybook add storybook-vrhythm@next
+```
+
+> **Install the `next` tag on Storybook 10 or 11.** The `latest` tag is 0.x: it supports Storybook 10 only and has no audit, so `storybook-vrhythm/audit` will not resolve. `next` moves to `latest` as `1.0.0` when Storybook 11 is released.
+
+That installs and registers the addon. A baseline grid now shows on every story, toggleable from the toolbar.
+
+Using `definePreview` (CSF Next)? Register it in `.storybook/preview.ts`. This also types `parameters.vrhythm` in your stories:
+
+```typescript
+import { definePreview } from '@storybook/your-framework';
+import vrhythm from 'storybook-vrhythm';
+
+export default definePreview({
+  addons: [vrhythm()],
+});
+```
+
+Otherwise, run `pnpm add -D storybook-vrhythm@next` and add `'storybook-vrhythm'` to `addons` in `.storybook/main.ts`. HTML projects need this path: `@storybook/html` 11.0.0-beta.0 does not export `definePreview`.
 
 ## Use it with a coding agent
 
@@ -35,11 +60,12 @@ Report what you changed and the final result.
 
 The package ships an [Agent Skill](https://github.com/jmlweb/storybook-vrhythm/tree/main/packages/storybook-vrhythm/skills/storybook-vrhythm) at `node_modules/storybook-vrhythm/skills/`, covering setup, the fix loop, error codes and the rules against silencing the audit. Copy it to your agent's skills folder.
 
-### Set it up by hand
+### Turn on the audit by hand
+
+After the [quick start](#quick-start), add story tests if you have none:
 
 ```bash
-npx storybook add storybook-vrhythm@next
-npx storybook add @storybook/addon-vitest # if you have no story tests yet
+npx storybook add @storybook/addon-vitest
 ```
 
 The `audit` parameter needs `1.0.0-next.3` or later. Older versions ignore it, so nothing fails.
@@ -84,6 +110,7 @@ Tighten in steps, per component if you like:
 | 2    | `audit: 'error'`, `auditOptions: { edges: ['top'] }`      | Holds new work to the grid on top edges. Misses a wrong height |
 | 3    | `audit: 'error'`                                          | Full check                                             |
 
+
 ## Features
 
 - 🤖 **Built for coding agents:** one parameter audits every story, and failures name the edge, delta and fix, through Vitest or MCP
@@ -99,304 +126,12 @@ Tighten in steps, per component if you like:
 - 🖱️ **Non-intrusive:** `pointer-events: none` keeps stories interactive
 - 🔒 **Typed:** typed parameters under CSF Next, editor completion for presets
 
-## Quick start
 
-Requires Node.js 22.12+ and Storybook 10 or 11. CI runs unit and browser tests against both.
+## Documentation
 
-```bash
-npx storybook add storybook-vrhythm@next
-```
-
-> **Install the `next` tag on Storybook 10 or 11.** The `latest` tag is 0.x: it supports Storybook 10 only and has no audit, so `storybook-vrhythm/audit` will not resolve. `next` moves to `latest` as `1.0.0` when Storybook 11 is released.
-
-That installs and registers the addon. A baseline grid now shows on every story, toggleable from the toolbar.
-
-To register by hand, run `pnpm add -D storybook-vrhythm@next` and edit `.storybook/main.ts`:
-
-```typescript
-const config = {
-  addons: ['storybook-vrhythm'],
-};
-
-export default config;
-```
-
-### CSF Next
-
-Using `definePreview`? Register it in `.storybook/preview.ts` instead:
-
-```typescript
-import { definePreview } from '@storybook/your-framework';
-import vrhythm from 'storybook-vrhythm';
-
-export default definePreview({
-  addons: [vrhythm()],
-});
-```
-
-- This types `parameters.vrhythm` in your stories.
-- No `.storybook/main.ts` entry is needed. Keeping one is harmless: the decorator still runs once.
-- `definePreview` must come from your framework package. `@storybook/html` and `@storybook/html-vite` 11.0.0-beta.0 don't export it, so HTML projects should use `.storybook/main.ts`.
-
-## Configuration
-
-### Global defaults
-
-In `.storybook/preview.ts`:
-
-```typescript
-const preview = {
-  parameters: {
-    vrhythm: {
-      color: 'rgba(99, 102, 241, 0.2)',
-      lineHeight: '8px',
-    },
-  },
-};
-
-export default preview;
-```
-
-Put `parameters` inside the default export. A separate `export const parameters` next to `export default preview` is ignored, with no error. With `definePreview`, put it in the object you pass to `definePreview`.
-
-### Off by default
-
-To keep the grid off until someone picks it in the toolbar:
-
-```typescript
-const preview = {
-  initialGlobals: { vrhythm: 'false' },
-};
-
-export default preview;
-```
-
-This also keeps the grid out of visual regression tests such as Chromatic. The audit still runs: with `audit` set, it reads the grid from the story's parameters.
-
-### Per-story overrides
-
-```typescript
-export const Compact = {
-  parameters: {
-    vrhythm: { lineHeight: '4px', color: 'rgba(244, 67, 54, 0.15)' },
-  },
-};
-
-export const NoGrid = {
-  parameters: {
-    vrhythm: { hide: true },
-  },
-};
-```
-
-### Using presets
-
-```typescript
-export const MaterialGrid = {
-  parameters: {
-    vrhythm: { preset: 'material' },
-  },
-};
-```
-
-| Preset | Color                      | Best for                    |
-| ------ | -------------------------- | --------------------------- |
-| `4px`  | `rgba(0, 150, 255, 0.15)`  | Dense UIs, compact grids    |
-| `8px`  | `rgba(0, 150, 255, 0.2)`   | Standard 8pt grid systems   |
-| `12px` | `rgba(0, 150, 255, 0.2)`   | 12px grids, mid-density UIs |
-| `16px` | `rgba(204, 204, 204, 0.5)` | Body text baseline          |
-| `24px` | `rgba(204, 204, 204, 0.5)` | Heading alignment           |
-| `32px` | `rgba(204, 204, 204, 0.5)` | Large-scale layout grids    |
-
-Aliases add no style of their own:
-
-| Alias       | Same as | Reason                              |
-| ----------- | ------- | ----------------------------------- |
-| `material`  | `4px`   | Material Design uses a 4dp grid     |
-| `tailwind`  | `4px`   | Tailwind's spacing unit is 0.25rem  |
-| `bootstrap` | `24px`  | Body text is 1rem × 1.5 line-height |
-| `carbon`    | `8px`   | IBM Carbon uses an 8px mini-unit    |
-
-### Grid origin
-
-The first grid line starts at the story root, plus `offset`. The overlay and the audit share that origin, so picture and numbers agree. Set `anchor` to change it:
-
-| `anchor`     | First grid line                                        |
-| ------------ | ------------------------------------------------------ |
-| `'story'`    | Top of the story root (default)                        |
-| `'page'`     | Top of the document                                    |
-| Any selector | Top of that element, looked up after the story renders |
-
-- The overlay stays on `body`, runs to the end of the document and spans its full width. It follows the anchor when the story or window resizes.
-- Docs pages always use `'page'`: they show several stories but one overlay, styled by the story that rendered last.
-
-### Column grid
-
-```typescript
-export const ColumnGrid = {
-  parameters: {
-    vrhythm: {
-      lineHeight: '8px',
-      columnWidth: '80px',
-      gutterWidth: '16px',
-      columnColor: 'rgba(99, 102, 241, 0.1)',
-    },
-  },
-};
-```
-
-### Manual decorator
-
-To opt out of the addon preset:
-
-```typescript
-import { withVRhythm } from 'storybook-vrhythm';
-
-const preview = {
-  decorators: [withVRhythm],
-};
-
-export default preview;
-```
-
-The manual decorator only draws the grid, so the `audit` parameter needs the addon. `expectRhythm` and `auditRhythm` work either way.
-
-## Options
-
-### Style options
-
-| Option        | Type               | Default                | Description                                        |
-| ------------- | ------------------ | ---------------------- | -------------------------------------------------- |
-| `color`       | `string`           | `'rgb(204, 204, 204)'` | CSS color for horizontal guide lines               |
-| `lineHeight`  | `string \| number` | `'16px'`               | Baseline grid height (`'8px'`, `'1rem'`, etc.)     |
-| `lineWidth`   | `string \| number` | `'1px'`                | Thickness of each horizontal guide line            |
-| `offset`      | `string \| number` | `0`                    | Vertical offset from the anchor                    |
-| `opacity`     | `number`           | `1`                    | Overlay opacity (0–1)                              |
-| `zIndex`      | `number`           | `9999`                 | Stack order of the overlay                         |
-| `maxWidth`    | `string \| number` | —                      | Centers the overlay with this max width            |
-| `columnWidth` | `string \| number` | —                      | Repeating column width for a vertical column grid  |
-| `columnColor` | `string`           | —                      | CSS color for column lines (falls back to `color`) |
-| `gutterWidth` | `string \| number` | —                      | Gutter between columns (requires `columnWidth`)    |
-
-### Config options
-
-| Option         | Type                          | Default   | Description                                                          |
-| -------------- | ----------------------------- | --------- | -------------------------------------------------------------------- |
-| `audit`        | `'error' \| 'todo' \| 'off'`  | `'off'`   | Audit the story after it renders and after `play`                    |
-| `auditOptions` | `AuditOptions`                | —         | Options for that audit, as in [the audit](#auditing-rhythm-in-tests) |
-| `anchor`       | `'story' \| 'page' \| string` | `'story'` | Where the first grid line starts (see [Grid origin](#grid-origin))   |
-| `hide`         | `boolean`                     | `false`   | Hide the overlay for this story (overrides toolbar toggle)           |
-| `preset`       | `string`                      | —         | Built-in preset name                                                 |
-| `container`    | `string`                      | —         | Deprecated: use `anchor`, which takes the same selector              |
-
-- An unknown `preset` warns in the console and falls back to the default grid. The audit rejects that grid with `UNKNOWN_PRESET`.
-- `parameters.vrhythm` is type-checked when you register through `definePreview`. With `addons: ['storybook-vrhythm']`, `StoryObj` does not check it.
-
-### Parameter resolution order
-
-```text
-DEFAULT_PARAMS → preset styles → story-level parameters → toolbar preset
-```
-
-Later sources win, so a preset picked in the toolbar also changes the grid the audit reads from the overlay. The story-level `hide` param beats the toolbar toggle.
-
-## Auditing rhythm in tests
-
-`storybook-vrhythm/audit` measures the grid, so tests, CI and coding agents get numbers instead of a picture.
-
-To audit every story, set `audit: 'error'` in `parameters.vrhythm`. Use the functions below for one story, or for the data.
-
-```ts
-import { expectRhythm } from 'storybook-vrhythm/audit';
-
-export const Card = {
-  play: async ({ canvasElement }) => {
-    await expectRhythm(canvasElement);
-  },
-};
-```
-
-`expectRhythm` throws when an element is off the grid:
-
-```text
-Expected elements on the 8px grid starting at y=0px, found 1 off-grid:
-  h2.title top: 21px, nearest 24px (delta -3px)
-Fix from the top: move h2.title top by 3px, then rerun. Moving an edge shifts everything below it, so later deltas go stale.
-```
-
-Violations with the same `delta` are listed together. That is a pattern, not proof of a shared cause. The message shows 10 violations at most, and `error.report.violations` always has all of them.
-
-`auditRhythm` returns the result as data:
-
-```ts
-import { auditRhythm } from 'storybook-vrhythm/audit';
-
-const report = await auditRhythm(canvasElement);
-// {
-//   ok: false,
-//   grid: { lineHeight: 8, origin: 0 },
-//   checked: 12,
-//   violations: [
-//     { selector: 'h2.title', edge: 'top', actual: 21, nearest: 24, delta: -3 },
-//   ],
-// }
-```
-
-- `grid.origin` is the viewport Y of the first grid line. It comes from the overlay's top, or from the top of `root` plus `offset` when `offset` is set or the overlay is hidden.
-- `actual` and `nearest` are relative to `grid.origin`.
-- `checked` counts what was measured after `checks`, `edges` and `ignore` apply, so `0` means nothing was tested.
-
-### Audit options
-
-Both functions accept:
-
-| Option       | Type                          | Default          | Description                                                                                                                      |
-| ------------ | ----------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `lineHeight` | `string \| number`            | From the overlay | Grid size in `px`, `rem`, or a number of pixels                                                                                  |
-| `offset`     | `string \| number`            | Overlay position | Grid start below the top of `root`, or of `anchor`. Replaces the overlay's position, and differs from the story's `offset`, which starts at the story's anchor |
-| `anchor`     | `'story' \| 'page' \| string` | `root`           | What `offset` is measured from. Replaces the overlay's position                                                                  |
-| `tolerance`  | `number`                      | `0.5`            | Allowed distance from a grid line, in pixels                                                                                     |
-| `checks`     | `('box' \| 'baseline')[]`     | `['box']`        | What to measure                                                                                                                  |
-| `edges`      | `('top' \| 'bottom')[]`       | Both             | Box edges to measure. `['top']` misses a wrong height                                                                            |
-| `ignore`     | `string`                      | —                | Selector to skip, on top of `[data-vrhythm-ignore]`                                                                              |
-
-| Check      | Measures                                                                                     | Use for                            |
-| ---------- | -------------------------------------------------------------------------------------------- | ---------------------------------- |
-| `box`      | Top and bottom of each visible element, except `root`, inline text elements and inline `svg` | Spacing grids, such as 4px and 8px |
-| `baseline` | Each line of text                                                                            | Type-driven grids                  |
-
-Don't use `baseline` on a spacing grid: 16px text in a 24px line sits about 17px below an on-grid box. Results can differ by up to 1px, and more with `font-stretch` or `font-size-adjust`, so raise `tolerance` up to 1, only for font-metric drift, and say why.
-
-### Audit notes
-
-- ⚠️ **Real layout required:** run it in a browser, such as `@storybook/addon-vitest` with Playwright. jsdom has no layout, so `expectRhythm` fails there with `Nothing was measured`.
-- 🔧 **Fixing violations:** work from the top down and rerun after each change. Moving an edge shifts everything below it, so `delta` values further down go stale and on-grid edges can move off.
-- 🙈 **Off-grid on purpose:** add `data-vrhythm-ignore` to skip an element and its subtree when the component owns the decision. Use the `ignore` option, which also skips subtrees, for one story or without touching markup.
-- 👻 **Hidden overlay:** `audit` needs nothing extra: it uses the grid the overlay would have drawn. `expectRhythm` and `auditRhythm` need `lineHeight` from you, and the origin is the top of `root` unless you pass `anchor` or `offset`.
-- 🫙 **Empty stories:** `audit: 'error'` fails with `NOTHING_MEASURED` when nothing was measured, as `expectRhythm` does. Set `audit: 'off'` on stories that render outside the canvas, such as portals. `audit: 'todo'` never fails a story: it warns about off-grid edges and bad setups alike.
-- 📜 **Nested scrolling:** the overlay runs to the end of the document. Content that scrolls inside its own container has no grid past the first screen. The audit is not affected.
-- 📏 **Any layout:** `centered`, `padded` and `fullscreen` give the same result at any viewport height, because the grid starts at the story root. `anchor: 'page'` gives that up: `centered` then depends on viewport height.
-- ⬆️ **Top margins:** a top margin on the first element collapses through the root and moves it, and the grid with it. That margin is not measured.
-- 🚫 **Invalid setups throw:** `RhythmConfigError` means the audit could not give a real answer. See [Error codes](#error-codes).
-
-### Error codes
-
-Audit errors have a stable `code`, also exported as `RhythmErrorCode`. Branch on it, not on the message.
-
-| `code`               | Error                  | Meaning                                                                                     |
-| -------------------- | ---------------------- | ------------------------------------------------------------------------------------------- |
-| `OFF_GRID`           | `RhythmAssertionError` | Edges are off the grid                                                                      |
-| `NOTHING_MEASURED`   | `RhythmAssertionError` | `checked` is `0`: `root` is empty, or there is no layout                                    |
-| `NO_GRID`            | `RhythmConfigError`    | No overlay and no `lineHeight` option                                                       |
-| `UNKNOWN_PRESET`     | `RhythmConfigError`    | `preset` names no preset, so the overlay's grid is not the one you asked for                |
-| `ANCHOR_NOT_FOUND`   | `RhythmConfigError`    | The `anchor` selector matched nothing                                                       |
-| `UNUSABLE_OVERLAY`   | `RhythmConfigError`    | The overlay has no area or lies outside `root`, so it is not a grid                         |
-| `INVALID_LENGTH`     | `RhythmConfigError`    | `lineHeight` or `offset` is not a finite `px` or `rem` length, or `lineHeight` is 0 or less |
-| `INVALID_TOLERANCE`  | `RhythmConfigError`    | `tolerance` is negative, not finite, or half of `lineHeight` or more                        |
-| `INVALID_EDGES`      | `RhythmConfigError`    | `edges` is empty                                                                            |
-| `INVALID_SELECTOR`   | `RhythmConfigError`    | `ignore` is not a valid selector                                                            |
-| `INVALID_AUDIT_MODE` | `RhythmConfigError`    | `parameters.vrhythm.audit` is not `'error'`, `'todo'` or `'off'`                            |
-| `UNMEASURABLE`       | `RhythmConfigError`    | The environment cannot measure an edge or a baseline                                        |
+- [Reference](https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/docs/reference.md): configuration, presets, grid origin, column grids, every option, the audit API and error codes
+- [`llms.txt`](https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/llms.txt): the same in one file for agents, also at `node_modules/storybook-vrhythm/llms.txt`
+- [Agent Skill](https://github.com/jmlweb/storybook-vrhythm/tree/main/packages/storybook-vrhythm/skills/storybook-vrhythm): setup, the fix loop and the rules against silencing the audit
 
 ## Contributing
 

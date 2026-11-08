@@ -27,6 +27,7 @@ packages/
       preset.ts             # Storybook preset entry (intentionally empty, auto-discovery)
       preview.ts            # Storybook preview annotations (decorator + toolbar toggle)
       storybook-parameter-augmentation.ts  # Type augmentation for Storybook parameters/globals
+    docs/reference.md      # Full option and audit reference, linked from README (not published)
     skills/storybook-vrhythm/SKILL.md  # Agent Skill, published. The root `skills` is a symlink to skills/
     test/
       audit.test.ts         # Unit tests for the audit, with stubbed rects
@@ -161,7 +162,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - **Don't import `index.ts` from `preview.ts`** — `index.ts` imports `preview.ts` for the CSF Next factory, so the shared decorator lives in `withVRhythm.ts` to avoid a cycle
 - **Keep both registration paths working** — `apps/react` and `apps/vue` use CSF Next, while `apps/html` uses classic `main.ts` registration
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
-- **Keep agent docs in step** — a change to the public API updates `README.md`, `llms.txt` and `skills/storybook-vrhythm/SKILL.md`. Error codes are public: do not rename them
+- **Keep agent docs in step** — a change to the public API updates `README.md`, `docs/reference.md`, `llms.txt` and `skills/storybook-vrhythm/SKILL.md`. Error codes are public: do not rename them
 - **Do not use a top margin in story fixtures** — it collapses through the root and moves the grid origin
 - **Always run `pnpm test` after changing `src/`** — tests catch regressions in style generation and DOM handling
 - **Don't modify `DIV_ID` or `PARENT_SELECTOR`** — consumers may depend on `#storybook-rhythm` for custom styling

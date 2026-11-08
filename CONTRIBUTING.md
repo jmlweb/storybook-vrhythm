@@ -31,7 +31,7 @@ pnpm build
 ```
 
 - Add tests in `packages/storybook-vrhythm/test` for code changes.
-- Update the docs if you change the public API: `packages/storybook-vrhythm/README.md`, `llms.txt` and `skills/storybook-vrhythm/SKILL.md`.
+- Update the docs if you change the public API: `packages/storybook-vrhythm/README.md`, `docs/reference.md`, `llms.txt` and `skills/storybook-vrhythm/SKILL.md`.
 - Keep the package free of runtime dependencies.
 
 ## Changesets

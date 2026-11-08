@@ -212,7 +212,7 @@ import type { AuditOptions, RhythmAssertionError, RhythmConfigError, RhythmRepor
 
 ## Auditing rhythm
 
-Use the audit to check alignment without judging a screenshot. It needs a real browser: jsdom has no layout. Full details: https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/README.md#auditing-rhythm-in-tests
+Use the audit to check alignment without judging a screenshot. It needs a real browser: jsdom has no layout. Full details: https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/docs/reference.md#auditing-rhythm-in-tests
 
 Workflow for fixing layout:
 
