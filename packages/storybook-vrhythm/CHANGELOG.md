@@ -1,5 +1,13 @@
 # storybook-vrhythm
 
+## 1.0.0-next.4
+
+### Patch Changes
+
+- [`c5b8729`](https://github.com/jmlweb/storybook-vrhythm/commit/c5b872905e8dc69ebd127231776a0dd1b76b3a87) Thanks [@jmlweb](https://github.com/jmlweb)! - Refresh the README: quick start first, a new screenshot, and the full option and audit reference moved to `docs/reference.md`. Shrink the addon catalog icon from 1.3 MB to 31 KB.
+
+- [`debde56`](https://github.com/jmlweb/storybook-vrhythm/commit/debde56ac471763f7ffdc07cda02a92e03f229ea) Thanks [@jmlweb](https://github.com/jmlweb)! - The failure message now lists the 10 highest violations, grouped by delta, and names the highest edge in "Fix from the top". It used document order, so a parent's bottom edge could be named before a higher child edge. `report.violations` keeps document order.
+
 ## 1.0.0-next.3
 
 ### Major Changes
