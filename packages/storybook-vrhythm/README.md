@@ -1,15 +1,23 @@
+<div align="center">
+
+<a href="https://jmlweb.github.io/storybook-vrhythm/"><img src="https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/.github/assets/banner.png" alt="Keep every story on the beat. A baseline grid for Storybook that coding agents can run: a measured audit with exact pixel deltas, plus a visual overlay." width="100%" /></a>
+
 # storybook-vrhythm
 
 [![npm version][npm-badge]][npm]
 [![License: MIT][license-badge]][license]
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/storybook-vrhythm)](https://bundlephobia.com/package/storybook-vrhythm)
-[![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.org/package/storybook-vrhythm)
+[![Bundle Size][size-badge]][size]
+[![Zero Dependencies][deps-badge]][npm]
 
-> A baseline grid for Storybook that coding agents can run: a measured audit with exact pixel deltas, plus a visual overlay.
+**[Live demo](https://jmlweb.github.io/storybook-vrhythm/)** · [Storybook](https://jmlweb.github.io/storybook-vrhythm/storybook/) · [Reference](https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/docs/reference.md) · [`llms.txt`](https://github.com/jmlweb/storybook-vrhythm/blob/main/packages/storybook-vrhythm/llms.txt)
 
-![An article card in Storybook with the 8px baseline grid drawn over it](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/storybook-vrhythm.jpg)
+</div>
 
 Measures your stories against a baseline grid and draws that grid on top of them. Agents and tests get exact pixel offsets. You get a visible grid.
+
+<a href="https://jmlweb.github.io/storybook-vrhythm/"><img src="https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/.github/assets/playground.png" alt="The live playground: a card with its heading 2px off the 8px grid, each off-grid edge marked, and the audit output naming the edge to move" width="100%" /></a>
+
+<p align="center"><sub>The <a href="https://jmlweb.github.io/storybook-vrhythm/">live playground</a> runs the real audit in your browser. Break the rhythm, read the fix.</sub></p>
 
 ## Quick start
 
@@ -22,6 +30,8 @@ npx storybook add storybook-vrhythm@next
 > **Install the `next` tag on Storybook 10 or 11.** The `latest` tag is 0.x: it supports Storybook 10 only and has no audit, so `storybook-vrhythm/audit` will not resolve. `next` moves to `latest` as `1.0.0` when Storybook 11 is released.
 
 That installs and registers the addon. A baseline grid now shows on every story, toggleable from the toolbar.
+
+![An article card in Storybook with the 8px baseline grid drawn over it](https://raw.githubusercontent.com/jmlweb/storybook-vrhythm/main/storybook-vrhythm.jpg)
 
 Using `definePreview` (CSF Next)? Register it in `.storybook/preview.ts`. This also types `parameters.vrhythm` in your stories:
 
@@ -145,7 +155,10 @@ Inspired by [Baseliner](https://jpedroribeiro.com/2015/08/baseliner-my-first-chr
 
 [MIT](https://github.com/jmlweb/storybook-vrhythm/blob/main/LICENSE)
 
-[npm-badge]: https://img.shields.io/npm/v/storybook-vrhythm.svg
+[npm-badge]: https://img.shields.io/npm/v/storybook-vrhythm.svg?style=for-the-badge&labelColor=140c2e&color=8b5cf6
 [npm]: https://www.npmjs.org/package/storybook-vrhythm
-[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-badge]: https://img.shields.io/badge/license-MIT-ec4899.svg?style=for-the-badge&labelColor=140c2e
 [license]: https://github.com/jmlweb/storybook-vrhythm/blob/main/LICENSE
+[size-badge]: https://img.shields.io/bundlephobia/minzip/storybook-vrhythm?style=for-the-badge&labelColor=140c2e&color=f59e0b
+[size]: https://bundlephobia.com/package/storybook-vrhythm
+[deps-badge]: https://img.shields.io/badge/dependencies-0-22d3ee?style=for-the-badge&labelColor=140c2e

@@ -43,8 +43,11 @@ apps/
     src/stories/Options.stories.tsx   # One story per kind of option
   vue/                      # Storybook + Vue (CSF Next): smoke tests
   html/                     # Storybook + HTML/Vite (classic main.ts): smoke tests
+  site/                     # Landing page (Vite + React, no Storybook): live audit playground
 scripts/
-  run-story-tests.mjs       # `test` script of every app: fails when a story file yields no tests
+  run-story-tests.mjs       # `test` script of every Storybook app: fails when a story file yields no tests
+.github/workflows/
+  pages.yml                 # Deploys apps/site to GitHub Pages, with the apps/react Storybook under /storybook/
 ```
 
 ## Tech Stack
@@ -167,6 +170,8 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - **Don't add `previewAnnotations` to `preset.ts`** — Storybook auto-discovers `./preview` from the exports map; adding it to the preset causes a double-import crash
 - **Don't break the preview protocol** — `preview.ts` must use `export default` (Storybook requirement)
 - **Don't import `index.ts` from `preview.ts`** — `index.ts` imports `preview.ts` for the CSF Next factory, so the shared decorator lives in `withVRhythm.ts` to avoid a cycle
+- **`apps/site` imports only `storybook-vrhythm/audit`** — the package root imports `storybook` through `preview`, which the site does not install. Its URLs stay relative (`base: './'`), because Pages serves it from `/storybook-vrhythm/`
+- **Keep the demo card in `apps/site` free of borders and top margins** — its playground runs the real audit, and either one moves edges off the grid
 - **Keep both registration paths working** — `apps/react` and `apps/vue` use CSF Next, while `apps/html` uses classic `main.ts` registration
 - **Don't add runtime dependencies** — the package has zero production dependencies; only `storybook` as peer
 - **Keep agent docs in step** — a change to the public API updates `README.md`, `docs/reference.md`, `llms.txt` and `skills/storybook-vrhythm/SKILL.md`. Error codes are public: do not rename them
