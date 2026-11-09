@@ -27,13 +27,14 @@ export const OffGrid = meta.story({
     const { ok, violations } = await auditRhythm(canvasElement);
 
     await expect(ok).toBe(false);
-    await expect(violations).toContainEqual(
-      expect.objectContaining({
-        selector: '[data-testid="heading"]',
-        edge: 'bottom',
-        delta: -2,
-      })
+    // The heading is 2px short per line. Fonts differ per OS, so the line
+    // count and the exact delta do too; the sign and the edge do not.
+    const heading = violations.find(
+      (violation) =>
+        violation.selector === '[data-testid="heading"]' &&
+        violation.edge === 'bottom'
     );
+    await expect(heading?.delta).toBeLessThan(0);
     await expect(expectRhythm(canvasElement)).rejects.toThrow('heading');
   },
 });

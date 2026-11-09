@@ -1,5 +1,6 @@
 // Every height is a multiple of 8px, so the card sits on an 8px grid. The
-// off-grid heading is 38px tall, which pushes everything below it 2px off.
+// off-grid heading is 38px tall per line, so each line it wraps to pushes
+// everything below it 2px further off the grid.
 export const ArticleCard = ({ isOffGrid = false }: { isOffGrid?: boolean }) => (
   <article
     style={{
