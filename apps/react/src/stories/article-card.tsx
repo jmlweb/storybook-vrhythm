@@ -8,22 +8,30 @@ export const ArticleCard = ({ isOffGrid = false }: { isOffGrid?: boolean }) => (
       width: 400,
       padding: '24px 32px',
       background: '#fff',
-      borderRadius: 12,
+      borderRadius: 16,
       boxShadow:
-        '0 1px 2px rgba(15, 23, 42, 0.08), 0 8px 24px rgba(15, 23, 42, 0.08)',
+        '0 1px 2px rgba(76, 29, 149, 0.12), 0 16px 40px rgba(124, 58, 237, 0.2)',
       fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
-      color: '#0f172a',
+      color: '#1a1033',
     }}
   >
+    <div
+      style={{
+        height: 96,
+        borderRadius: 8,
+        background:
+          'radial-gradient(120px 80px at 80% 20%, rgba(255, 255, 255, 0.5), transparent 70%), linear-gradient(120deg, #7c3aed, #ec4899 55%, #fbbf24)',
+      }}
+    />
     <p
       style={{
-        margin: 0,
+        margin: '16px 0 0',
         fontSize: 12,
         lineHeight: '16px',
-        letterSpacing: '0.08em',
+        letterSpacing: '0.1em',
         textTransform: 'uppercase',
-        color: '#6366f1',
-        fontWeight: 600,
+        color: '#7c3aed',
+        fontWeight: 700,
       }}
     >
       Typography
@@ -44,7 +52,7 @@ export const ArticleCard = ({ isOffGrid = false }: { isOffGrid?: boolean }) => (
         margin: '8px 0 0',
         fontSize: 16,
         lineHeight: '24px',
-        color: '#334155',
+        color: '#4a4168',
       }}
     >
       A baseline grid gives every block a shared rhythm. Headings, paragraphs
@@ -60,7 +68,7 @@ export const ArticleCard = ({ isOffGrid = false }: { isOffGrid?: boolean }) => (
         padding: '0 20px',
         border: 0,
         borderRadius: 8,
-        background: '#4f46e5',
+        background: 'linear-gradient(100deg, #7c3aed, #db2777)',
         color: '#fff',
         fontSize: 15,
         fontWeight: 600,

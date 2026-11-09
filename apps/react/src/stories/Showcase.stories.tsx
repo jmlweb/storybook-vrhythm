@@ -9,7 +9,11 @@ const meta = preview.meta({
   component: ArticleCard,
   parameters: {
     layout: 'padded',
-    vrhythm: { lineHeight: '8px', opacity: 0.6 },
+    vrhythm: {
+      lineHeight: '8px',
+      color: 'rgba(236, 72, 153, 0.6)',
+      opacity: 0.6,
+    },
   },
 });
 
