@@ -13,7 +13,7 @@ pnpm build
 
 ## Layout
 
-The addon lives in `packages/storybook-vrhythm`. The apps in `apps/` are real Storybook instances (React, Vue, HTML) used as integration tests.
+The addon lives in `packages/storybook-vrhythm`. The apps in `apps/` are real Storybook instances (React, Vue, HTML) whose stories run as browser tests. `apps/react` holds the audit suite and the demos. `apps/vue` and `apps/html` keep a few smoke stories for their framework and registration path.
 
 Run one to see your change:
 

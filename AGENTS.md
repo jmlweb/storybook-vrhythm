@@ -37,9 +37,14 @@ packages/
       index.test.ts         # Unit tests for the decorator (withVRhythm)
       utils.test.ts         # Unit tests for DOM manipulation utilities
 apps/
-  react/                    # Storybook + React integration test app
-  vue/                      # Storybook + Vue integration test app
-  html/                     # Storybook + HTML/Vite integration test app
+  react/                    # Storybook + React (CSF Next): browser test suite and demos
+    src/stories/audit/      # Real-layout audit tests, one file per concern (Grid, Baseline, Anchor, Overlay, Errors, AutoAudit)
+    src/stories/Showcase.stories.tsx  # A realistic card on and off the grid
+    src/stories/Options.stories.tsx   # One story per kind of option
+  vue/                      # Storybook + Vue (CSF Next): smoke tests
+  html/                     # Storybook + HTML/Vite (classic main.ts): smoke tests
+scripts/
+  run-story-tests.mjs       # `test` script of every app: fails when a story file yields no tests
 ```
 
 ## Tech Stack
@@ -143,7 +148,9 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Test file naming: `<module>.test.ts`
 - Focus on pure function testing (`getStyle`), decorator behavior (`index`), and DOM manipulation (`utils`)
 - Use `jsdom` environment for DOM tests
-- jsdom has no layout, so `audit` tests stub rects. `apps/react/src/stories/Audit.stories.tsx` checks real layout through `play` functions (`pnpm -F @apps/react test`, needs `playwright install chromium`)
+- jsdom has no layout, so `audit` tests stub rects. `apps/react/src/stories/audit/` checks real layout through `play` functions (`pnpm -F @apps/react test`, needs `playwright install chromium`)
+- Every app story has a `play` function or an `audit` parameter. `apps/vue` and `apps/html` keep a few smoke stories, so each registration path is tested, not just built
+- Stories in one file run in order and share the overlay element. `NoLeakAfterMaxWidth` depends on this, so keep it right after `MaxWidth`
 
 ## Publishing
 

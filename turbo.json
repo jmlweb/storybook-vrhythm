@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
+  "globalDependencies": ["scripts/run-story-tests.mjs"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

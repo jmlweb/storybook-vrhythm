@@ -184,12 +184,24 @@ importers:
 
   apps/html:
     devDependencies:
+      '@storybook/addon-vitest':
+        specifier: '>=11.0.0-0 <12.0.0-0'
+        version: 11.0.0-beta.0(@vitest/browser-playwright@5.1.0)(@vitest/browser@5.1.0)(react@19.3.1)(storybook@11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1))(vitest@5.1.0)
       '@storybook/html':
         specifier: '>=11.0.0-0 <12.0.0-0'
         version: 11.0.0-beta.0(storybook@11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1))
       '@storybook/html-vite':
         specifier: '>=11.0.0-0 <12.0.0-0'
         version: 11.0.0-beta.0(storybook@11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1))(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))
+      '@vitest/browser':
+        specifier: 5.1.0
+        version: 5.1.0(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))(vitest@5.1.0)
+      '@vitest/browser-playwright':
+        specifier: 5.1.0
+        version: 5.1.0(playwright@1.64.1)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))(vitest@5.1.0)
+      playwright:
+        specifier: ^1.64.1
+        version: 1.64.1
       storybook:
         specifier: '>=11.0.0-0 <12.0.0-0'
         version: 11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1)
@@ -199,6 +211,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      vitest:
+        specifier: 5.1.0
+        version: 5.1.0(@types/node@22.20.5)(@vitest/browser-playwright@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))
 
   apps/react:
     dependencies:
@@ -252,12 +267,24 @@ importers:
         specifier: ^3.5.44
         version: 3.5.44(typescript@6.0.3)
     devDependencies:
+      '@storybook/addon-vitest':
+        specifier: '>=11.0.0-0 <12.0.0-0'
+        version: 11.0.0-beta.0(@vitest/browser-playwright@5.1.0)(@vitest/browser@5.1.0)(react@19.3.1)(storybook@11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1))(vitest@5.1.0)
       '@storybook/vue3':
         specifier: '>=11.0.0-0 <12.0.0-0'
         version: 11.0.0-beta.0(storybook@11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1))(typescript@6.0.3)(vue@3.5.44(typescript@6.0.3))
       '@storybook/vue3-vite':
         specifier: '>=11.0.0-0 <12.0.0-0'
         version: 11.0.0-beta.0(storybook@11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1))(typescript@6.0.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))(vue@3.5.44(typescript@6.0.3))
+      '@vitest/browser':
+        specifier: 5.1.0
+        version: 5.1.0(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))(vitest@5.1.0)
+      '@vitest/browser-playwright':
+        specifier: 5.1.0
+        version: 5.1.0(playwright@1.64.1)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))(vitest@5.1.0)
+      playwright:
+        specifier: ^1.64.1
+        version: 1.64.1
       storybook:
         specifier: '>=11.0.0-0 <12.0.0-0'
         version: 11.0.0-beta.0(@types/react@19.3.0)(react@19.3.1)
@@ -267,6 +294,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
+      vitest:
+        specifier: 5.1.0
+        version: 5.1.0(@types/node@22.20.5)(@vitest/browser-playwright@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@30.1.3)(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(yaml@2.9.1))
 
   packages/storybook-vrhythm:
     devDependencies:

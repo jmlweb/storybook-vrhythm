@@ -18,16 +18,16 @@ There is no hosted Storybook. The README image shows the overlay but not a faili
 
 1. Prerequisite (manual, by the maintainer): enable GitHub Pages for the repo. `gh api repos/jmlweb/storybook-vrhythm/pages` returns 404 today.
 2. Deploy the `apps/react` Storybook from CI to Pages. `ci.yml` already runs `turbo run build-storybook`, so reuse that build. The new workflow needs `pages: write` and `id-token: write`, and must pin actions by SHA like `ci.yml` does.
-3. Keep the demo to `fullscreen` stories until TSK-010 lands (it covers TSK-002, tall stories, and TSK-003, centered layout). Otherwise the demo shows those bugs. Only `Audit.stories.tsx` sets `layout: 'fullscreen'` today, and `Rhythm.stories.tsx` sets no layout, so either set it there or filter the demo build to chosen stories.
+3. Keep the demo to `fullscreen` stories until TSK-010 lands (it covers TSK-002, tall stories, and TSK-003, centered layout). Otherwise the demo shows those bugs. The `audit/` stories set `layout: 'fullscreen'`, while `Options.stories.tsx` and `Showcase.stories.tsx` use `padded`, so either set it there or filter the demo build to chosen stories.
 4. Decide whether test fixtures such as `HiddenOverlayNeedsOptions` appear in the demo. Deploying all of `apps/react` exposes them.
-5. Add a demo story that is off-grid on purpose and renders the `auditRhythm` report on screen. Assert the failure the way `OffGrid` does (`Audit.stories.tsx:28`), so the story passes in `pnpm -F @apps/react test` and needs no test exclusion. Do not use `tags: ['!test']`: `run-story-tests.mjs:8` matches the text of the whole file, so it would exempt that file from the no-tests guard.
+5. Add a demo story that is off-grid on purpose and renders the `auditRhythm` report on screen. Assert the failure the way `OffGrid` does (`Showcase.stories.tsx`), so the story passes in `pnpm -F @apps/react test` and needs no test exclusion. Do not use `tags: ['!test']`: `scripts/run-story-tests.mjs` matches the text of the whole file, so it would exempt that file from the no-tests guard.
 6. Add the demo link and the failing audit output near the top of the README, plus a short comparison with the core grid: baseline lines plus numeric checks.
 7. Update the `homepage` field in `packages/storybook-vrhythm/package.json` together with the README link. It reaches npm only at the next publish: `next.2` at the earliest, and `latest` at GA.
 
 ## Files to Modify
 
 - `.github/workflows/` — new demo deploy workflow
-- `apps/react/src/stories/` — demo story that renders the audit report; `layout` in `Rhythm.stories.tsx`, if that route is chosen
+- `apps/react/src/stories/` — demo story that renders the audit report; `layout` in `Options.stories.tsx`, if that route is chosen
 - `packages/storybook-vrhythm/README.md` — demo link, audit output, comparison
 - `packages/storybook-vrhythm/package.json` — `homepage`
 
