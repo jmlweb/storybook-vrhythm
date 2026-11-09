@@ -36,6 +36,7 @@
         "packages/storybook-vrhythm/src/preview.ts",
         "**/tsdown.config.ts",
         "**/vitest.config.ts",
+        "**/vite.config.ts",
         "apps/*/.storybook/**",
         "apps/*/src/stories/**"
       ],
