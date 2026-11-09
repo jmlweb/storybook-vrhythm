@@ -13,6 +13,15 @@ export const BLOCK_SELECTOR = '[data-testid="block"]';
 
 export const getOverlay = () => document.getElementById('storybook-rhythm');
 
+// Runs in beforeEach, before the decorator, so a story can check what the
+// decorator does to an overlay left behind by any earlier story.
+export const seedOverlay = (style: Partial<CSSStyleDeclaration> = {}) => {
+  const overlay = getOverlay() ?? document.createElement('div');
+  overlay.id = 'storybook-rhythm';
+  Object.assign(overlay.style, style);
+  document.body.append(overlay);
+};
+
 export const originOf = (canvasElement: HTMLElement) =>
   canvasElement.getBoundingClientRect().top;
 

@@ -1,7 +1,12 @@
+import { expect } from 'storybook/test';
+import { auditRhythm } from 'storybook-vrhythm/audit';
+
 import preview from '../../../.storybook/preview';
 import { Block } from './fixtures';
 
-// No play functions: the addon's afterEach runs the audit and fails the test.
+// The addon's afterEach runs the audit after play, and Storybook runs a story's
+// own afterEach before it, so no story here can observe the result.
+// test/auto-audit.test.ts covers what each mode does with it.
 const meta = preview.meta({
   title: 'VRhythm/Audit/AutoAudit',
   component: Block,
@@ -22,4 +27,11 @@ export const ErrorModeWithHiddenOverlay = meta.story({
 export const TodoMode = meta.story({
   args: { top: 21, height: 19 },
   parameters: { vrhythm: { audit: 'todo' } },
+  // Proves the story passes because todo mode does not fail it, not because
+  // the fixture happens to be on the grid.
+  play: async ({ canvasElement }) => {
+    const { ok } = await auditRhythm(canvasElement);
+
+    await expect(ok).toBe(false);
+  },
 });

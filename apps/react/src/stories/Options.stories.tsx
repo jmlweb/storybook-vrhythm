@@ -3,8 +3,7 @@ import { auditRhythm } from 'storybook-vrhythm/audit';
 
 import preview from '../../.storybook/preview';
 import { ArticleCard } from './article-card';
-
-const getOverlay = () => document.getElementById('storybook-rhythm');
+import { getOverlay, seedOverlay } from './audit/fixtures';
 
 const expectGridOf = async (
   canvasElement: HTMLElement,
@@ -67,11 +66,18 @@ export const CustomLook = meta.story({
   play: async ({ canvasElement }) => {
     await expectGridOf(canvasElement, 8, 4);
     await expect(getOverlay()?.style.opacity).toBe('0.6');
+    await expect(getOverlay()?.style.backgroundImage).toContain(
+      'rgba(0, 200, 100, 0.25)'
+    );
   },
 });
 
 export const Hidden = meta.story({
   parameters: { vrhythm: { hide: true } },
+  // A seeded overlay makes the check prove the decorator removed it.
+  beforeEach: () => {
+    seedOverlay();
+  },
   play: async () => {
     await expect(getOverlay()).toBeNull();
   },

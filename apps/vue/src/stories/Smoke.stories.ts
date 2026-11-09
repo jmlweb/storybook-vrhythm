@@ -48,6 +48,14 @@ export const OffGrid = meta.story({
 
 export const Hidden = meta.story({
   parameters: { vrhythm: { hide: true } },
+  // A seeded overlay makes the check prove the decorator ran and removed it.
+  beforeEach: () => {
+    if (!document.getElementById('storybook-rhythm')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'storybook-rhythm';
+      document.body.append(overlay);
+    }
+  },
   play: async () => {
     await expect(document.getElementById('storybook-rhythm')).toBeNull();
   },

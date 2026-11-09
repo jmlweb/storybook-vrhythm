@@ -1,6 +1,5 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalDependencies": ["scripts/run-story-tests.mjs"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -12,7 +11,8 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/scripts/run-story-tests.mjs"]
     },
     "typecheck": {
       "dependsOn": ["^build"]

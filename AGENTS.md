@@ -150,7 +150,7 @@ Later sources override earlier ones. The story-level `hide` param takes preceden
 - Use `jsdom` environment for DOM tests
 - jsdom has no layout, so `audit` tests stub rects. `apps/react/src/stories/audit/` checks real layout through `play` functions (`pnpm -F @apps/react test`, needs `playwright install chromium`)
 - Every app story has a `play` function or an `audit` parameter. `apps/vue` and `apps/html` keep a few smoke stories, so each registration path is tested, not just built
-- Stories in one file run in order and share the overlay element. `NoLeakAfterMaxWidth` depends on this, so keep it right after `MaxWidth`
+- Stories share the overlay element. To test what the decorator does to a leftover overlay, seed it in `beforeEach` (`seedOverlay` in `audit/fixtures.tsx`) instead of relying on story order
 
 ## Publishing
 

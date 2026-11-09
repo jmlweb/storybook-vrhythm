@@ -2,7 +2,7 @@ import { expect, waitFor } from 'storybook/test';
 import { expectRhythm } from 'storybook-vrhythm/audit';
 
 import preview from '../../../.storybook/preview';
-import { BLOCK_SELECTOR, Block, getOverlay } from './fixtures';
+import { BLOCK_SELECTOR, Block, getOverlay, seedOverlay } from './fixtures';
 
 const meta = preview.meta({
   title: 'VRhythm/Audit/Overlay',
@@ -62,9 +62,16 @@ export const MaxWidth = meta.story({
   },
 });
 
-// Must stay right after MaxWidth: Vitest runs a file's stories in order, and
-// this one checks that the reused overlay drops the styles MaxWidth set.
+// Seeds the styles maxWidth leaves on the reused overlay, so the story does not
+// depend on running after MaxWidth.
 export const NoLeakAfterMaxWidth = meta.story({
+  beforeEach: () => {
+    seedOverlay({
+      left: '50%',
+      maxWidth: '400px',
+      transform: 'translateX(-50%)',
+    });
+  },
   play: async () => {
     const overlay = getOverlay();
 
