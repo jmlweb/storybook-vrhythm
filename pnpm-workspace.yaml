@@ -4,6 +4,23 @@ packages:
 allowBuilds:
   esbuild: true
 engineStrict: true
+minimumReleaseAgeExclude:
+  - "@turbo/darwin-64@2.11.13"
+  - "@turbo/darwin-arm64@2.11.13"
+  - "@turbo/linux-64@2.11.13"
+  - "@turbo/linux-arm64@2.11.13"
+  - "@turbo/windows-64@2.11.13"
+  - "@turbo/windows-arm64@2.11.13"
+  - "@vitest/browser-playwright@5.1.1"
+  - "@vitest/browser@5.1.1"
+  - "@vitest/coverage-v8@5.1.1"
+  - "@vitest/mocker@5.1.1"
+  - "@vitest/pretty-format@5.1.1"
+  - "@vitest/spy@5.1.1"
+  - "@vitest/ui@5.1.1"
+  - "@vitest/utils@5.1.1"
+  - turbo@2.11.13
+  - vitest@5.1.1
 overrides:
   # Storybook 11 beta pulls glob 13 through this plugin (GHSA-3g3m-2fjr-6pw4, GHSA-g3hv-75wg-m249).
   # Drop once @storybook/react-vite depends on a plugin version without glob (0.9.1 or later).
